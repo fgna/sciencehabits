@@ -1,0 +1,1 @@
+export { ResearchArticles } from './ResearchArticles';

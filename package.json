@@ -1,0 +1,89 @@
+{
+  "name": "sciencehabits",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@headlessui/react": "^2.2.7",
+    "@tailwindcss/forms": "^0.5.10",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "dexie": "^4.0.11",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-i18next": "^15.6.1",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.8.0",
+    "react-scripts": "5.0.1",
+    "remark-gfm": "^4.0.1",
+    "web-vitals": "^2.1.4",
+    "zustand": "^5.0.7"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --watchAll=false",
+    "test:watch": "react-scripts test",
+    "test:coverage": "react-scripts test --coverage --watchAll=false",
+    "test:a11y": "react-scripts test --testMatch='**/*a11y*' --watchAll=false",
+    "test:smoke": "cypress run --spec 'cypress/e2e/smoke-tests/*.cy.ts'",
+    "eject": "react-scripts eject",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "type-check": "tsc --noEmit",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:component": "cypress run --component",
+    "precommit": "npm run lint && npm run type-check && npm run test:coverage"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@cypress/code-coverage": "^3.14.5",
+    "@cypress/react18": "^2.0.1",
+    "@types/node": "^24.2.1",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "@types/testing-library__jest-dom": "^5.14.9",
+    "cypress": "^13.17.0",
+    "cypress-axe": "^1.6.0",
+    "fake-indexeddb": "^6.1.0",
+    "jest-axe": "^8.0.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "typescript": "^4.9.5"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts",
+      "!src/index.tsx",
+      "!src/reportWebVitals.ts",
+      "!src/setupTests.ts"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    }
+  }
+}

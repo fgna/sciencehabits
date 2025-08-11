@@ -1,0 +1,32 @@
+[
+  {
+    "id": "productivity_001_pomodoro_technique",
+    "title": "25-Minute Pomodoro Focus Session",
+    "description": "Use the Pomodoro Technique for focused work periods followed by short breaks",
+    "timeMinutes": 25,
+    "category": "productivity",
+    "goalTags": ["improve_focus", "increase_productivity", "time_management"],
+    "lifestyleTags": ["professional", "student"],
+    "timeTags": ["morning", "flexible"],
+    "instructions": "1. Choose one specific task to work on\n2. Set timer for 25 minutes\n3. Work focused on that task only - no distractions\n4. When timer rings, take a 5-minute break\n5. After 4 pomodoros, take a 15-30 minute break\n6. Track completed pomodoros for motivation",
+    "researchIds": ["pomodoro_productivity_2019", "attention_management_2020"],
+    "isCustom": false,
+    "difficulty": "moderate",
+    "equipment": "timer or pomodoro app"
+  },
+  {
+    "id": "productivity_002_time_blocking",
+    "title": "Daily Time Blocking",
+    "description": "Block out specific time periods for different types of work and activities",
+    "timeMinutes": 10,
+    "category": "productivity",
+    "goalTags": ["time_management", "increase_productivity", "reduce_stress"],
+    "lifestyleTags": ["professional", "parent"],
+    "timeTags": ["morning", "evening"],
+    "instructions": "1. Review your tasks and priorities for tomorrow\n2. Estimate time needed for each task\n3. Block out specific time slots in your calendar\n4. Include buffer time between blocks\n5. Color-code different types of work\n6. Stick to your blocks but adjust if needed",
+    "researchIds": ["time_blocking_efficiency_2021", "calendar_productivity_2020"],
+    "isCustom": false,
+    "difficulty": "intermediate",
+    "equipment": "calendar app or planner"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sleep_001_blue_light_filter",
+    "title": "Blue Light Filter 2 Hours Before Bed",
+    "description": "Use blue light filters on devices or wear blue light blocking glasses to improve sleep quality",
+    "timeMinutes": 2,
+    "category": "sleep",
+    "goalTags": ["improve_sleep", "reduce_eye_strain"],
+    "lifestyleTags": ["professional", "parent", "student"],
+    "timeTags": ["evening"],
+    "instructions": "1. Set automatic blue light filters on all devices (f.lux, Night Shift, etc.)\n2. Enable filters 2 hours before planned bedtime\n3. Consider blue light blocking glasses for extended evening screen time\n4. Dim room lighting and avoid bright screens when possible",
+    "researchIds": ["blue_light_sleep_2019", "circadian_disruption_2020"],
+    "isCustom": false,
+    "difficulty": "easy",
+    "equipment": "blue light filtering app or glasses"
+  },
+  {
+    "id": "sleep_002_bedroom_temperature",
+    "title": "Optimal Bedroom Temperature (16-19°C)",
+    "description": "Maintain cool bedroom temperature for deeper sleep and easier sleep onset",
+    "timeMinutes": 5,
+    "category": "sleep",
+    "goalTags": ["improve_sleep", "sleep_quality"],
+    "lifestyleTags": ["professional", "parent", "student"],
+    "timeTags": ["evening"],
+    "instructions": "1. Set bedroom temperature between 16-19°C (60-67°F)\n2. Use breathable bedding materials (cotton, bamboo)\n3. Consider a fan for air circulation\n4. Avoid heavy blankets that trap heat\n5. Check temperature 30 minutes before sleep",
+    "researchIds": ["sleep_temperature_2018", "thermoregulation_sleep_2021"],
+    "isCustom": false,
+    "difficulty": "easy",
+    "equipment": "thermometer, fan or air conditioning"
+  }
+]
