@@ -23,18 +23,24 @@
 
 ScienceHabits is a Progressive Web Application (PWA) that helps users build sustainable habits based on scientific research. The app provides personalized habit recommendations, progress tracking, and educational content to support evidence-based behavior change.
 
+**🎉 Latest Enhancement**: Now features comprehensive non-daily habit tracking with weekly goals (e.g., "exercise 3 times per week"), periodic habits (quarterly/yearly), and an intelligent reminder system that learns from user completion patterns to deliver personalized notifications.
+
 ## ✨ Features
 
 ### 🎯 **Core Features**
 - **Personalized Onboarding**: Goal-based habit recommendations
-- **Daily Habit Tracking**: Simple, engaging completion interface
-- **Progress Analytics**: Comprehensive streak and performance tracking
+- **Multi-Frequency Habit Tracking**: Daily, weekly (3x/week), periodic (quarterly/yearly) habits
+- **Smart Progress Analytics**: Frequency-aware streak and performance tracking
+- **Intelligent Reminders**: Browser notifications with completion pattern analysis
 - **Research Integration**: Science-backed habit explanations
 - **Offline Capability**: Full PWA functionality
 
 ### 🔬 **Advanced Features**
+- **Non-Daily Habit Support**: Weekly goals, periodic habits, custom frequencies
+- **Intelligent Reminder System**: Context-aware notifications based on user patterns
 - **Modular Content System**: Dynamic habit and research loading
 - **Goal-based Filtering**: Personalized content recommendations
+- **Advanced Weekly Tracking**: Session counting for flexible weekly goals (e.g., "3 times per week")
 - **Premium Analytics**: Advanced progress insights (planned)
 - **Data Export**: Progress data in multiple formats (premium)
 - **Cross-device Sync**: Account-based synchronization (planned)
@@ -67,6 +73,13 @@ npm start
 ```
 
 The app will be available at `http://localhost:3000`.
+
+### Key Features Available
+- **Multi-frequency habit creation**: Daily, weekly goals, periodic habits
+- **Smart reminders**: Browser notifications (requires permission)
+- **Weekly goal tracking**: Session-based progress (e.g., "3/5 this week")
+- **Research integration**: Science-backed explanations
+- **Offline support**: Full PWA capabilities
 
 ### Development Commands
 
@@ -133,6 +146,62 @@ Our GitHub Actions pipeline runs:
 - ✅ Security vulnerability scanning
 - ✅ Deployment to staging/production
 
+## 📊 Non-Daily Habit Tracking System
+
+### Overview
+
+ScienceHabits supports sophisticated habit tracking beyond daily routines, enabling users to track habits with various frequencies and patterns:
+
+### Supported Habit Types
+
+**🗓️ Daily Habits**
+- Traditional daily habits (default behavior)
+- Streak tracking and completion analytics
+- Time-based reminders with user preference learning
+
+**📅 Weekly Goals** 
+- Flexible weekly targets (e.g., "3 times per week")
+- Session counting with preferred days
+- Smart distribution across the week
+- Progress visualization and deficit tracking
+
+**📆 Periodic Habits**
+- Quarterly habits (every 3 months)
+- Yearly habits (annual goals)
+- Custom interval support
+- Due date tracking and overdue notifications
+
+### Technical Implementation
+
+**Database Schema (Dexie v3)**
+```typescript
+interface HabitFrequency {
+  type: 'daily' | 'weekly' | 'periodic' | 'custom';
+  weeklyTarget?: {
+    sessionsPerWeek: number;
+    preferredDays?: string[];
+    allowFlexibleDays?: boolean;
+  };
+  periodicTarget?: {
+    interval: 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+    intervalCount: number;
+    nextDueDate?: string;
+  };
+}
+```
+
+**Intelligent Reminder System**
+- Completion pattern analysis for personalized timing
+- Frequency-aware notification scheduling
+- Priority-based reminders (urgent for weekly goals near deadline)
+- Browser notification integration with permission management
+
+**Progress Tracking**
+- Weekly progress objects with session counting
+- Frequency-aware streak calculations
+- Goal completion percentage tracking
+- Historical trend analysis
+
 ## 🏗️ Architecture
 
 ### Technology Stack
@@ -168,11 +237,18 @@ src/
 │   ├── onboarding/     # User onboarding flow
 │   ├── habits/         # Habit management
 │   ├── research/       # Research articles
-│   └── analytics/      # Progress analytics
+│   ├── analytics/      # Progress analytics
+│   └── reminders/      # Reminder system UI
 ├── stores/             # Zustand state stores
 ├── hooks/              # Custom React hooks
 ├── services/           # API and data services
+│   ├── storage/        # Database and persistence
+│   └── reminderService # Notification system
+├── contexts/           # React context providers
 ├── utils/              # Helper functions
+│   ├── frequencyHelpers     # Non-daily habit logic
+│   ├── weeklyGoalHelpers    # Weekly tracking
+│   └── reminderHelpers      # Intelligent notifications
 ├── types/              # TypeScript definitions
 ├── data/               # Static data files
 └── __tests__/          # Test utilities and fixtures

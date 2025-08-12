@@ -1,5 +1,6 @@
 import { db } from '../services/storage/database';
 import { Habit, ResearchStudy } from '../types';
+import { createDefaultFrequency, createDefaultReminders, migrateLegacyFrequency } from '../utils/frequencyHelpers';
 
 export async function loadInitialData() {
   try {
@@ -100,7 +101,9 @@ function getDefaultHabits(): Habit[] {
       researchIds: ['hydration_cognitive_performance_2020'],
       isCustom: false,
       difficulty: 'beginner',
-      equipment: 'none'
+      equipment: 'none',
+      frequency: createDefaultFrequency(),
+      reminders: createDefaultReminders()
     },
     {
       id: 'morning_sunlight',
@@ -115,7 +118,9 @@ function getDefaultHabits(): Habit[] {
       researchIds: ['morning_light_sleep_2020', 'circadian_light_therapy_2021'],
       isCustom: false,
       difficulty: 'beginner',
-      equipment: 'none'
+      equipment: 'none',
+      frequency: createDefaultFrequency(),
+      reminders: createDefaultReminders()
     },
     {
       id: 'daily_movement',
@@ -130,7 +135,9 @@ function getDefaultHabits(): Habit[] {
       researchIds: ['exercise_snacks_mcmaster_2021'],
       isCustom: false,
       difficulty: 'beginner',
-      equipment: 'none'
+      equipment: 'none',
+      frequency: createDefaultFrequency(),
+      reminders: createDefaultReminders()
     },
     {
       id: 'breathing_exercise',
@@ -145,7 +152,9 @@ function getDefaultHabits(): Habit[] {
       researchIds: ['stanford_huberman_2023'],
       isCustom: false,
       difficulty: 'beginner',
-      equipment: 'none'
+      equipment: 'none',
+      frequency: createDefaultFrequency(),
+      reminders: createDefaultReminders()
     }
   ];
 }

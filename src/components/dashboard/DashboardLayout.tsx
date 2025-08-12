@@ -5,6 +5,8 @@ import { AnalyticsView } from '../analytics/AnalyticsView';
 import { ProfileModal } from '../profile';
 import { ResearchArticles } from '../research';
 import { ContentLoaderDemo } from '../admin/ContentLoaderDemo';
+import { ReminderIndicator } from '../reminders/ReminderIndicator';
+import { RecoveryDashboard } from '../recovery';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -12,7 +14,7 @@ interface DashboardLayoutProps {
   onSignOut?: () => void;
 }
 
-type DashboardTab = 'today' | 'habits' | 'progress' | 'research' | 'content-demo';
+type DashboardTab = 'today' | 'habits' | 'progress' | 'recovery' | 'research' | 'content-demo';
 
 export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutProps) {
   const [activeTab, setActiveTab] = useState<DashboardTab>('today');
@@ -32,7 +34,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
     };
   }, []);
 
-  const navigation = [
+  const navigation: { id: DashboardTab; name: string; icon: React.ReactNode }[] = [
     {
       id: 'today' as const,
       name: 'Today',
@@ -57,6 +59,15 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+      )
+    },
+    {
+      id: 'recovery' as const,
+      name: 'Recovery',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
       )
     },
@@ -130,6 +141,9 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
                   <p className="text-xs text-gray-500">{user.lifestyle} lifestyle</p>
                 </div>
               )}
+              
+              {/* Reminder Indicator */}
+              <ReminderIndicator className="hidden sm:flex" />
               
               <div className="flex items-center space-x-2">
                 <Button
@@ -226,6 +240,8 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
         
         {activeTab === 'progress' && <AnalyticsView />}
         
+        {activeTab === 'recovery' && <RecoveryDashboard />}
+        
         {activeTab === 'research' && <ResearchArticles />}
         
         {activeTab === 'content-demo' && <ContentLoaderDemo />}
@@ -233,7 +249,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
 
       {/* Bottom Navigation (Mobile) */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-5">
           {navigation.map((item) => (
             <button
               key={item.id}

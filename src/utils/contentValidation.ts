@@ -336,7 +336,7 @@ export class ContentValidator {
       }
     }
 
-    for (const [id, titles] of habitIds) {
+    habitIds.forEach((titles, id) => {
       if (titles.length > 1) {
         duplicatesCount++;
         errors.push({
@@ -348,7 +348,7 @@ export class ContentValidator {
           details: { duplicateItems: titles }
         });
       }
-    }
+    });
 
     // Check research ID duplicates
     const researchIds = new Map<string, string[]>();
@@ -361,7 +361,7 @@ export class ContentValidator {
       }
     }
 
-    for (const [id, titles] of researchIds) {
+    researchIds.forEach((titles, id) => {
       if (titles.length > 1) {
         duplicatesCount++;
         errors.push({
@@ -373,7 +373,7 @@ export class ContentValidator {
           details: { duplicateItems: titles }
         });
       }
-    }
+    });
 
     return { errors, warnings, duplicatesCount };
   }

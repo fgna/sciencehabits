@@ -42,7 +42,7 @@ export function ResearchArticles() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterByGoals, setFilterByGoals] = useState(true); // Default to filtering by user goals
+  const [filterByGoals, setFilterByGoals] = useState(false); // Default to showing all articles
 
   // Listen for research article navigation events
   useEffect(() => {
@@ -141,7 +141,7 @@ export function ResearchArticles() {
     setSelectedDifficulty(null);
     setSelectedCategory(null);
     setSearchQuery('');
-    setFilterByGoals(true); // Reset to default (filter by goals)
+    setFilterByGoals(false); // Reset to default (show all articles)
   };
 
   if (isLoading) {
@@ -383,15 +383,6 @@ function ArticleCard({ article, onReadMore, getCategoryColor, getDifficultyColor
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            {article.tags.slice(0, 4).map((tag) => (
-              <span key={tag} className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">
-                #{tag}
-              </span>
-            ))}
           </div>
 
           {/* Footer */}

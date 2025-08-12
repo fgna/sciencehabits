@@ -12,10 +12,18 @@ ScienceHabits is a React-based Progressive Web App (PWA) for science-backed habi
 - Research articles are filtered by user goals for personalized content
 
 ### 📊 Habit Tracking
-- Daily habit completion tracking with streak counters
+- Multi-frequency habit tracking (daily, weekly, periodic)
+- Advanced scheduling with smart reminders
 - Visual progress indicators and completion percentages
 - Support for both science-backed and custom habits
 - Collapsible instructions and research details for each habit
+
+### 🔄 Recovery-First Design System
+- **Compassion messaging** when users miss habits with research-backed explanations
+- **Micro-habit recovery** offering 2-minute versions to maintain context
+- **Trend-focused progress** emphasizing consistency over perfection
+- **Recovery sessions** with progressive scaling and coaching tips
+- **Research integration** citing 66-day habit formation studies and neuroplasticity research
 
 ### 📚 Research Integration
 - Curated research articles linked to habits
@@ -24,7 +32,8 @@ ScienceHabits is a React-based Progressive Web App (PWA) for science-backed habi
 - Direct navigation from habit cards to related research
 
 ### 📈 Progress Analytics
-- Completion streaks and statistics
+- Enhanced analytics dashboard with completion trends
+- Smart notification system for habit reminders
 - Daily, weekly, and monthly progress views
 - Visual charts and progress indicators
 
@@ -49,26 +58,36 @@ ScienceHabits is a React-based Progressive Web App (PWA) for science-backed habi
 ```
 src/
 ├── components/           # React components
-│   ├── ui/              # Reusable UI components (Button, Card, etc.)
-│   ├── dashboard/       # Main app views (Today, Progress, etc.)
+│   ├── ui/              # Reusable UI components (Button, Card, Modal, etc.)
+│   ├── dashboard/       # Main app views (Today, Progress, Recovery, etc.)
 │   ├── habits/          # Habit management components
 │   ├── onboarding/      # User setup flow
 │   ├── profile/         # User profile management
 │   ├── analytics/       # Progress tracking views
+│   ├── recovery/        # Recovery-first design system components
+│   ├── reminders/       # Smart notification system
 │   └── research/        # Research articles display
 ├── stores/              # Zustand state management
 │   ├── userStore.ts     # User data, habits, progress
-│   └── habitStore.ts    # Habit CRUD operations
+│   ├── habitStore.ts    # Habit CRUD operations
+│   └── recoveryStore.ts # Recovery system state management
 ├── contexts/            # React contexts
-│   └── ResearchContext.tsx  # Research articles management
+│   ├── ResearchContext.tsx  # Research articles management
+│   └── ReminderContext.tsx  # Notification system context
 ├── hooks/               # Custom React hooks
 │   └── useCurrentDate.ts    # Date/time utilities
 ├── data/                # Static data files
 │   ├── habits.json      # Basic habit definitions
 │   ├── enhanced_habits.json  # Enhanced habit data
 │   ├── research_articles.json  # Research content
-│   └── goals.json       # Goal definitions and tiers
+│   ├── goals.json       # Goal definitions and tiers
+│   └── recoveryResearch.ts  # Recovery system research database
 ├── types/               # TypeScript interfaces
+│   ├── index.ts         # Core types (User, Habit, Progress)
+│   └── recovery.ts      # Recovery system types
+├── services/            # Business logic services
+│   ├── reminderService.ts   # Smart notification logic
+│   └── storage/         # Data persistence layer
 └── utils/               # Utility functions
 ```
 
@@ -107,6 +126,18 @@ interface Habit {
   evidenceStrength?: 'very_high' | 'high' | 'moderate' | 'low';
   whyEffective?: string;
   cost?: string;
+  // Frequency & Reminder fields
+  frequency: HabitFrequency;
+  reminders: HabitReminders;
+}
+
+interface HabitFrequency {
+  type: 'daily' | 'weekly' | 'custom';
+  schedule?: 'everyday' | 'weekdays' | 'weekends';
+  customDays?: number[];
+  timesPerWeek?: number;
+  periodicInterval?: number;
+  periodicUnit?: 'days' | 'weeks' | 'months';
 }
 ```
 
@@ -121,6 +152,46 @@ interface Progress {
   currentStreak: number;
   longestStreak: number;
   totalDays: number;
+}
+```
+
+### Recovery System Types
+```typescript
+interface CompassionMessage {
+  id: string;
+  triggerCondition: 'first_miss' | 'second_consecutive' | 'third_consecutive';
+  message: string;
+  researchExplanation: string;
+  researchCitation?: ResearchCitation;
+  recoveryOptions: string[];
+  emotionalTone: 'supportive' | 'encouraging' | 'understanding';
+  severity: 'gentle' | 'moderate' | 'intensive';
+}
+
+interface MicroHabit {
+  id: string;
+  originalHabitId: string;
+  name: string;
+  description: string;
+  timeRequired: number; // minutes
+  difficulty: 'minimal' | 'easy' | 'moderate';
+  maintainsSameContext: boolean;
+  scalingSteps: string[];
+  successRate: number;
+}
+
+interface RecoverySession {
+  id: string;
+  habitId: string;
+  userId: string;
+  recoveryType: 'micro_habit' | 'timing_adjustment' | 'social_support' | 'reduced_frequency';
+  startDate: string;
+  currentStep: number;
+  totalSteps: number;
+  nextMilestone: string;
+  successfulDays: number;
+  coachingTips: string[];
+  completed: boolean;
 }
 ```
 
@@ -150,6 +221,20 @@ interface Progress {
 - **Goal Filtering**: Articles filtered by user goals for personalized research
 - **Navigation**: Direct links from habit details to related research articles
 
+### 5. Recovery-First Design System
+- **Compassion Triggers**: Automatic detection of missed habits with different severity levels
+- **Research-Backed Messages**: Scientific explanations for why missing habits is normal
+- **Micro-Habit Generation**: 2-minute versions of full habits to maintain behavioral context
+- **Progressive Scaling**: Step-by-step path back to full habits
+- **Trend Analysis**: Focus on weekly/monthly consistency rather than daily perfection
+- **Recovery Sessions**: Structured support with coaching tips and milestone tracking
+
+### 6. Smart Notification System
+- **Browser Notifications**: Permission-based reminders with timing intelligence
+- **Frequency-Aware Scheduling**: Different reminder patterns for daily vs weekly habits
+- **Context-Aware Timing**: Personalized reminder timing based on user preferences
+- **Progress Integration**: Reminders adapt based on current streak and completion patterns
+
 ## State Management
 
 ### UserStore (Zustand)
@@ -163,20 +248,34 @@ interface Progress {
 - **Edit Operations**: Modify custom habit properties
 - **Validation**: Form validation and error handling
 
+### RecoveryStore (Zustand)
+- **Compassion Messages**: Research-backed messages for different trigger conditions
+- **Recovery Sessions**: Active recovery tracking with progress and coaching
+- **Micro-Habit Generation**: Create simplified versions of existing habits
+- **Trend Analysis**: Calculate consistency trends over time periods
+- **Recovery Metrics**: Track success rates and recovery patterns
+
 ### ResearchContext
 - **Article Loading**: Fetch and cache research articles
 - **Filtering Logic**: Goal-based and search-based filtering
 - **Related Articles**: Find articles related to specific habits
 
+### ReminderContext
+- **Permission Management**: Handle browser notification permissions
+- **Smart Scheduling**: Calculate optimal reminder times based on habits and preferences
+- **Notification Queue**: Manage pending and active notifications
+- **Frequency Integration**: Different reminder patterns for various habit frequencies
+
 ## Navigation & User Flow
 
 ### App Structure
 1. **Onboarding**: Goal selection, lifestyle setup, habit recommendations
-2. **Dashboard**: 4-tab interface (Today, My Habits, Progress, Research)
-3. **Today Tab**: Daily habit checklist with completion tracking
-4. **My Habits**: Full habit library with create/edit capabilities
-5. **Progress Tab**: Analytics, streaks, and historical data
-6. **Research Tab**: Filtered articles with goal-based personalization
+2. **Dashboard**: 5-tab interface (Today, My Habits, Progress, Recovery, Research)
+3. **Today Tab**: Daily habit checklist with completion tracking and smart reminders
+4. **My Habits**: Full habit library with create/edit capabilities and frequency settings
+5. **Progress Tab**: Enhanced analytics with completion trends and frequency analysis
+6. **Recovery Tab**: Recovery-first design system with compassion messaging and micro-habits
+7. **Research Tab**: Filtered articles with goal-based personalization
 
 ### Inter-Component Communication
 - **Custom Events**: Navigation between tabs using `window.dispatchEvent`
@@ -330,6 +429,18 @@ The project includes comprehensive GitHub Actions workflows:
 3. Add appropriate tags and category for goal filtering
 4. Verify article appears in research tab and habit details
 
+### Working with Recovery System
+1. **Adding Compassion Messages**: Update `src/data/recoveryResearch.ts` with new research-backed messages
+2. **Customizing Micro-Habits**: Modify micro-habit generation logic in `recoveryStore.ts`
+3. **Trigger Conditions**: Adjust compassion trigger logic based on missed habit patterns
+4. **Recovery Research**: Add new research citations to support compassion messaging
+
+### Configuring Reminders
+1. **Notification Timing**: Modify reminder calculation logic in `src/services/reminderService.ts`
+2. **Frequency Patterns**: Update scheduling algorithms for different habit frequencies
+3. **Permission Handling**: Customize browser notification permission flow
+4. **Context Integration**: Adjust reminder timing based on user progress patterns
+
 ### Modifying UI Components
 1. Update shared components in `src/components/ui/`
 2. Use TypeScript interfaces for all props
@@ -353,10 +464,12 @@ The project includes comprehensive GitHub Actions workflows:
 ### Future Enhancements
 - **Backend Integration**: User accounts, cloud sync
 - **Social Features**: Sharing, community challenges
-- **Advanced Analytics**: Detailed progress insights
-- **Notifications**: Reminder system for habits
+- **Advanced Analytics**: Detailed progress insights and correlation analysis
+- **Enhanced Recovery**: Machine learning for personalized recovery recommendations
 - **Export Features**: Data export, progress reports
 - **Branch Protection**: Enable GitHub branch protection rules
+- **Mobile App**: Native mobile application with enhanced notifications
+- **AI Coaching**: Personalized habit coaching based on user patterns and research
 
 ## Getting Started as a New Developer
 

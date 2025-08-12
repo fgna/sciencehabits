@@ -24,6 +24,14 @@ export class ScienceHabitsDB extends Dexie {
       progress: 'id, userId, habitId, dateStarted, currentStreak, longestStreak',
       research: 'id, category, year, studyType, sampleSize, evidenceLevel, studyQuality, *habitRelevance'
     });
+
+    // Version 3: Non-daily habit tracking support
+    this.version(3).stores({
+      users: 'id, name, createdAt, language, lifestyle, preferredTime, dailyMinutes',
+      habits: 'id, category, isCustom, difficulty, effectivenessScore, evidenceStrength, frequency.type, *goalTags, *lifestyleTags, *timeTags',
+      progress: 'id, userId, habitId, dateStarted, currentStreak, longestStreak, lastCompletionDate, *completions',
+      research: 'id, category, year, studyType, sampleSize, evidenceLevel, studyQuality, *habitRelevance'
+    });
   }
 }
 
@@ -34,7 +42,7 @@ export async function initializeDatabase() {
   try {
     // Check if we need to reload data (for enhanced data format)
     const currentVersion = localStorage.getItem('sciencehabits_data_version');
-    const expectedVersion = '2.1'; // Enhanced data format with flattened directory
+    const expectedVersion = '3.0'; // Non-daily habit tracking support
     
     if (currentVersion !== expectedVersion) {
       console.log('Data version mismatch, clearing and reloading data...');
@@ -186,21 +194,67 @@ export const dbHelpers = {
       console.log('Progress created:', progress);
     }
 
+    // Get habit to check frequency type
+    const habit = await db.habits.get(habitId);
+    if (!habit) {
+      console.error('Habit not found:', habitId);
+      return;
+    }
+
     // Avoid duplicate completions for the same day
     if (!progress.completions.includes(completionDate)) {
       console.log('Adding new completion for date:', completionDate);
       const updatedCompletions = [...progress.completions, completionDate].sort();
       
-      // Calculate streaks
-      const { currentStreak, longestStreak } = calculateStreaks(updatedCompletions);
+      // Calculate streaks based on habit frequency
+      const { currentStreak, longestStreak } = habit.frequency.type === 'daily' 
+        ? calculateStreaks(updatedCompletions)
+        : { currentStreak: progress.currentStreak, longestStreak: progress.longestStreak };
+
       console.log('Calculated streaks:', { currentStreak, longestStreak });
       
-      const updateData = {
+      const updateData: any = {
         completions: updatedCompletions,
         currentStreak,
         longestStreak: Math.max(longestStreak, progress.longestStreak),
-        totalDays: updatedCompletions.length
+        totalDays: updatedCompletions.length,
+        lastCompletionDate: completionDate
       };
+
+      // Handle weekly progress tracking
+      if (habit.frequency.type === 'weekly' && habit.frequency.weeklyTarget) {
+        const { getWeekStart } = await import('../../utils/weeklyGoalHelpers');
+        const weekStart = getWeekStart(new Date(completionDate));
+        await this.updateWeeklyProgress(userId, habitId, weekStart, true);
+        
+        // Recalculate frequency-aware streak for weekly habits
+        updateData.frequencyAwareStreak = {
+          current: await this.calculateFrequencyAwareStreak(userId, habitId),
+          type: 'weekly',
+          lastCalculated: new Date().toISOString()
+        };
+      }
+
+      // Handle periodic progress tracking
+      if (habit.frequency.type === 'periodic') {
+        await this.updatePeriodicProgress(userId, habitId, true);
+        
+        // Recalculate frequency-aware streak for periodic habits
+        updateData.frequencyAwareStreak = {
+          current: await this.calculateFrequencyAwareStreak(userId, habitId),
+          type: 'periodic',
+          lastCalculated: new Date().toISOString()
+        };
+      }
+
+      // For daily habits, update frequency-aware streak
+      if (habit.frequency.type === 'daily') {
+        updateData.frequencyAwareStreak = {
+          current: currentStreak,
+          type: 'daily',
+          lastCalculated: new Date().toISOString()
+        };
+      }
       
       console.log('Updating progress with:', updateData);
       await db.progress.update(progress.id, updateData);
@@ -244,6 +298,155 @@ export const dbHelpers = {
   async deleteProgress(userId: string, habitId: string): Promise<void> {
     const id = `${userId}:${habitId}`;
     await db.progress.delete(id);
+  },
+
+  // Non-daily habit tracking methods
+  async updateWeeklyProgress(userId: string, habitId: string, weekStart: string, completedSession: boolean): Promise<void> {
+    const progress = await this.getProgress(userId, habitId);
+    if (!progress) return;
+
+    // Find or create weekly progress entry
+    const weeklyProgress = progress.weeklyProgress || [];
+    const weekIndex = weeklyProgress.findIndex(w => w.weekStart === weekStart);
+
+    if (weekIndex >= 0) {
+      // Update existing week
+      if (completedSession) {
+        weeklyProgress[weekIndex].completedSessions++;
+        const today = new Date().toISOString().split('T')[0];
+        if (!weeklyProgress[weekIndex].completedDates.includes(today)) {
+          weeklyProgress[weekIndex].completedDates.push(today);
+        }
+      }
+      weeklyProgress[weekIndex].weeklyGoalMet = 
+        weeklyProgress[weekIndex].completedSessions >= weeklyProgress[weekIndex].targetSessions;
+    } else {
+      // Create new weekly progress entry
+      const habit = await db.habits.get(habitId);
+      const targetSessions = habit?.frequency.weeklyTarget?.sessionsPerWeek || 3;
+      
+      weeklyProgress.push({
+        weekStart,
+        completedSessions: completedSession ? 1 : 0,
+        targetSessions,
+        weeklyGoalMet: false,
+        completedDates: completedSession ? [new Date().toISOString().split('T')[0]] : []
+      });
+    }
+
+    await db.progress.update(progress.id, { 
+      weeklyProgress,
+      lastCompletionDate: completedSession ? new Date().toISOString().split('T')[0] : progress.lastCompletionDate
+    });
+  },
+
+  async updatePeriodicProgress(userId: string, habitId: string, completed: boolean): Promise<void> {
+    const progress = await this.getProgress(userId, habitId);
+    if (!progress) return;
+
+    const habit = await db.habits.get(habitId);
+    if (!habit?.frequency.periodicTarget) return;
+
+    const { interval, intervalCount } = habit.frequency.periodicTarget;
+    const now = new Date();
+    const completionDate = now.toISOString().split('T')[0];
+    
+    // Calculate interval dates based on frequency
+    let intervalStart: Date;
+    let intervalEnd: Date;
+
+    switch (interval) {
+      case 'monthly':
+        intervalStart = new Date(now.getFullYear(), now.getMonth() - (intervalCount - 1), 1);
+        intervalEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        break;
+      case 'quarterly':
+        const quarterStart = Math.floor(now.getMonth() / 3) * 3;
+        intervalStart = new Date(now.getFullYear(), quarterStart, 1);
+        intervalEnd = new Date(now.getFullYear(), quarterStart + 3, 0);
+        break;
+      case 'yearly':
+        intervalStart = new Date(now.getFullYear(), 0, 1);
+        intervalEnd = new Date(now.getFullYear(), 11, 31);
+        break;
+      default:
+        intervalStart = new Date(now);
+        intervalEnd = new Date(now);
+    }
+
+    const periodicProgress = progress.periodicProgress || [];
+    const intervalKey = `${intervalStart.toISOString().split('T')[0]}_${intervalEnd.toISOString().split('T')[0]}`;
+    const existingIndex = periodicProgress.findIndex(p => 
+      p.intervalStart === intervalStart.toISOString().split('T')[0] &&
+      p.intervalEnd === intervalEnd.toISOString().split('T')[0]
+    );
+
+    const progressEntry = {
+      intervalStart: intervalStart.toISOString().split('T')[0],
+      intervalEnd: intervalEnd.toISOString().split('T')[0],
+      completed,
+      completedDate: completed ? completionDate : undefined,
+      daysSinceCompletion: completed ? 0 : undefined,
+      intervalType: interval
+    };
+
+    if (existingIndex >= 0) {
+      periodicProgress[existingIndex] = progressEntry;
+    } else {
+      periodicProgress.push(progressEntry);
+    }
+
+    await db.progress.update(progress.id, { 
+      periodicProgress,
+      lastCompletionDate: completed ? completionDate : progress.lastCompletionDate
+    });
+  },
+
+  async calculateFrequencyAwareStreak(userId: string, habitId: string): Promise<number> {
+    const progress = await this.getProgress(userId, habitId);
+    const habit = await db.habits.get(habitId);
+    
+    if (!progress || !habit) return 0;
+
+    switch (habit.frequency.type) {
+      case 'daily':
+        return progress.currentStreak;
+      
+      case 'weekly':
+        if (!progress.weeklyProgress) return 0;
+        const recentWeeks = progress.weeklyProgress
+          .sort((a, b) => b.weekStart.localeCompare(a.weekStart))
+          .slice(0, 12); // Look at last 12 weeks
+        
+        let weeklyStreak = 0;
+        for (const week of recentWeeks) {
+          if (week.weeklyGoalMet) {
+            weeklyStreak++;
+          } else {
+            break;
+          }
+        }
+        return weeklyStreak;
+      
+      case 'periodic':
+        if (!progress.periodicProgress) return 0;
+        const recentPeriods = progress.periodicProgress
+          .sort((a, b) => b.intervalStart.localeCompare(a.intervalStart))
+          .slice(0, 12); // Look at last 12 periods
+        
+        let periodicStreak = 0;
+        for (const period of recentPeriods) {
+          if (period.completed) {
+            periodicStreak++;
+          } else {
+            break;
+          }
+        }
+        return periodicStreak;
+      
+      default:
+        return progress.currentStreak;
+    }
   }
 };
 

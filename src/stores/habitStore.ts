@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { Habit } from '../types';
 import { dbHelpers } from '../services/storage/database';
+import { createDefaultFrequency, createDefaultReminders } from '../utils/frequencyHelpers';
 
 interface HabitFormData {
   title: string;
@@ -112,7 +113,9 @@ export const useHabitStore = create<HabitState>((set, get) => ({
         goalTags: formData.goalTags,
         lifestyleTags: formData.lifestyleTags,
         timeTags: formData.timeTags,
-        researchIds: [] // Custom habits don't have research backing initially
+        researchIds: [], // Custom habits don't have research backing initially
+        frequency: createDefaultFrequency(),
+        reminders: createDefaultReminders()
       };
       const habit = await dbHelpers.createCustomHabit(habitData);
 

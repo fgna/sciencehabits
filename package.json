@@ -21,7 +21,8 @@
     "zustand": "^5.0.7"
   },
   "scripts": {
-    "start": "npm run validate-content && react-scripts start",
+    "start": "react-scripts start",
+    "start:with-validation": "npm run validate-content && react-scripts start",
     "build": "npm run validate-content && react-scripts build",
     "test": "react-scripts test --watchAll=false",
     "test:watch": "react-scripts test",

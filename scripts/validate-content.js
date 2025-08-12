@@ -9,6 +9,7 @@
 
 const path = require('path');
 const fs = require('fs').promises;
+const { NodeAutoContentLoader } = require('./auto-content-loader.js');
 
 // Simple validation implementation for Node.js environment
 class SimpleContentValidator {
@@ -22,9 +23,12 @@ class SimpleContentValidator {
     console.log('🔍 Starting content validation...');
     
     try {
-      // Load content files
-      const habits = await this.loadHabits();
-      const research = await this.loadResearch();
+      // Use auto content loader to discover and load all files
+      const autoLoader = new NodeAutoContentLoader();
+      const loadedContent = await autoLoader.loadAllContent();
+      
+      const habits = loadedContent.habits;
+      const research = loadedContent.research;
       
       console.log(`📊 Loaded ${habits.length} habits, ${research.length} research articles`);
       

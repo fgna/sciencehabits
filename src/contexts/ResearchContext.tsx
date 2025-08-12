@@ -86,25 +86,33 @@ export function ResearchProvider({ children }: ResearchProviderProps) {
     try {
       setIsLoading(true);
       
+      // Try to load using content manifest first
       let articleFilenames: string[];
       
       try {
-        const indexResponse = await fetch('/data/research-articles/index.json');
-        if (indexResponse.ok) {
-          const indexData = await indexResponse.json();
-          articleFilenames = indexData.articles;
+        const manifestResponse = await fetch('/data/content-manifest.json');
+        if (manifestResponse.ok) {
+          const manifest = await manifestResponse.json();
+          // Extract research article filenames from manifest
+          articleFilenames = manifest.sources
+            .filter((source: any) => source.type === 'research' && source.filename.includes('article'))
+            .map((source: any) => source.filename);
+          console.log(`📋 Found ${articleFilenames.length} articles in manifest`);
         } else {
-          throw new Error('Index not found');
+          throw new Error('Manifest not found');
         }
       } catch {
+        // Fallback to manual discovery if manifest fails
         articleFilenames = await discoverArticles();
+        console.log(`🔍 Discovered ${articleFilenames.length} articles manually`);
       }
       
       const articlePromises = articleFilenames.map(async (filename: string) => {
         try {
           const response = await fetch(`/data/research-articles/${filename}`);
           if (!response.ok) throw new Error(`Failed to load ${filename}`);
-          return await response.json();
+          const articleData = await response.json();
+          return articleData;
         } catch (error) {
           console.warn(`Failed to load article ${filename}:`, error);
           return null;
@@ -113,14 +121,18 @@ export function ResearchProvider({ children }: ResearchProviderProps) {
 
       const loadedArticles = (await Promise.all(articlePromises)).filter(Boolean);
       
-      const sortedArticles = loadedArticles.sort((a, b) => 
-        new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime()
-      );
+      const sortedArticles = loadedArticles.sort((a, b) => {
+        const dateA = a.publishedDate ? new Date(a.publishedDate) : new Date(a.studyDetails?.year || 0, 0, 1);
+        const dateB = b.publishedDate ? new Date(b.publishedDate) : new Date(b.studyDetails?.year || 0, 0, 1);
+        return dateB.getTime() - dateA.getTime();
+      });
       
+      console.log(`📚 Successfully loaded ${sortedArticles.length} research articles`);
       setArticles(sortedArticles);
       
     } catch (error) {
       console.error('Failed to load research articles:', error);
+      setArticles([]); // Set empty array to prevent undefined state
     } finally {
       setIsLoading(false);
     }

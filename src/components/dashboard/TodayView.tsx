@@ -1,12 +1,13 @@
 import React from 'react';
 import { useUserStore, getTodayCompletions, getDashboardStats } from '../../stores/userStore';
 import { useCurrentDate } from '../../hooks/useCurrentDate';
-import { Card, CardHeader, CardContent } from '../ui';
+import { Card, CardContent } from '../ui';
 import { HabitChecklistCard } from './HabitChecklistCard';
 import { ProgressStatsCard } from './ProgressStatsCard';
+import { WeeklyProgressDashboard } from './WeeklyProgressDashboard';
 
 export function TodayView() {
-  const { currentUser, userHabits, userProgress, isLoading, error } = useUserStore();
+  const { currentUser, userHabits, userProgress, isLoading, error, updateUserProgress } = useUserStore();
   const { todayDisplay } = useCurrentDate();
 
   if (isLoading) {
@@ -74,11 +75,25 @@ export function TodayView() {
     );
   }
 
+  // Separate daily and weekly habits
+  const dailyHabits = userHabits.filter(h => h.frequency.type === 'daily');
+  const weeklyHabits = userHabits.filter(h => h.frequency.type === 'weekly');
+  
   const todayCompletions = getTodayCompletions(userProgress);
   const stats = getDashboardStats(userProgress);
-  const completionPercentage = userHabits.length > 0 
-    ? Math.round((todayCompletions.length / userHabits.length) * 100)
+  
+  // Calculate completion percentage based on daily habits for "today's progress"
+  const dailyCompletions = todayCompletions.filter(completion => 
+    dailyHabits.find(h => h.id === completion.habitId)
+  );
+  const completionPercentage = dailyHabits.length > 0 
+    ? Math.round((dailyCompletions.length / dailyHabits.length) * 100)
     : 0;
+
+  // Handler for habit completion
+  const handleHabitComplete = async (habitId: string) => {
+    await updateUserProgress(habitId);
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -96,7 +111,7 @@ export function TodayView() {
             {completionPercentage}%
           </div>
           <div className="text-sm text-gray-500">
-            {todayCompletions.length} of {userHabits.length} completed
+            {dailyCompletions.length} of {dailyHabits.length} daily habits
           </div>
         </div>
       </div>
@@ -104,7 +119,16 @@ export function TodayView() {
       {/* Progress Stats */}
       <ProgressStatsCard stats={stats} />
 
-      {/* Today's Habits */}
+      {/* Weekly Goals Dashboard */}
+      {weeklyHabits.length > 0 && (
+        <WeeklyProgressDashboard 
+          habits={weeklyHabits}
+          progress={userProgress}
+          onHabitComplete={handleHabitComplete}
+        />
+      )}
+
+      {/* Today's Daily Habits */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-gray-900">Today's Habits</h2>
@@ -119,13 +143,20 @@ export function TodayView() {
         </div>
 
         <div className="space-y-4">
-          {userHabits.map((habit) => (
+          {dailyHabits.map((habit) => (
             <HabitChecklistCard 
               key={habit.id} 
               habit={habit}
               progress={userProgress.find(p => p.habitId === habit.id)}
             />
           ))}
+          
+          {dailyHabits.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              <p>No daily habits configured.</p>
+              <p className="text-sm mt-1">All your habits are weekly or periodic.</p>
+            </div>
+          )}
         </div>
       </div>
 

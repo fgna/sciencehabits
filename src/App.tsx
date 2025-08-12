@@ -4,6 +4,7 @@ import { DashboardLayout, TodayView } from './components/dashboard';
 import { initializeDatabase } from './services/storage/database';
 import { useUserStore } from './stores/userStore';
 import { ResearchProvider } from './contexts/ResearchContext';
+import { ReminderProvider } from './contexts/ReminderContext';
 
 function App() {
   const [isOnboarded, setIsOnboarded] = useState<boolean | null>(null);
@@ -67,12 +68,14 @@ function App() {
   // Main dashboard view
   return (
     <ResearchProvider>
-      <DashboardLayout 
-        user={currentUser}
-        onSignOut={handleResetOnboarding}
-      >
-        <TodayView />
-      </DashboardLayout>
+      <ReminderProvider>
+        <DashboardLayout 
+          user={currentUser}
+          onSignOut={handleResetOnboarding}
+        >
+          <TodayView />
+        </DashboardLayout>
+      </ReminderProvider>
     </ResearchProvider>
   );
 }

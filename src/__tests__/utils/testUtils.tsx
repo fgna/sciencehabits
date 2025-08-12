@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
+import { createDefaultFrequency, createDefaultReminders } from '../../utils/frequencyHelpers';
 
 // Simple test wrapper without complex providers
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -51,6 +52,8 @@ export const createMockHabit = (overrides = {}) => ({
   isCustom: false,
   difficulty: 'easy' as const,
   equipment: 'none',
+  frequency: createDefaultFrequency(),
+  reminders: createDefaultReminders(),
   ...overrides
 });
 
