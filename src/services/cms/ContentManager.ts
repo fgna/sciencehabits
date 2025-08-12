@@ -109,11 +109,11 @@ export class ContentManager {
       // Fallback to static JSON for development
       console.log('📁 Falling back to static research_articles.json');
       await this.cacheStaticContent();
-      return researchData as ResearchStudy[];
+      return researchData as unknown as ResearchStudy[];
     } catch (error) {
       console.error('Failed to load research from CMS:', error);
       // Ultimate fallback to static data
-      return researchData as ResearchStudy[];
+      return researchData as unknown as ResearchStudy[];
     }
   }
 
@@ -261,7 +261,7 @@ export class ContentManager {
     try {
       // Convert legacy format to CMS format and cache
       const cmsHabits = this.convertLegacyHabitsToCMSFormat(habitsData as Habit[]);
-      const cmsResearch = this.convertLegacyResearchToCMSFormat(researchData as ResearchStudy[]);
+      const cmsResearch = this.convertLegacyResearchToCMSFormat(researchData as any);
 
       await Promise.all([
         this.setCachedContent('cms_habits', cmsHabits),
@@ -276,7 +276,7 @@ export class ContentManager {
     }
   }
 
-  private async getCachedContent<T>(storeName: string): Promise<T[]> {
+  async getCachedContent<T>(storeName: string): Promise<T[]> {
     if (!this.db) return [];
 
     return new Promise((resolve) => {
@@ -348,7 +348,14 @@ export class ContentManager {
         timeMinutes: habit.timeMinutes,
         category: habit.category,
         goalTags: habit.goalTags,
-        researchBacking: habit.researchStudies
+        lifestyleTags: [],
+        timeTags: [],
+        researchIds: habit.researchStudies,
+        isCustom: false,
+        difficulty: 'beginner' as const,
+        equipment: 'none',
+        frequency: { type: 'daily' as const },
+        reminders: { enabled: false, periodicReminderDays: 7 }
       }));
   }
 
@@ -361,10 +368,12 @@ export class ContentManager {
         authors: research.authors,
         year: research.year,
         journal: research.journal,
-        citation: research.citation,
         summary: this.getLocalizedText(research.summary),
         finding: this.getLocalizedText(research.finding),
-        category: research.category
+        sampleSize: 100,
+        studyType: 'observational',
+        category: research.category,
+        fullCitation: research.citation
       }));
   }
 
@@ -377,7 +386,7 @@ export class ContentManager {
       timeMinutes: habit.timeMinutes,
       category: habit.category,
       goalTags: habit.goalTags,
-      researchStudies: habit.researchBacking || [],
+      researchStudies: habit.researchIds || [],
       status: 'published' as const,
       isVerified: true,
       createdAt: new Date(),
@@ -388,14 +397,14 @@ export class ContentManager {
     }));
   }
 
-  private convertLegacyResearchToCMSFormat(research: ResearchStudy[]): CMSResearchStudy[] {
+  private convertLegacyResearchToCMSFormat(research: any[]): CMSResearchStudy[] {
     return research.map(study => ({
       id: study.id,
       title: study.title,
       authors: study.authors,
       year: study.year,
       journal: study.journal,
-      citation: study.citation,
+      citation: study.fullCitation || '',
       summary: { en: study.summary },
       finding: { en: study.finding },
       category: study.category,
@@ -467,7 +476,7 @@ export class ContentManager {
 
   private createFallbackLocalizedContent(): LocalizedContent {
     const cmsHabits = this.convertLegacyHabitsToCMSFormat(habitsData as Habit[]);
-    const cmsResearch = this.convertLegacyResearchToCMSFormat(researchData as ResearchStudy[]);
+    const cmsResearch = this.convertLegacyResearchToCMSFormat(researchData as any);
     
     return {
       habits: cmsHabits,

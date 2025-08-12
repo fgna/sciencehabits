@@ -440,8 +440,7 @@ export class ResearchValidator {
       metadata: {
         doi,
         citationCount: mockCitationCount,
-        lastChecked: new Date(),
-        source: 'crossref-mock'
+        lastChecked: new Date()
       }
     };
   }

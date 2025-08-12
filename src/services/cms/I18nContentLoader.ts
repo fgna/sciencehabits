@@ -150,9 +150,9 @@ export class I18nContentLoader {
     // Fallback to default language
     const fallbackValue = field[this.defaultLanguage as keyof LocalizedField<T>];
     
-    if (markFallback && fallbackValue) {
+    if (markFallback && fallbackValue && typeof fallbackValue === 'object' && fallbackValue !== null) {
       return {
-        ...fallbackValue,
+        ...(fallbackValue as any),
         _fallbackUsed: true
       } as T & { _fallbackUsed?: boolean };
     }
@@ -310,7 +310,7 @@ export class I18nContentLoader {
           contentType: 'title' in item ? 'habit' : 'research',
           contentId: item.id,
           title: this.getLocalizedText(
-            'title' in item ? item.title : { en: item.title } as LocalizedField<string>, 
+            'title' in item ? item.title : { en: (item as any).title } as LocalizedField<string>, 
             locale
           ),
           missingFields,

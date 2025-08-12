@@ -246,8 +246,8 @@ export class JSONWorkflowService {
 
     // Categorize changes
     data.forEach((item: any, index: number) => {
-      const isDuplicate = duplicates?.exactDuplicates.some(d => d.newIndex === index) ||
-                         duplicates?.likelyDuplicates.some(d => d.newIndex === index);
+      const isDuplicate = duplicates?.exactDuplicates.some((d: any) => d.newIndex === index) ||
+                         duplicates?.likelyDuplicates.some((d: any) => d.newIndex === index);
 
       if (isDuplicate) {
         modifications.push({
