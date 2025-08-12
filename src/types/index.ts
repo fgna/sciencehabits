@@ -16,6 +16,7 @@ export interface User {
     endDate?: string;
   };
   isPremium: boolean;
+  preferredIntensity?: 'low' | 'medium' | 'high';
 }
 
 // Badge System Types
@@ -155,6 +156,13 @@ export interface Habit {
   contraindications?: string;
   cost?: string;
   germanSuppliers?: string;
+  
+  // UX Enhancement fields
+  icon?: string;
+  researchBacked?: boolean;
+  researchSummary?: string;
+  researchCitations?: ResearchCitation[];
+  createdAt?: string;
 }
 
 export interface WeeklyProgress {
@@ -195,7 +203,16 @@ export interface Progress {
     type: 'daily' | 'weekly' | 'periodic';
     lastCalculated: string;
   };
+  
+  // Additional fields for UX enhancements
+  completed?: boolean; // For today's completion status
+  bestStreak?: number; // Alias for longestStreak
+  totalCompletions?: number; // Total number of times completed
+  date?: string; // Current date for progress tracking
 }
+
+// Type aliases for backward compatibility
+export type HabitProgress = Progress;
 
 export interface HabitReminder {
   habitId: string;

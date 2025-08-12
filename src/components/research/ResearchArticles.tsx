@@ -40,7 +40,6 @@ export function ResearchArticles() {
   const { currentUser } = useUserStore();
   const [selectedArticle, setSelectedArticle] = useState<ResearchArticle | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterByGoals, setFilterByGoals] = useState(false); // Default to showing all articles
 
@@ -113,10 +112,6 @@ export function ResearchArticles() {
       return false;
     }
 
-    // Category filter  
-    if (selectedCategory && article.category !== selectedCategory) {
-      return false;
-    }
 
 
     // Search query filter
@@ -135,11 +130,9 @@ export function ResearchArticles() {
 
   // Get unique values for filters
   const uniqueDifficulties = Array.from(new Set(articles.map(a => a.difficulty))).sort();
-  const uniqueCategories = Array.from(new Set(articles.map(a => a.category))).sort();
 
   const clearAllFilters = () => {
     setSelectedDifficulty(null);
-    setSelectedCategory(null);
     setSearchQuery('');
     setFilterByGoals(false); // Reset to default (show all articles)
   };
@@ -241,49 +234,21 @@ export function ResearchArticles() {
             ))}
           </div>
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm font-medium text-gray-700">Category:</span>
-            <button
-              onClick={() => setSelectedCategory(null)}
-              className={`text-xs px-3 py-1 rounded-full font-medium transition-colors ${
-                selectedCategory === null 
-                  ? 'bg-gray-900 text-white' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              All
-            </button>
-            {uniqueCategories.map(category => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category === selectedCategory ? null : category)}
-                className={`text-xs px-3 py-1 rounded-full font-medium transition-colors ${
-                  selectedCategory === category 
-                    ? getCategoryColor(category).replace('100', '500').replace('800', '100')
-                    : getCategoryColor(category) + ' hover:opacity-80'
-                }`}
-              >
-                {category.replace('_', ' ')}
-              </button>
-            ))}
-          </div>
         </div>
 
 
         {/* Active Filters & Clear */}
-        {(selectedDifficulty || selectedCategory || searchQuery || (currentUser?.goals && currentUser.goals.length > 0 && filterByGoals)) && (
+        {(selectedDifficulty || searchQuery || (currentUser?.goals && currentUser.goals.length > 0 && filterByGoals)) && (
           <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
             <div className="flex items-center space-x-2 text-sm text-gray-600">
               <span>Showing {filteredArticles.length} of {articles.length} articles</span>
-              {(selectedDifficulty || selectedCategory || (filterByGoals && currentUser?.goals && currentUser.goals.length > 0)) && (
+              {(selectedDifficulty || (filterByGoals && currentUser?.goals && currentUser.goals.length > 0)) && (
                 <span>•</span>
               )}
               {filterByGoals && currentUser?.goals && currentUser.goals.length > 0 && (
                 <span className="font-medium text-purple-600">filtered by your goals</span>
               )}
               {selectedDifficulty && <span className="font-medium">{selectedDifficulty}</span>}
-              {selectedCategory && <span className="font-medium">{selectedCategory.replace('_', ' ')}</span>}
             </div>
             <Button variant="ghost" size="sm" onClick={clearAllFilters}>
               Clear filters

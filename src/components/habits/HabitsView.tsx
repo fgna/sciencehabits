@@ -71,19 +71,11 @@ export function HabitsView() {
   return (
     <div className="max-w-4xl mx-auto p-6 pb-20 md:pb-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Habits</h1>
-          <p className="text-gray-600">
-            Manage your habit collection - both science-backed and custom habits
-          </p>
-        </div>
-        <Button onClick={() => setShowCreateForm(true)}>
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Create Custom Habit
-        </Button>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">My Habits</h1>
+        <p className="text-gray-600">
+          Manage your habit collection - both science-backed and custom habits
+        </p>
       </div>
 
       {/* Error display */}
@@ -149,11 +141,19 @@ export function HabitsView() {
 
         {/* Custom habits */}
         <div>
-          <div className="flex items-center space-x-2 mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">Custom Habits</h2>
-            <div className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
-              Personal
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-2">
+              <h2 className="text-xl font-semibold text-gray-900">Custom Habits</h2>
+              <div className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
+                Personal
+              </div>
             </div>
+            <Button onClick={() => setShowCreateForm(true)} size="sm">
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Create Custom Habit
+            </Button>
           </div>
           
           {customHabits.length === 0 ? (

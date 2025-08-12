@@ -41,6 +41,7 @@ export class BrowserAutoContentLoader {
   
   private knownFiles = {
     habits: [
+      'fixed-all-content-2025-08-12.json', // Merged content file
       'sleep-habits.json',
       'productivity-habits.json',
       'exercise-habits.json',
@@ -89,6 +90,9 @@ export class BrowserAutoContentLoader {
         discoveredFiles = await this.discoverContentFiles();
       }
       
+      // Always add legacy files as they might not be in the manifest
+      await this.addLegacyFiles(discoveredFiles);
+      
       const loadedContent = await this.loadContentFromFiles(discoveredFiles);
       
       console.log(`📊 Content loaded from ${loadedContent.sources.length} files:`);
@@ -107,7 +111,24 @@ export class BrowserAutoContentLoader {
     try {
       const response = await fetch('/data/content-manifest.json');
       if (response.ok) {
-        return await response.json();
+        const manifest = await response.json();
+        // Add paths to the manifest sources
+        if (manifest && manifest.sources) {
+          manifest.sources = manifest.sources.map((source: any) => {
+            if (!source.path) {
+              // Construct the path based on type
+              if (source.type === 'habits') {
+                source.path = `/data/habits/${source.filename}`;
+              } else if (source.type === 'research') {
+                source.path = `/data/research-articles/${source.filename}`;
+              } else if (source.type === 'custom') {
+                source.path = `/data/content-custom/${source.filename}`;
+              }
+            }
+            return source;
+          });
+        }
+        return manifest;
       }
     } catch (error) {
       console.log('📋 No content manifest found, falling back to manual discovery');

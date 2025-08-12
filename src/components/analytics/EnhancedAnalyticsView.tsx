@@ -1,24 +1,7 @@
-/**
- * Enhanced Analytics View
- * 
- * Comprehensive analytics dashboard with frequency-aware insights,
- * interactive visualizations, and intelligent recommendations
- */
-
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Card, CardContent } from '../ui';
 import { useAnalyticsStore } from '../../stores/analyticsStore';
 import { useUserStore } from '../../stores/userStore';
-import { calculateFrequencyAnalytics } from '../../utils/frequencyAnalyticsHelpers';
-import { getDateRange } from '../../utils/analyticsHelpers';
-
-// Enhanced components
-import { HabitHeatmap } from './HabitHeatmap';
-import { FrequencyAnalyticsCharts } from './FrequencyAnalyticsCharts';
-import { GoalProgressIndicators } from './GoalProgressIndicators';
-import { TrendAnalysisView } from './TrendAnalysisView';
-
-// Original components for fallback
 import { ProgressOverview } from './ProgressOverview';
 import { HabitPerformanceChart } from './HabitPerformanceChart';
 import { TimeBasedAnalytics } from './TimeBasedAnalytics';
@@ -26,17 +9,16 @@ import { AchievementTracker } from './AchievementTracker';
 import { HabitCorrelationAnalysis } from './HabitCorrelationAnalysis';
 import { GoalProgressTracker } from './GoalProgressTracker';
 import { ReportExporter } from './ReportExporter';
-
-// Badge and Level components
-import { BadgeShowcase } from '../badges/BadgeShowcase';
-import { LevelProgress } from '../levels/LevelProgress';
+import { getDateRange } from '../../utils/analyticsHelpers';
 
 type TimeRange = 'week' | 'month' | '3months' | 'year' | 'all';
-type AnalyticsTab = 'overview' | 'frequency' | 'heatmap' | 'goals' | 'trends' | 'performance' | 'achievements' | 'badges' | 'levels' | 'insights' | 'export';
 
-export function EnhancedAnalyticsView() {
-  const [activeTab, setActiveTab] = useState<AnalyticsTab>('overview');
-  const [enhancedMode, setEnhancedMode] = useState(true);
+interface EnhancedAnalyticsViewProps {
+  onBackToSimple?: () => void;
+}
+
+export function EnhancedAnalyticsView({ onBackToSimple }: EnhancedAnalyticsViewProps = {}) {
+  const [activeTab, setActiveTab] = useState<'overview' | 'performance' | 'trends' | 'achievements' | 'insights' | 'goals' | 'export'>('overview');
   
   const {
     analyticsData,
@@ -48,17 +30,7 @@ export function EnhancedAnalyticsView() {
     setTimeRange
   } = useAnalyticsStore();
   
-  const { currentUser, userProgress, userHabits } = useUserStore();
-
-  // Calculate enhanced frequency analytics
-  const frequencyAnalytics = useMemo(() => {
-    if (!userHabits.length || !userProgress.length || !analyticsData) {
-      return null;
-    }
-
-    const { start, end } = getDateRange(selectedTimeRange);
-    return calculateFrequencyAnalytics(userHabits, userProgress, { start, end });
-  }, [userHabits, userProgress, selectedTimeRange, analyticsData]);
+  const { userProgress, userHabits } = useUserStore();
 
   // Load analytics data when component mounts or data changes
   useEffect(() => {
@@ -69,6 +41,7 @@ export function EnhancedAnalyticsView() {
 
   const handleTimeRangeChange = (range: TimeRange) => {
     setTimeRange(range);
+    // Analytics will be reloaded by the useEffect above
   };
 
   const handleRefresh = () => {
@@ -124,7 +97,7 @@ export function EnhancedAnalyticsView() {
                 Start tracking habits to see detailed analytics and insights about your progress.
               </p>
               <p className="text-sm text-gray-500">
-                Complete some habits and return here to see your performance metrics, trends, and frequency-aware insights.
+                Complete some habits and return here to see your performance metrics.
               </p>
             </div>
           </CardContent>
@@ -133,18 +106,14 @@ export function EnhancedAnalyticsView() {
     );
   }
 
-  const enhancedTabs = [
-    { id: 'overview' as const, name: 'Overview', icon: '📊', enhanced: false },
-    { id: 'frequency' as const, name: 'Frequency Analysis', icon: '📈', enhanced: true },
-    { id: 'heatmap' as const, name: 'Heatmap', icon: '🗓️', enhanced: true },
-    { id: 'goals' as const, name: 'Goals', icon: '🎯', enhanced: true },
-    { id: 'trends' as const, name: 'Trends', icon: '📉', enhanced: true },
-    { id: 'performance' as const, name: 'Performance', icon: '⚡', enhanced: false },
-    { id: 'achievements' as const, name: 'Achievements', icon: '🏆', enhanced: false },
-    { id: 'badges' as const, name: 'Badges', icon: '🏅', enhanced: true },
-    { id: 'levels' as const, name: 'Levels', icon: '📊', enhanced: true },
-    { id: 'insights' as const, name: 'Insights', icon: '🔗', enhanced: false },
-    { id: 'export' as const, name: 'Export', icon: '📤', enhanced: false }
+  const tabs = [
+    { id: 'overview' as const, name: 'Overview', icon: '📊' },
+    { id: 'performance' as const, name: 'Performance', icon: '📈' },
+    { id: 'trends' as const, name: 'Trends', icon: '📉' },
+    { id: 'achievements' as const, name: 'Achievements', icon: '🏆' },
+    { id: 'insights' as const, name: 'Insights', icon: '🔗' },
+    { id: 'goals' as const, name: 'Goals', icon: '🎯' },
+    { id: 'export' as const, name: 'Export', icon: '📤' }
   ];
 
   const timeRangeOptions: { id: TimeRange; name: string }[] = [
@@ -162,14 +131,9 @@ export function EnhancedAnalyticsView() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 space-y-4 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {enhancedMode ? '🚀 Enhanced Analytics' : '📊 Analytics Dashboard'}
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900">Enhanced Analytics Dashboard</h1>
           <p className="text-gray-600">
-            {enhancedMode 
-              ? 'Advanced insights with frequency-aware analysis and intelligent recommendations'
-              : 'Detailed insights into your habit tracking performance'
-            }
+            Detailed insights into your habit tracking performance
           </p>
           {lastUpdated && (
             <p className="text-xs text-gray-500 mt-1">
@@ -179,22 +143,12 @@ export function EnhancedAnalyticsView() {
         </div>
         
         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-          {/* Enhanced Mode Toggle */}
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600">Enhanced:</span>
-            <button
-              onClick={() => setEnhancedMode(!enhancedMode)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                enhancedMode ? 'bg-primary-600' : 'bg-gray-300'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  enhancedMode ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          </div>
+          {/* Back to Simple Button */}
+          {onBackToSimple && (
+            <Button variant="ghost" size="sm" onClick={onBackToSimple}>
+              ← Simple View
+            </Button>
+          )}
           
           {/* Time Range Selector */}
           <div className="flex flex-wrap gap-1">
@@ -234,76 +188,25 @@ export function EnhancedAnalyticsView() {
       {/* Navigation Tabs */}
       <div className="border-b border-gray-200 mb-6">
         <nav className="-mb-px flex space-x-8 overflow-x-auto">
-          {enhancedTabs.map((tab) => {
-            const showTab = enhancedMode || !tab.enhanced;
-            if (!showTab) return null;
-            
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? 'border-primary-500 text-primary-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <span>{tab.icon}</span>
-                <span>{tab.name}</span>
-                {tab.enhanced && enhancedMode && (
-                  <span className="text-xs bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded-full">
-                    New
-                  </span>
-                )}
-              </button>
-            );
-          })}
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
+                activeTab === tab.id
+                  ? 'border-primary-500 text-primary-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <span>{tab.icon}</span>
+              <span>{tab.name}</span>
+            </button>
+          ))}
         </nav>
       </div>
 
       {/* Tab Content */}
       <div className="space-y-6">
-        {/* Enhanced Analytics Content */}
-        {enhancedMode && frequencyAnalytics && (
-          <>
-            {activeTab === 'frequency' && (
-              <FrequencyAnalyticsCharts
-                frequencyStats={frequencyAnalytics.frequencyBreakdown}
-                weeklyGoalStats={frequencyAnalytics.weeklyGoalPerformance}
-                periodicStats={frequencyAnalytics.periodicHabitStatus}
-                consistencyPatterns={frequencyAnalytics.consistencyPatterns}
-              />
-            )}
-            
-            {activeTab === 'heatmap' && (
-              <HabitHeatmap 
-                heatmapData={frequencyAnalytics.heatmapData}
-                title="Habit Completion Calendar"
-                showLegend={true}
-                interactive={true}
-              />
-            )}
-            
-            {activeTab === 'goals' && (
-              <GoalProgressIndicators
-                weeklyGoalStats={frequencyAnalytics.weeklyGoalPerformance}
-                periodicStats={frequencyAnalytics.periodicHabitStatus}
-                progressForecast={frequencyAnalytics.progressForecast}
-              />
-            )}
-            
-            {activeTab === 'trends' && (
-              <TrendAnalysisView
-                analyticsData={analyticsData}
-                frequencyStats={frequencyAnalytics.frequencyBreakdown}
-                optimalFrequencyInsights={frequencyAnalytics.optimalFrequencies}
-                consistencyPatterns={frequencyAnalytics.consistencyPatterns}
-              />
-            )}
-          </>
-        )}
-
-        {/* Original Analytics Content */}
         {activeTab === 'overview' && (
           <ProgressOverview analytics={analyticsData} />
         )}
@@ -364,7 +267,7 @@ export function EnhancedAnalyticsView() {
           </div>
         )}
         
-        {!enhancedMode && activeTab === 'trends' && (
+        {activeTab === 'trends' && (
           <TimeBasedAnalytics 
             dailyStats={analyticsData.dailyStats}
             weeklyStats={analyticsData.weeklyStats}
@@ -388,27 +291,11 @@ export function EnhancedAnalyticsView() {
           />
         )}
         
-        {(!enhancedMode && activeTab === 'goals') && (
+        {activeTab === 'goals' && (
           <GoalProgressTracker 
             analytics={analyticsData}
             habitPerformance={analyticsData.habitPerformance}
           />
-        )}
-        
-        {activeTab === 'badges' && currentUser && (
-          <BadgeShowcase userId={currentUser.id} />
-        )}
-        
-        {activeTab === 'levels' && currentUser && (
-          <div className="space-y-6">
-            {userHabits.map(habit => (
-              <LevelProgress 
-                key={habit.id}
-                userId={currentUser.id}
-                categoryId={habit.category}
-              />
-            ))}
-          </div>
         )}
         
         {activeTab === 'export' && (

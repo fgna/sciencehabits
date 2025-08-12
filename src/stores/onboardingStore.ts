@@ -45,12 +45,12 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
   loadGoalsData: async () => {
     try {
       set({ isLoading: true, error: null });
-      await loadGoals();
-      const goals = getAvailableGoals(false); // Free goals only for onboarding
-      set({ availableGoals: goals, isLoading: false });
+      const allGoals = await loadGoals(); // Wait for goals to load
+      const freeGoals = allGoals.filter(goal => goal.tier === 'free'); // Free goals only for onboarding
+      set({ availableGoals: freeGoals, isLoading: false });
     } catch (error) {
       console.error('Failed to load goals:', error);
-      set({ error: 'Failed to load goals', isLoading: false });
+      set({ error: 'Failed to load goals. Please try again.', isLoading: false });
     }
   },
   
