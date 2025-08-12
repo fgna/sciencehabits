@@ -157,7 +157,7 @@ export class I18nContentLoader {
       } as T & { _fallbackUsed?: boolean };
     }
 
-    return fallbackValue as T & { _fallbackUsed?: boolean };
+    return fallbackValue as unknown as T & { _fallbackUsed?: boolean };
   }
 
   /**
@@ -310,7 +310,9 @@ export class I18nContentLoader {
           contentType: 'title' in item ? 'habit' : 'research',
           contentId: item.id,
           title: this.getLocalizedText(
-            'title' in item ? item.title : { en: (item as any).title } as LocalizedField<string>, 
+            ('title' in item && typeof item.title === 'object') 
+              ? item.title as LocalizedField<string>
+              : { en: (item as any).title || 'Untitled' } as LocalizedField<string>, 
             locale
           ),
           missingFields,

@@ -19,7 +19,9 @@ import { Habit, ResearchStudy } from '../../types';
 import { AdminAuthService } from './AdminAuthService';
 
 // Static imports for fallback/development
+// @ts-ignore - JSON imports handled by build system
 import habitsData from '../../data/habits.json';
+// @ts-ignore - JSON imports handled by build system
 import researchData from '../../data/research_articles.json';
 
 export class ContentManager {
