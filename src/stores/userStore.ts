@@ -150,6 +150,15 @@ export const useUserStore = create<UserState>((set, get) => ({
       const { userProgress } = get();
       console.log('Progress after refresh:', userProgress);
       
+      // Dispatch event for reminder system
+      window.dispatchEvent(new CustomEvent('habit-completed', { 
+        detail: { habitId, userId: currentUser.id, date } 
+      }));
+      
+      // Check for new badges after progress update
+      const { useBadgeStore } = await import('./badgeStore');
+      useBadgeStore.getState().checkForNewBadges(currentUser.id, habitId);
+      
     } catch (error) {
       console.error('Failed to update progress:', error);
       set({ 
