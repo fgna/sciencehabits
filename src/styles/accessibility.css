@@ -1,0 +1,283 @@
+/* Accessibility and UI Preferences Styles */
+
+/* High Contrast Mode */
+.high-contrast {
+  --color-text-primary: #000000;
+  --color-text-secondary: #000000;
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f5f5f5;
+  --color-border: #000000;
+  --color-focus: #0066cc;
+}
+
+.high-contrast .bg-gray-50 { @apply bg-white border border-black; }
+.high-contrast .bg-gray-100 { @apply bg-gray-200 border border-black; }
+.high-contrast .text-gray-600 { @apply text-black; }
+.high-contrast .text-gray-700 { @apply text-black; }
+.high-contrast .border-gray-200 { @apply border-black; }
+
+/* Font Size Variations */
+.font-small { font-size: 0.875rem; }
+.font-normal { font-size: 1rem; }
+.font-large { font-size: 1.125rem; }
+.font-extra-large { font-size: 1.25rem; }
+
+.font-small h1 { @apply text-xl; }
+.font-small h2 { @apply text-lg; }
+.font-small h3 { @apply text-base; }
+
+.font-large h1 { @apply text-4xl; }
+.font-large h2 { @apply text-2xl; }
+.font-large h3 { @apply text-xl; }
+
+.font-extra-large h1 { @apply text-5xl; }
+.font-extra-large h2 { @apply text-3xl; }
+.font-extra-large h3 { @apply text-2xl; }
+
+/* Touch Target Sizes */
+.touch-compact button,
+.touch-compact a,
+.touch-compact [role="button"] {
+  min-height: 36px;
+  min-width: 36px;
+}
+
+.touch-standard button,
+.touch-standard a,
+.touch-standard [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.touch-large button,
+.touch-large a,
+.touch-large [role="button"] {
+  min-height: 56px;
+  min-width: 56px;
+  padding: 0.75rem 1.5rem;
+}
+
+/* Focus Management */
+.focus-visible:focus {
+  outline: 2px solid var(--color-focus, #2563eb);
+  outline-offset: 2px;
+}
+
+.high-contrast .focus-visible:focus {
+  outline: 3px solid #0066cc;
+  outline-offset: 3px;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Screen Reader Only Content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Skip Links */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Emotional Design Variants */
+.emotional-compassionate {
+  --color-primary: theme('colors.compassion.500');
+  --color-primary-hover: theme('colors.compassion.600');
+  --color-success: theme('colors.compassion.500');
+  --color-progress: theme('colors.progress.500');
+}
+
+.emotional-standard {
+  --color-primary: theme('colors.primary.500');
+  --color-primary-hover: theme('colors.primary.600');
+  --color-success: theme('colors.green.500');
+  --color-progress: theme('colors.blue.500');
+}
+
+.emotional-minimal {
+  --color-primary: theme('colors.gray.700');
+  --color-primary-hover: theme('colors.gray.800');
+  --color-success: theme('colors.gray.600');
+  --color-progress: theme('colors.gray.500');
+}
+
+/* Animation Utilities */
+.animate-compassionate-pulse {
+  animation: compassionate-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes compassionate-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+.animate-gentle-bounce {
+  animation: gentle-bounce 1s ease-in-out;
+}
+
+@keyframes gentle-bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-8px);
+  }
+  60% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-celebration {
+  animation: celebration 0.8s ease-out;
+}
+
+@keyframes celebration {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  25% {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.05) rotate(2deg);
+    opacity: 0.95;
+  }
+  75% {
+    transform: scale(1.02) rotate(-1deg);
+    opacity: 0.98;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* Progress Indicators with Compassionate Design */
+.progress-compassionate {
+  background: linear-gradient(
+    90deg,
+    theme('colors.compassion.500') 0%,
+    theme('colors.compassion.400') 50%,
+    theme('colors.compassion.300') 100%
+  );
+  border-radius: 9999px;
+  transition: width 0.6s ease-out;
+}
+
+.progress-gentle {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Interactive States */
+.interactive-gentle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-out;
+}
+
+.interactive-gentle:active {
+  transform: translateY(0);
+  transition: all 0.1s ease-out;
+}
+
+/* Compassionate Card Design */
+.card-compassionate {
+  border: 1px solid theme('colors.compassion.200');
+  background: linear-gradient(
+    135deg,
+    theme('colors.compassion.50') 0%,
+    rgba(255, 255, 255, 0.9) 100%
+  );
+}
+
+.card-compassionate:hover {
+  border-color: theme('colors.compassion.300');
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
+}
+
+/* Recovery State Styling */
+.recovery-state {
+  background: linear-gradient(
+    135deg,
+    theme('colors.recovery.50') 0%,
+    rgba(255, 255, 255, 0.95) 100%
+  );
+  border: 1px solid theme('colors.recovery.200');
+}
+
+.recovery-message {
+  color: theme('colors.recovery.700');
+  font-weight: 500;
+}
+
+/* Research Credibility Indicators */
+.research-badge {
+  background: theme('colors.research.100');
+  color: theme('colors.research.700');
+  border: 1px solid theme('colors.research.200');
+}
+
+.research-high {
+  background: theme('colors.research.500');
+  color: white;
+}
+
+.research-medium {
+  background: theme('colors.research.300');
+  color: theme('colors.research.800');
+}
+
+.research-low {
+  background: theme('colors.research.100');
+  color: theme('colors.research.700');
+}

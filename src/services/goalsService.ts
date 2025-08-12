@@ -6,6 +6,23 @@ export interface Goal {
   tier: 'free' | 'premium';
   category: string;
   priority: number;
+  
+  // Enhanced UX fields
+  researchLevel?: 'high' | 'medium' | 'low';
+  researchSummary?: string;
+  benefits?: string[];
+  commonConcerns?: Array<{
+    concern: string;
+    response: string;
+  }>;
+  timeToResults?: {
+    initial: string; // e.g., "1-2 weeks"
+    significant: string; // e.g., "4-8 weeks"
+  };
+  averageTimeCommitment?: {
+    min: number; // minutes per day
+    max: number;
+  };
 }
 
 interface GoalsData {
@@ -32,7 +49,7 @@ export async function loadGoals(): Promise<Goal[]> {
     return goalsCache;
   } catch (error) {
     console.warn('Failed to load goals from JSON, using fallback:', error);
-    // Fallback goals
+    // Fallback goals with enhanced UX data
     goalsCache = [
       {
         id: 'reduce_stress',
@@ -40,8 +57,19 @@ export async function loadGoals(): Promise<Goal[]> {
         description: 'Feel calmer and more relaxed throughout the day',
         icon: '🧘‍♀️',
         tier: 'free',
-        category: 'mental_health',
-        priority: 1
+        category: 'wellbeing',
+        priority: 1,
+        researchLevel: 'high',
+        researchSummary: 'Multiple meta-analyses show that mindfulness and breathing exercises significantly reduce cortisol levels and perceived stress.',
+        benefits: ['Lower cortisol levels', 'Improved sleep quality', 'Better emotional regulation', 'Reduced anxiety'],
+        commonConcerns: [
+          {
+            concern: 'I don\'t have time for meditation',
+            response: 'Start with just 3 minutes. Even brief breathing exercises show measurable stress reduction.'
+          }
+        ],
+        timeToResults: { initial: '1-2 weeks', significant: '4-6 weeks' },
+        averageTimeCommitment: { min: 3, max: 15 }
       },
       {
         id: 'increase_focus',
@@ -49,8 +77,13 @@ export async function loadGoals(): Promise<Goal[]> {
         description: 'Improve concentration and mental clarity',
         icon: '🎯',
         tier: 'free',
-        category: 'cognitive',
-        priority: 2
+        category: 'productivity',
+        priority: 2,
+        researchLevel: 'high',
+        researchSummary: 'Cognitive training and attention exercises improve working memory and sustained attention in healthy adults.',
+        benefits: ['Better concentration', 'Reduced mental fatigue', 'Improved productivity', 'Enhanced learning ability'],
+        timeToResults: { initial: '2-3 weeks', significant: '6-8 weeks' },
+        averageTimeCommitment: { min: 5, max: 20 }
       },
       {
         id: 'improve_mood',
@@ -58,8 +91,13 @@ export async function loadGoals(): Promise<Goal[]> {
         description: 'Boost happiness and emotional well-being',
         icon: '😊',
         tier: 'free',
-        category: 'mental_health',
-        priority: 3
+        category: 'wellbeing',
+        priority: 3,
+        researchLevel: 'high',
+        researchSummary: 'Gratitude practices, physical activity, and social connection are proven to increase positive emotions and life satisfaction.',
+        benefits: ['Increased happiness', 'Better relationships', 'Greater life satisfaction', 'Improved resilience'],
+        timeToResults: { initial: '1-2 weeks', significant: '3-4 weeks' },
+        averageTimeCommitment: { min: 5, max: 15 }
       },
       {
         id: 'increase_energy',
@@ -67,8 +105,13 @@ export async function loadGoals(): Promise<Goal[]> {
         description: 'Feel more energized and motivated',
         icon: '⚡',
         tier: 'free',
-        category: 'physical_health',
-        priority: 4
+        category: 'health',
+        priority: 4,
+        researchLevel: 'high',
+        researchSummary: 'Regular exercise, proper hydration, and sleep hygiene significantly improve energy levels and reduce fatigue.',
+        benefits: ['Higher energy levels', 'Better sleep quality', 'Improved motivation', 'Enhanced physical stamina'],
+        timeToResults: { initial: '1 week', significant: '2-4 weeks' },
+        averageTimeCommitment: { min: 5, max: 30 }
       },
       {
         id: 'improve_health',
@@ -76,8 +119,13 @@ export async function loadGoals(): Promise<Goal[]> {
         description: 'Build healthier daily habits',
         icon: '💪',
         tier: 'free',
-        category: 'physical_health',
-        priority: 5
+        category: 'health',
+        priority: 5,
+        researchLevel: 'high',
+        researchSummary: 'Small, consistent healthy habits compound over time to create significant improvements in overall health outcomes.',
+        benefits: ['Better physical health', 'Increased longevity', 'Improved immune function', 'Enhanced quality of life'],
+        timeToResults: { initial: '2-3 weeks', significant: '8-12 weeks' },
+        averageTimeCommitment: { min: 10, max: 30 }
       }
     ];
     return goalsCache;

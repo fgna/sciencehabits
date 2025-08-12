@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { ProgressIndicator } from './ProgressIndicator';
 import { WelcomeStep } from './WelcomeStep';
-import { GoalsStep } from './GoalsStep';
+import { ProgressiveGoalSelector } from './ProgressiveGoalSelector';
 import { PreferencesStep } from './PreferencesStep';
 import { RecommendationsStep } from './RecommendationsStep';
 import { initializeDatabase, dbHelpers } from '../../services/storage/database';
@@ -79,7 +79,7 @@ export function OnboardingContainer({ onComplete }: OnboardingContainerProps) {
       case 'welcome':
         return <WelcomeStep />;
       case 'goals':
-        return <GoalsStep />;
+        return <ProgressiveGoalSelector />;
       case 'preferences':
         return <PreferencesStep />;
       case 'recommendations':
