@@ -28,16 +28,22 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
   // Get data from store for components that need it
   const { userHabits, userProgress } = useUserStore();
 
-  // Listen for research article navigation events
+  // Listen for navigation events
   useEffect(() => {
     const handleShowResearchArticle = (event: CustomEvent) => {
       setActiveTab('research');
     };
+    
+    const handleNavigateToHabits = (event: CustomEvent) => {
+      setActiveTab('habits');
+    };
 
     window.addEventListener('showResearchArticle', handleShowResearchArticle as EventListener);
+    window.addEventListener('navigate-to-habits', handleNavigateToHabits as EventListener);
     
     return () => {
       window.removeEventListener('showResearchArticle', handleShowResearchArticle as EventListener);
+      window.removeEventListener('navigate-to-habits', handleNavigateToHabits as EventListener);
     };
   }, []);
 
@@ -244,7 +250,14 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
           user={user}
           habits={userHabits}
           progress={userProgress}
-          currentContext="dashboard"
+          currentContext={{
+            timeOfDay: new Date().getHours() < 12 ? 'morning' : 
+                      new Date().getHours() < 17 ? 'midday' : 
+                      new Date().getHours() < 21 ? 'evening' : 'night',
+            dayOfWeek: new Date().toLocaleDateString('en-US', { weekday: 'long' }),
+            isWeekend: [0, 6].includes(new Date().getDay()),
+            recentActivity: 'active'
+          }}
         />
       )}
 

@@ -19,19 +19,55 @@ export function SmartDailyDashboard() {
   }, [selectedDate, currentUser, userHabits, userProgress]);
 
   const loadSmartSchedule = async () => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      console.log('No current user, skipping schedule generation');
+      setIsLoading(false);
+      return;
+    }
 
     try {
       setIsLoading(true);
+      console.log('Generating smart schedule for:', {
+        userId: currentUser.id,
+        habitsCount: userHabits.length,
+        progressCount: userProgress.length,
+        selectedDate
+      });
+      
+      // If no habits, create empty schedule immediately
+      if (userHabits.length === 0) {
+        console.log('No habits found, creating empty schedule');
+        setSmartSchedule({
+          userId: currentUser.id,
+          date: selectedDate,
+          stacks: [],
+          flexibleSlots: [],
+          adaptiveRecommendations: [],
+          contextualHints: []
+        });
+        return;
+      }
+      
       const schedule = await smartSchedulingService.generateSmartSchedule(
         currentUser,
         userHabits,
         userProgress,
         selectedDate
       );
+      
+      console.log('Smart schedule generated:', schedule);
       setSmartSchedule(schedule);
     } catch (error) {
       console.error('Failed to load smart schedule:', error);
+      // Set a fallback empty schedule to prevent infinite loading
+      setSmartSchedule({
+        userId: currentUser.id,
+        date: selectedDate,
+        stacks: [],
+        flexibleSlots: [],
+        adaptiveRecommendations: [],
+        contextualHints: []
+      });
     } finally {
       setIsLoading(false);
     }
@@ -199,6 +235,31 @@ export function SmartDailyDashboard() {
         <div className="text-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-progress-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Optimizing your daily schedule...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle empty state
+  if (!smartSchedule || userHabits.length === 0) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="text-center py-12">
+          <div className="text-gray-400 mb-4">
+            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">No Habits to Schedule</h2>
+          <p className="text-gray-600 mb-6">
+            Start by adding some habits to see your personalized daily schedule.
+          </p>
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-habits'))}
+            className="px-6 py-3 bg-progress-600 text-white rounded-lg hover:bg-progress-700 transition-colors"
+          >
+            Add Your First Habit
+          </button>
         </div>
       </div>
     );

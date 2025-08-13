@@ -14,6 +14,7 @@ interface UserState {
   loadUserData: (userId: string) => Promise<void>;
   updateUser: (updates: Partial<User>) => Promise<void>;
   updateUserProgress: (habitId: string, date?: string) => Promise<void>;
+  toggleHabitCompletion: (habitId: string, date?: string) => Promise<void>;
   refreshProgress: () => Promise<void>;
   setError: (error: string | null) => void;
   clearUser: () => void;
@@ -180,6 +181,11 @@ export const useUserStore = create<UserState>((set, get) => ({
   },
 
   setError: (error) => set({ error }),
+
+  toggleHabitCompletion: async (habitId, date) => {
+    // Alias for updateUserProgress for backward compatibility
+    await get().updateUserProgress(habitId, date);
+  },
 
   clearUser: () => set({
     currentUser: null,
