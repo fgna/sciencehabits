@@ -3,7 +3,7 @@ import { Button, Card, CardContent } from '../ui';
 import { CreateHabitForm } from './CreateHabitForm';
 import { useHabitStore } from '../../stores/habitStore';
 import { useUserStore } from '../../stores/userStore';
-import { HabitChecklistCard } from '../dashboard/HabitChecklistCard';
+import { CleanHabitCard } from '../ui/CleanHabitCard';
 import { HabitResearchModal } from '../research/HabitResearchModal';
 import { Habit } from '../../types';
 
@@ -79,6 +79,11 @@ export function HabitsView() {
     }
   };
 
+  const handleCompleteHabit = async (habitId: string) => {
+    const { updateUserProgress } = useUserStore.getState();
+    await updateUserProgress(habitId);
+  };
+
 
   if (isLoading) {
     return (
@@ -147,19 +152,36 @@ export function HabitsView() {
                   <p className="text-gray-600 mb-4">
                     Complete the onboarding process to get personalized habit recommendations based on research.
                   </p>
+                  <Button 
+                    onClick={() => {
+                      if (window.confirm('This will restart your onboarding process. Are you sure?')) {
+                        localStorage.removeItem('sciencehabits_user_id');
+                        window.location.reload();
+                      }
+                    }}
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    Start Onboarding Setup
+                  </Button>
                 </div>
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-4">
-              {userHabits.filter(h => !h.isCustom).map((habit) => (
-                <HabitChecklistCard 
-                  key={habit.id} 
-                  habit={habit}
-                  progress={userProgress.find(p => p.habitId === habit.id)}
-                  onViewResearch={handleViewResearch}
-                />
-              ))}
+              {userHabits.filter(h => !h.isCustom).map((habit) => {
+                const progress = userProgress.find(p => p.habitId === habit.id);
+                const isCompleted = progress?.completions.includes(new Date().toISOString().split('T')[0]) || false;
+                return (
+                  <CleanHabitCard 
+                    key={habit.id} 
+                    habit={habit}
+                    progress={progress}
+                    onComplete={handleCompleteHabit}
+                    onViewResearch={handleViewResearch}
+                    isCompleted={isCompleted}
+                  />
+                );
+              })}
             </div>
           )}
         </div>
@@ -198,17 +220,23 @@ export function HabitsView() {
             </Card>
           ) : (
             <div className="space-y-4">
-              {customHabits.map((habit) => (
-                <HabitChecklistCard 
-                  key={habit.id} 
-                  habit={habit}
-                  progress={userProgress.find(p => p.habitId === habit.id)}
-                  showActions
-                  onEdit={() => handleEdit(habit)}
-                  onDelete={() => handleDelete(habit)}
-                  onViewResearch={handleViewResearch}
-                />
-              ))}
+              {customHabits.map((habit) => {
+                const progress = userProgress.find(p => p.habitId === habit.id);
+                const isCompleted = progress?.completions.includes(new Date().toISOString().split('T')[0]) || false;
+                return (
+                  <CleanHabitCard 
+                    key={habit.id} 
+                    habit={habit}
+                    progress={progress}
+                    onComplete={handleCompleteHabit}
+                    onViewResearch={handleViewResearch}
+                    isCompleted={isCompleted}
+                    showActions
+                    onEdit={() => handleEdit(habit)}
+                    onDelete={() => handleDelete(habit)}
+                  />
+                );
+              })}
             </div>
           )}
         </div>

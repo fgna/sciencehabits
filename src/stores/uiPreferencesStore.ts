@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export interface UIPreferences {
+  // Layout preferences
+  layoutMode: 'simplified' | 'enhanced';
+  
   // Accessibility preferences
   highContrast: boolean;
   reducedMotion: boolean;
@@ -31,6 +34,7 @@ export interface UIPreferences {
 
 interface UIPreferencesStore extends UIPreferences {
   // Actions
+  setLayoutMode: (mode: UIPreferences['layoutMode']) => void;
   setHighContrast: (enabled: boolean) => void;
   setReducedMotion: (enabled: boolean) => void;
   setFontSize: (size: UIPreferences['fontSize']) => void;
@@ -53,6 +57,7 @@ interface UIPreferencesStore extends UIPreferences {
 }
 
 const defaultPreferences: UIPreferences = {
+  layoutMode: 'simplified',
   highContrast: false,
   reducedMotion: false,
   fontSize: 'normal',
@@ -73,6 +78,8 @@ export const useUIPreferencesStore = create<UIPreferencesStore>()(
   persist(
     (set, get) => ({
       ...defaultPreferences,
+
+      setLayoutMode: (mode) => set({ layoutMode: mode }),
 
       setHighContrast: (enabled) => {
         set({ highContrast: enabled });

@@ -1,6 +1,11 @@
 // Export main analytics view (simplified)
 export { AnalyticsView } from './AnalyticsView';
 export { SimpleAnalyticsView } from './SimpleAnalyticsView';
+export { Analytics } from './Analytics';
+export { OverviewCard } from './OverviewCard';
+export { TimeRangeSelector } from './TimeRangeSelector';
+export { HabitBreakdown } from './HabitBreakdown';
+export { ExportSection } from './ExportSection';
 
 // Export core analytics components (kept for practical use)
 export { ProgressOverview } from './ProgressOverview';

@@ -86,7 +86,28 @@ export function ResearchProvider({ children }: ResearchProviderProps) {
     try {
       setIsLoading(true);
       
-      // Try to load using content manifest first
+      // Try to load from enhanced_research.json first
+      try {
+        const response = await fetch('/data/enhanced_research.json');
+        if (response.ok) {
+          const researchData = await response.json();
+          const loadedArticles = researchData.studies || []; // Changed from 'articles' to 'studies'
+          console.log(`📚 Successfully loaded ${loadedArticles.length} research articles from enhanced_research.json`);
+          
+          const sortedArticles = loadedArticles.sort((a: any, b: any) => {
+            const dateA = a.publishedDate ? new Date(a.publishedDate) : new Date(a.year || 0, 0, 1);
+            const dateB = b.publishedDate ? new Date(b.publishedDate) : new Date(b.year || 0, 0, 1);
+            return dateB.getTime() - dateA.getTime();
+          });
+          
+          setArticles(sortedArticles);
+          return;
+        }
+      } catch (error) {
+        console.warn('Failed to load enhanced_research.json, trying individual files:', error);
+      }
+      
+      // Fallback to individual article files
       let articleFilenames: string[];
       
       try {

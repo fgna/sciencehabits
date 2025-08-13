@@ -1,0 +1,206 @@
+/* Clean Habit Card Layout */
+.clean-habit-card {
+  @apply bg-white rounded-lg p-4 mb-3 shadow-sm border border-gray-200;
+  @apply hover:shadow-md transition-shadow duration-200;
+}
+
+/* Header Section */
+.habit-header {
+  @apply flex items-start justify-between mb-2;
+}
+
+.habit-title-section {
+  @apply flex items-center gap-2 flex-1;
+}
+
+.research-badge {
+  @apply text-sm opacity-70;
+}
+
+.habit-title {
+  @apply text-lg font-medium text-gray-900 leading-tight;
+}
+
+.completion-btn {
+  @apply w-8 h-8 rounded-full border-2 flex items-center justify-center;
+  @apply transition-colors duration-200 flex-shrink-0;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.completion-btn.pending {
+  @apply border-gray-300 text-gray-400 hover:border-blue-500 hover:text-blue-500;
+}
+
+.completion-btn.completed {
+  @apply border-green-500 bg-green-500 text-white;
+}
+
+/* Description */
+.habit-description {
+  @apply text-sm text-gray-600 mb-3 leading-relaxed;
+}
+
+/* Metadata Row */
+.habit-metadata {
+  @apply flex items-center gap-4 mb-3 text-sm text-gray-500 flex-wrap;
+}
+
+.time-estimate,
+.streak-display,
+.effectiveness-score {
+  @apply flex items-center gap-1;
+}
+
+/* Actions Row */
+.habit-actions {
+  @apply flex flex-col gap-3;
+}
+
+.admin-actions {
+  @apply flex gap-2;
+}
+
+.habit-main-actions {
+  @apply flex gap-2;
+}
+
+.research-btn,
+.edit-btn {
+  @apply px-3 py-1.5 text-sm border border-gray-300 rounded-md;
+  @apply text-gray-700 hover:bg-gray-50 transition-colors duration-200;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.delete-btn {
+  @apply px-3 py-1.5 text-sm border border-red-300 rounded-md;
+  @apply text-red-600 hover:bg-red-50 transition-colors duration-200;
+  @apply focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
+}
+
+.primary-action-btn {
+  @apply px-4 py-1.5 text-sm bg-blue-600 text-white rounded-md;
+  @apply hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed;
+  @apply transition-colors duration-200 flex-1;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+/* Research Article Cards */
+.research-article-card {
+  @apply bg-gray-50 rounded-lg p-4 mb-4 last:mb-0;
+}
+
+.article-header {
+  @apply flex items-start justify-between mb-2 gap-2;
+}
+
+.article-title {
+  @apply font-medium text-gray-900 leading-tight flex-1;
+}
+
+.evidence-level {
+  @apply px-2 py-1 text-xs rounded-full flex-shrink-0;
+}
+
+.article-meta {
+  @apply text-sm text-gray-600 mb-3 flex flex-wrap gap-2;
+}
+
+.journal {
+  @apply font-medium;
+}
+
+.key-findings {
+  @apply text-sm mb-3 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r;
+}
+
+.takeaways-list {
+  @apply list-disc list-inside mt-1 space-y-1;
+}
+
+.takeaway-item {
+  @apply text-gray-700 leading-relaxed;
+}
+
+.more-indicator {
+  @apply text-blue-600 font-medium text-xs;
+}
+
+.study-details {
+  @apply text-sm text-gray-600 mb-3 space-y-1;
+}
+
+.detail-item {
+  @apply flex gap-2;
+}
+
+.expand-btn {
+  @apply text-sm text-blue-600 hover:text-blue-700 hover:underline;
+  @apply transition-colors duration-200 mb-2;
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.reading-time {
+  @apply text-xs text-gray-500 flex items-center gap-1;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 640px) {
+  .clean-habit-card {
+    @apply p-3 mb-2;
+  }
+  
+  .completion-btn {
+    @apply w-10 h-10; /* Larger touch target */
+  }
+  
+  .habit-actions {
+    @apply gap-2; /* Smaller gap on mobile */
+  }
+  
+  .admin-actions,
+  .habit-main-actions {
+    @apply flex-col gap-2; /* Stack buttons vertically on mobile */
+  }
+  
+  .primary-action-btn {
+    @apply py-3 text-base; /* Larger tap area */
+  }
+  
+  .habit-metadata {
+    @apply text-xs; /* Slightly smaller metadata on mobile */
+  }
+}
+
+/* Tablet optimizations */
+@media (max-width: 768px) {
+  .habit-actions {
+    @apply flex-col-reverse gap-2; /* Primary action on bottom */
+  }
+}
+
+/* Focus and keyboard navigation */
+.clean-habit-card:focus-within {
+  @apply ring-2 ring-blue-500 ring-offset-2;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .clean-habit-card {
+    @apply border-2 border-gray-400;
+  }
+  
+  .completion-btn.pending {
+    @apply border-gray-600;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .clean-habit-card,
+  .completion-btn,
+  .research-btn,
+  .primary-action-btn,
+  .expand-btn {
+    @apply transition-none;
+  }
+}

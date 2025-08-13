@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal } from '../ui/Modal';
+import { ResearchArticleCard } from '../ui/ResearchArticleCard';
 import { useResearch } from '../../contexts/ResearchContext';
 
 interface HabitResearchModalProps {
@@ -18,6 +19,17 @@ export function HabitResearchModal({
   researchIds 
 }: HabitResearchModalProps) {
   const { articles } = useResearch();
+  const [expandedArticles, setExpandedArticles] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (articleId: string) => {
+    const newExpanded = new Set(expandedArticles);
+    if (newExpanded.has(articleId)) {
+      newExpanded.delete(articleId);
+    } else {
+      newExpanded.add(articleId);
+    }
+    setExpandedArticles(newExpanded);
+  };
 
   // Filter articles based on the habit's research IDs
   const relatedArticles = articles.filter(article => 
@@ -45,69 +57,12 @@ export function HabitResearchModal({
             </p>
             
             {relatedArticles.map((article) => (
-              <div key={article.id} className="border border-gray-200 rounded-lg p-6 bg-gray-50">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {article.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-3">
-                      {article.author} ({article.studyDetails.year}) - {article.studyDetails.journal}
-                    </p>
-                  </div>
-                  <div className="ml-4">
-                    <span className={`
-                      inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                      ${article.studyDetails.evidenceLevel === 'high' 
-                        ? 'bg-green-100 text-green-800' 
-                        : article.studyDetails.evidenceLevel === 'medium'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-gray-100 text-gray-800'
-                      }
-                    `}>
-                      {article.studyDetails.evidenceLevel} evidence
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Key Takeaways</h4>
-                    <div className="space-y-2">
-                      {article.keyTakeaways.map((takeaway, index) => (
-                        <p key={index} className="text-gray-700 text-sm bg-blue-50 p-3 rounded border-l-4 border-blue-400">
-                          {takeaway}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-6 text-sm text-gray-600">
-                    <div>
-                      <span className="font-medium">Study Type:</span> {article.studyDetails.studyType.replace(/_/g, ' ')}
-                    </div>
-                    <div>
-                      <span className="font-medium">Sample Size:</span> {article.studyDetails.sampleSize} participants
-                    </div>
-                    <div>
-                      <span className="font-medium">Statistical Significance:</span> {article.studyDetails.statisticalSignificance}
-                    </div>
-                  </div>
-                  
-                  <details className="mt-4">
-                    <summary className="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600">
-                      View Study Details
-                    </summary>
-                    <div className="text-xs text-gray-600 mt-2 p-3 bg-gray-100 rounded space-y-2">
-                      <p><strong>Study ID:</strong> {article.studyId}</p>
-                      <p><strong>Reading Time:</strong> {article.readingTime} minutes</p>
-                      <p><strong>Difficulty:</strong> {article.difficulty}</p>
-                      <p><strong>Category:</strong> {article.category}</p>
-                      <p><strong>Tags:</strong> {article.tags.join(', ')}</p>
-                    </div>
-                  </details>
-                </div>
-              </div>
+              <ResearchArticleCard
+                key={article.id}
+                article={article}
+                isExpanded={expandedArticles.has(article.id)}
+                onToggleExpand={() => toggleExpanded(article.id)}
+              />
             ))}
             
             <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">

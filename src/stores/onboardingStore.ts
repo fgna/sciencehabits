@@ -24,7 +24,7 @@ interface OnboardingState {
   resetOnboarding: () => void;
 }
 
-const stepOrder: OnboardingStep[] = ['welcome', 'goals', 'preferences', 'recommendations', 'complete'];
+const stepOrder: OnboardingStep[] = ['welcome', 'goals', 'recommendations', 'complete'];
 
 export const useOnboardingStore = create<OnboardingState>((set, get) => ({
   currentStep: 'welcome',

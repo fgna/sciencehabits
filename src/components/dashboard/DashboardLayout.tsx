@@ -15,6 +15,7 @@ import { useUIPreferencesStore } from '../../stores/uiPreferencesStore';
 import { addSampleCompletionsToExistingProgress } from '../../utils/devDataGenerator';
 import { SimplifiedDashboard } from './SimplifiedDashboard';
 import { CleanNavigation } from '../navigation/CleanNavigation';
+import { Analytics } from '../analytics/Analytics';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -26,7 +27,11 @@ type DashboardTab = 'today' | 'habits' | 'progress' | 'recovery' | 'research' | 
 
 export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutProps) {
   const [activeTab, setActiveTab] = useState<DashboardTab>('today');
-  const [simplifiedTab, setSimplifiedTab] = useState<'today' | 'habits'>('today');
+  const [simplifiedTab, setSimplifiedTab] = useState<'today' | 'habits' | 'analytics'>('today');
+
+  const handleTabChange = (tab: 'today' | 'habits' | 'analytics') => {
+    setSimplifiedTab(tab);
+  };
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   
@@ -201,12 +206,13 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
       <div className="min-h-screen bg-gray-50">
         <CleanNavigation 
           activeTab={simplifiedTab} 
-          onTabChange={setSimplifiedTab} 
+          onTabChange={handleTabChange} 
         />
         
         <main className="flex-1">
           {simplifiedTab === 'today' && <SimplifiedDashboard />}
           {simplifiedTab === 'habits' && <HabitsView />}
+          {simplifiedTab === 'analytics' && <Analytics />}
         </main>
         
         {/* Settings toggle - temporary for development */}

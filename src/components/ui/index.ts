@@ -5,3 +5,5 @@ export { Modal } from './Modal';
 export { BadgeComponent } from './Badge';
 export { MinimalHabitCard } from './MinimalHabitCard';
 export { SimpleProgress } from './SimpleProgress';
+export { CleanHabitCard } from './CleanHabitCard';
+export { ResearchArticleCard } from './ResearchArticleCard';

@@ -55,10 +55,10 @@ export function GoalsStep() {
     <div className="max-w-2xl mx-auto">
       <div className="text-center mb-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          What are your goals?
+          What matters most to you?
         </h1>
         <p className="text-gray-600">
-          Select all that apply. We'll recommend habits that help you achieve these goals.
+          Select all that apply. We'll recommend habits that help you achieve what matters most.
         </p>
       </div>
 

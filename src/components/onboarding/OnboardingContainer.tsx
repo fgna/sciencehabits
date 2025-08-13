@@ -1,10 +1,8 @@
 import React, { useEffect } from 'react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
-import { ProgressIndicator } from './ProgressIndicator';
 import { OnboardingProgressTracker } from './OnboardingProgressTracker';
 import { WelcomeStep } from './WelcomeStep';
 import { ProgressiveGoalSelector } from './ProgressiveGoalSelector';
-import { PreferencesStep } from './PreferencesStep';
 import { RecommendationsStep } from './RecommendationsStep';
 import { initializeDatabase, dbHelpers } from '../../services/storage/database';
 
@@ -90,8 +88,6 @@ export function OnboardingContainer({ onComplete }: OnboardingContainerProps) {
         return <WelcomeStep />;
       case 'goals':
         return <ProgressiveGoalSelector />;
-      case 'preferences':
-        return <PreferencesStep />;
       case 'recommendations':
         return <RecommendationsStep />;
       case 'complete':
@@ -114,16 +110,6 @@ export function OnboardingContainer({ onComplete }: OnboardingContainerProps) {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        {currentStep !== 'welcome' && currentStep !== 'complete' && (
-          <div className="space-y-4">
-            <ProgressIndicator currentStep={currentStep} />
-            <OnboardingProgressTracker 
-              user={tempUser as any}
-              onStepComplete={(step) => console.log('Step completed:', step)}
-              onPhaseComplete={(phase) => console.log('Phase completed:', phase)}
-            />
-          </div>
-        )}
         
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
           {renderStep()}

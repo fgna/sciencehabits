@@ -8,8 +8,7 @@ interface ProgressIndicatorProps {
 const steps: { id: OnboardingStep; title: string; number: number }[] = [
   { id: 'welcome', title: 'Welcome', number: 1 },
   { id: 'goals', title: 'Goals', number: 2 },
-  { id: 'preferences', title: 'Preferences', number: 3 },
-  { id: 'recommendations', title: 'Habits', number: 4 }
+  { id: 'recommendations', title: 'Habits', number: 3 }
 ];
 
 export function ProgressIndicator({ currentStep }: ProgressIndicatorProps) {
