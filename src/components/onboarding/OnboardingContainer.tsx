@@ -14,6 +14,15 @@ interface OnboardingContainerProps {
 
 export function OnboardingContainer({ onComplete }: OnboardingContainerProps) {
   const { currentStep, userData, selectedGoals, setLoading, setError, error } = useOnboardingStore();
+  
+  // Create a temporary user object for OnboardingProgressTracker
+  const tempUser = {
+    id: 'temp',
+    goals: selectedGoals,
+    lifestyle: userData.lifestyle || 'professional',
+    preferredTime: userData.preferredTime || 'flexible',
+    dailyMinutes: userData.dailyMinutes || 10
+  };
 
   useEffect(() => {
     // Initialize database when onboarding starts
@@ -108,7 +117,11 @@ export function OnboardingContainer({ onComplete }: OnboardingContainerProps) {
         {currentStep !== 'welcome' && currentStep !== 'complete' && (
           <div className="space-y-4">
             <ProgressIndicator currentStep={currentStep} />
-            <OnboardingProgressTracker />
+            <OnboardingProgressTracker 
+              user={tempUser as any}
+              onStepComplete={(step) => console.log('Step completed:', step)}
+              onPhaseComplete={(phase) => console.log('Phase completed:', phase)}
+            />
           </div>
         )}
         

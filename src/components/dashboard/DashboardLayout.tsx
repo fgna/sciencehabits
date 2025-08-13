@@ -10,6 +10,7 @@ import { RecoveryDashboard } from '../recovery';
 import { SmartDailyDashboard } from './SmartDailyDashboard';
 import { EnhancedProgressVisualization } from '../visualization/EnhancedProgressVisualization';
 import { MotivationalMessagingSystem } from '../motivation/MotivationalMessagingSystem';
+import { useUserStore } from '../../stores/userStore';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -23,6 +24,9 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
   const [activeTab, setActiveTab] = useState<DashboardTab>('today');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  
+  // Get data from store for components that need it
+  const { userHabits, userProgress } = useUserStore();
 
   // Listen for research article navigation events
   useEffect(() => {
@@ -235,7 +239,14 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
       </header>
 
       {/* Motivational Messaging System */}
-      <MotivationalMessagingSystem />
+      {user && (
+        <MotivationalMessagingSystem 
+          user={user}
+          habits={userHabits}
+          progress={userProgress}
+          currentContext="dashboard"
+        />
+      )}
 
       {/* Main Content */}
       <main className="flex-1">
@@ -246,7 +257,14 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
         
         {activeTab === 'progress' && (
           <div className="space-y-6">
-            <EnhancedProgressVisualization />
+            {user && (
+              <EnhancedProgressVisualization 
+                habits={userHabits}
+                progress={userProgress}
+                user={user}
+                timeframe="month"
+              />
+            )}
             <AnalyticsView />
           </div>
         )}

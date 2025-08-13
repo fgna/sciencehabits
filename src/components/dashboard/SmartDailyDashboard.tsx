@@ -7,7 +7,7 @@ import { smartSchedulingService, SmartSchedule, HabitStack } from '../../service
 
 export function SmartDailyDashboard() {
   const { animationsEnabled, emotionalDesign } = useUIPreferencesStore();
-  const { currentUser, userHabits, userProgress, toggleCompletion } = useUserStore();
+  const { currentUser, userHabits, userProgress, toggleHabitCompletion } = useUserStore();
   
   const [smartSchedule, setSmartSchedule] = useState<SmartSchedule | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -39,7 +39,7 @@ export function SmartDailyDashboard() {
   
   const onToggleHabit = (habitId: string) => {
     const today = new Date().toISOString().split('T')[0];
-    toggleCompletion(habitId, today);
+    toggleHabitCompletion(habitId, today);
   };
   
   const onEditHabit = (habitId: string) => {

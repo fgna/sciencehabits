@@ -282,7 +282,7 @@ export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
           <Card>
             <CardContent>
               <h3 className="text-lg font-medium text-gray-900 mb-4">AI Personalization</h3>
-              <PersonalizationDepthSettings userId={user.id} />
+              <PersonalizationDepthSettings user={user} />
             </CardContent>
           </Card>
 
