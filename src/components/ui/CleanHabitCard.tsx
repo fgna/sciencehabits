@@ -32,7 +32,7 @@ export const CleanHabitCard: React.FC<CleanHabitCardProps> = ({
       {/* Header Row */}
       <div className="habit-header">
         <div className="habit-title-section">
-          {hasResearch && (
+          {hasResearch && !habit.isCustom && (
             <span className="research-badge" aria-label="Research verified">
               🔬
             </span>
@@ -51,7 +51,7 @@ export const CleanHabitCard: React.FC<CleanHabitCardProps> = ({
           aria-label={`${isCompleted ? 'Mark incomplete' : 'Complete'} ${habit.title}`}
           aria-pressed={isCompleted}
         >
-          {isCompleted ? '✓' : '○'}
+          {habit.isCustom ? (isCompleted ? 'Done' : 'Start') : (isCompleted ? '✓' : '○')}
         </button>
       </div>
 
@@ -63,19 +63,19 @@ export const CleanHabitCard: React.FC<CleanHabitCardProps> = ({
       {/* Metadata Row */}
       <div className="habit-metadata">
         <span className="time-estimate">
-          ⏱ {habit.timeMinutes} min
+          {habit.isCustom ? '' : '⏱ '}{habit.timeMinutes} min
         </span>
         
         {currentStreak > 0 && (
           <span className="streak-display">
-            🔥 {currentStreak} days
+            {habit.isCustom ? '' : '🔥 '}{currentStreak} days
           </span>
         )}
 
         {/* Effectiveness Score */}
         {habit.effectivenessScore && (
           <span className="effectiveness-score">
-            📈 {habit.effectivenessScore}/100
+            {habit.isCustom ? '' : '📈 '}{habit.effectivenessScore}/100
           </span>
         )}
       </div>

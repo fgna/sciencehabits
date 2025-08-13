@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Modal } from '../ui/Modal';
 import { ResearchArticleCard } from '../ui/ResearchArticleCard';
 import { useResearch } from '../../contexts/ResearchContext';
@@ -19,24 +20,43 @@ export function HabitResearchModal({
   researchIds 
 }: HabitResearchModalProps) {
   const { articles } = useResearch();
-  const [expandedArticles, setExpandedArticles] = useState<Set<string>>(new Set());
+  const [fullArticleView, setFullArticleView] = useState<{article: any, isOpen: boolean}>({
+    article: null,
+    isOpen: false
+  });
 
-  const toggleExpanded = (articleId: string) => {
-    const newExpanded = new Set(expandedArticles);
-    if (newExpanded.has(articleId)) {
-      newExpanded.delete(articleId);
-    } else {
-      newExpanded.add(articleId);
-    }
-    setExpandedArticles(newExpanded);
+  const handleReadFullArticle = (article: any) => {
+    setFullArticleView({ article, isOpen: true });
+  };
+
+  const handleCloseFullArticle = () => {
+    setFullArticleView({ article: null, isOpen: false });
   };
 
   // Filter articles based on the habit's research IDs
+  // Support both exact matches and partial matches (with/without _article suffix)
   const relatedArticles = articles.filter(article => 
-    researchIds.includes(article.id)
+    researchIds.some(researchId => 
+      article.id === researchId || 
+      article.id === `${researchId}_article` ||
+      researchId === `${article.id}_article` ||
+      article.id.startsWith(researchId) ||
+      researchId.startsWith(article.id.replace('_article', ''))
+    )
   );
 
+  // Debug logging
+  console.log('🔬 Research matching debug:', {
+    habitTitle,
+    researchIds,
+    totalArticles: articles.length,
+    articleIds: articles.map(a => a.id),
+    matchedArticles: relatedArticles.length,
+    matchedIds: relatedArticles.map(a => a.id)
+  });
+
   return (
+    <>
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">
@@ -60,8 +80,7 @@ export function HabitResearchModal({
               <ResearchArticleCard
                 key={article.id}
                 article={article}
-                isExpanded={expandedArticles.has(article.id)}
-                onToggleExpand={() => toggleExpanded(article.id)}
+                onReadFullArticle={handleReadFullArticle}
               />
             ))}
             
@@ -93,5 +112,115 @@ export function HabitResearchModal({
         )}
       </div>
     </Modal>
+
+    {/* Full Article Modal */}
+    {fullArticleView.isOpen && fullArticleView.article && (
+      <Modal isOpen={true} onClose={handleCloseFullArticle} size="xl">
+        <div className="p-6 max-h-[90vh] overflow-y-auto">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                {fullArticleView.article.title}
+              </h2>
+              {fullArticleView.article.subtitle && (
+                <p className="text-lg text-gray-600">{fullArticleView.article.subtitle}</p>
+              )}
+            </div>
+            <button
+              onClick={handleCloseFullArticle}
+              className="text-gray-400 hover:text-gray-600 text-xl font-semibold"
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Original Paper Link */}
+          {fullArticleView.article.studyDetails && (
+            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-medium text-blue-900">📄 Original Research Paper</h3>
+                  <p className="text-sm text-blue-700 mt-1">
+                    {fullArticleView.article.studyDetails.journal} • {fullArticleView.article.studyDetails.year}
+                    {fullArticleView.article.studyDetails.sampleSize && 
+                      ` • ${fullArticleView.article.studyDetails.sampleSize.toLocaleString()} participants`
+                    }
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      // Create a DOI search URL based on the journal and year
+                      const journal = fullArticleView.article.studyDetails.journal;
+                      const year = fullArticleView.article.studyDetails.year;
+                      const searchQuery = encodeURIComponent(`${journal} ${year} thermal environment sleep`);
+                      window.open(`https://scholar.google.com/scholar?q=${searchQuery}`, '_blank');
+                    }}
+                    className="px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 border border-blue-300 rounded hover:bg-blue-200 transition-colors"
+                  >
+                    🔍 Find on Google Scholar
+                  </button>
+                  <button
+                    onClick={() => {
+                      // PubMed search
+                      const journal = fullArticleView.article.studyDetails.journal;
+                      const year = fullArticleView.article.studyDetails.year;
+                      const searchQuery = encodeURIComponent(`${journal}[journal] AND ${year}[pdat]`);
+                      window.open(`https://pubmed.ncbi.nlm.nih.gov/?term=${searchQuery}`, '_blank');
+                    }}
+                    className="px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 border border-blue-300 rounded hover:bg-blue-200 transition-colors"
+                  >
+                    📚 Search PubMed
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Article Content */}
+          <div className="prose prose-lg max-w-none">
+            {fullArticleView.article.content ? (
+              <ReactMarkdown
+                components={{
+                  // Custom styling for markdown elements
+                  h1: ({ children }) => <h1 className="text-3xl font-bold text-gray-900 mb-6 mt-8">{children}</h1>,
+                  h2: ({ children }) => <h2 className="text-2xl font-semibold text-gray-800 mb-4 mt-6">{children}</h2>,
+                  h3: ({ children }) => <h3 className="text-xl font-semibold text-gray-800 mb-3 mt-5">{children}</h3>,
+                  h4: ({ children }) => <h4 className="text-lg font-medium text-gray-700 mb-2 mt-4">{children}</h4>,
+                  p: ({ children }) => <p className="mb-4 text-gray-700 leading-relaxed">{children}</p>,
+                  ul: ({ children }) => <ul className="mb-4 ml-6 list-disc space-y-1">{children}</ul>,
+                  ol: ({ children }) => <ol className="mb-4 ml-6 list-decimal space-y-1">{children}</ol>,
+                  li: ({ children }) => <li className="text-gray-700 leading-relaxed">{children}</li>,
+                  strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                  em: ({ children }) => <em className="italic text-gray-800">{children}</em>,
+                  blockquote: ({ children }) => <blockquote className="border-l-4 border-blue-500 pl-4 py-2 mb-4 bg-blue-50 text-gray-700 italic">{children}</blockquote>,
+                  code: ({ children }) => <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800">{children}</code>,
+                }}
+              >
+                {(() => {
+                  // Remove duplicate title and subtitle from markdown content
+                  const content = fullArticleView.article.content;
+                  const lines = content.split('\n');
+                  
+                  // Find the first H2 (##) which should be the actual content start
+                  const firstH2Index = lines.findIndex((line: string) => line.startsWith('## '));
+                  
+                  if (firstH2Index !== -1) {
+                    // Return content starting from the first H2
+                    return lines.slice(firstH2Index).join('\n');
+                  }
+                  
+                  // Fallback: remove first 4 lines (title, empty line, subtitle, empty line)
+                  return lines.slice(4).join('\n');
+                })()}
+              </ReactMarkdown>
+            ) : (
+              <p className="text-gray-600">Article content not available.</p>
+            )}
+          </div>
+        </div>
+      </Modal>
+    )}
+    </>
   );
 }

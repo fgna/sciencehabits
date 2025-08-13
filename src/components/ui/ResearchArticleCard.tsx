@@ -4,14 +4,12 @@ import '../../styles/CleanHabitCard.css';
 
 interface ResearchArticleCardProps {
   article: ResearchArticle;
-  isExpanded?: boolean;
-  onToggleExpand?: () => void;
+  onReadFullArticle?: (article: ResearchArticle) => void;
 }
 
 export const ResearchArticleCard: React.FC<ResearchArticleCardProps> = ({
   article,
-  isExpanded = false,
-  onToggleExpand
+  onReadFullArticle
 }) => {
   const getEvidenceLevelColor = (level: string) => {
     switch (level.toLowerCase()) {
@@ -26,63 +24,87 @@ export const ResearchArticleCard: React.FC<ResearchArticleCardProps> = ({
     <div className="research-article-card">
       <div className="article-header">
         <h3 className="article-title">{article.title}</h3>
-        <span className={`evidence-level ${getEvidenceLevelColor(article.studyDetails.evidenceLevel)}`}>
-          {article.studyDetails.evidenceLevel} evidence
-        </span>
+        {article.studyDetails?.evidenceLevel && (
+          <span className={`evidence-level ${getEvidenceLevelColor(article.studyDetails.evidenceLevel)}`}>
+            {article.studyDetails.evidenceLevel} evidence
+          </span>
+        )}
       </div>
       
-      <div className="article-meta">
-        <span>{article.author} ({article.studyDetails.year})</span>
-        <span className="journal">{article.studyDetails.journal}</span>
-      </div>
+      {(article.studyDetails?.year || article.studyDetails?.journal) && (
+        <div className="article-meta">
+          {article.studyDetails?.year && (
+            <span>{article.studyDetails.year}</span>
+          )}
+          {article.studyDetails?.journal && (
+            <span className="journal">{article.studyDetails.journal}</span>
+          )}
+        </div>
+      )}
       
       {/* Key Takeaways */}
-      {article.keyTakeaways.length > 0 && (
+      {article.keyTakeaways && article.keyTakeaways.length > 0 && (
         <div className="key-findings">
           <strong>Key Findings:</strong>
           <ul className="takeaways-list">
-            {article.keyTakeaways.slice(0, isExpanded ? undefined : 2).map((takeaway, index) => (
+            {article.keyTakeaways.map((takeaway, index) => (
               <li key={index} className="takeaway-item">
                 {takeaway}
               </li>
             ))}
           </ul>
-          {article.keyTakeaways.length > 2 && !isExpanded && (
-            <span className="more-indicator">+{article.keyTakeaways.length - 2} more</span>
-          )}
         </div>
       )}
       
       {/* Study Details */}
-      <div className="study-details">
-        <div className="detail-item">
-          <strong>Study Type:</strong> {article.studyDetails.studyType.replace(/_/g, ' ')}
+      {article.studyDetails && (
+        <div className="study-details">
+          {article.studyDetails.studyType && (
+            <div className="detail-item">
+              <strong>Study Type:</strong> {article.studyDetails.studyType.replace(/_/g, ' ')}
+            </div>
+          )}
+          {article.studyDetails.sampleSize && (
+            <div className="detail-item">
+              <strong>Sample Size:</strong> {article.studyDetails.sampleSize} participants
+            </div>
+          )}
+          {article.studyDetails.statisticalSignificance && (
+            <div className="detail-item">
+              <strong>Statistical Significance:</strong> {article.studyDetails.statisticalSignificance}
+            </div>
+          )}
         </div>
-        <div className="detail-item">
-          <strong>Sample Size:</strong> {article.studyDetails.sampleSize} participants
-        </div>
-        {article.studyDetails.statisticalSignificance && (
-          <div className="detail-item">
-            <strong>Statistical Significance:</strong> {article.studyDetails.statisticalSignificance}
-          </div>
-        )}
-      </div>
+      )}
 
-      {/* Expand/Collapse Button */}
-      {onToggleExpand && (
-        <button 
-          onClick={onToggleExpand}
-          className="expand-btn"
-          aria-label={isExpanded ? 'Show less' : 'Show more details'}
-        >
-          {isExpanded ? 'Show Less' : 'Show More'}
-        </button>
+      {/* Action Buttons */}
+      {onReadFullArticle && article.content && (
+        <div className="article-actions" style={{ marginTop: '16px' }}>
+          <button 
+            onClick={() => onReadFullArticle(article)}
+            className="read-full-btn"
+            aria-label={`Read full article: ${article.title}`}
+            style={{
+              padding: '8px 16px',
+              fontSize: '14px',
+              border: '1px solid #3b82f6',
+              borderRadius: '6px',
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              cursor: 'pointer'
+            }}
+          >
+            📖 Read Full Article
+          </button>
+        </div>
       )}
       
       {/* Reading Time */}
-      <div className="reading-time">
-        📖 {article.readingTime} min read
-      </div>
+      {article.readingTime && (
+        <div className="reading-time" style={{ marginTop: '12px', fontSize: '14px', color: '#6b7280' }}>
+          📖 {article.readingTime} min read
+        </div>
+      )}
     </div>
   );
 };

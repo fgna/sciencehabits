@@ -207,7 +207,6 @@ export function HabitsView() {
             <Card>
               <CardContent>
                 <div className="text-center py-8">
-                  <div className="text-4xl mb-4">🎯</div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">No Custom Habits Yet</h3>
                   <p className="text-gray-600 mb-4">
                     Create personalized habits tailored to your specific needs and goals.
