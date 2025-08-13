@@ -3,6 +3,7 @@ import { User } from '../../types';
 import { Button, Card, CardContent } from '../ui';
 import { useUserStore } from '../../stores/userStore';
 import { Goal, getAvailableGoalsForProfile } from '../../services/goalsService';
+import { PersonalizationDepthSettings } from '../personalization/PersonalizationDepthSettings';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -274,6 +275,14 @@ export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
                   </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Personalization Settings */}
+          <Card>
+            <CardContent>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">AI Personalization</h3>
+              <PersonalizationDepthSettings userId={user.id} />
             </CardContent>
           </Card>
 

@@ -5,21 +5,9 @@ import { useUserStore } from '../../stores/userStore';
 import { Habit, HabitProgress } from '../../types';
 import { smartSchedulingService, SmartSchedule, HabitStack } from '../../services/smartSchedulingService';
 
-interface SmartDailyDashboardProps {
-  habits: Habit[];
-  progress: HabitProgress[];
-  onToggleHabit: (habitId: string) => void;
-  onEditHabit?: (habitId: string) => void;
-}
-
-export function SmartDailyDashboard({ 
-  habits, 
-  progress, 
-  onToggleHabit, 
-  onEditHabit 
-}: SmartDailyDashboardProps) {
+export function SmartDailyDashboard() {
   const { animationsEnabled, emotionalDesign } = useUIPreferencesStore();
-  const { currentUser } = useUserStore();
+  const { currentUser, userHabits, userProgress, toggleCompletion } = useUserStore();
   
   const [smartSchedule, setSmartSchedule] = useState<SmartSchedule | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -28,7 +16,7 @@ export function SmartDailyDashboard({
 
   useEffect(() => {
     loadSmartSchedule();
-  }, [selectedDate, currentUser, habits]);
+  }, [selectedDate, currentUser, userHabits, userProgress]);
 
   const loadSmartSchedule = async () => {
     if (!currentUser) return;
@@ -37,8 +25,8 @@ export function SmartDailyDashboard({
       setIsLoading(true);
       const schedule = await smartSchedulingService.generateSmartSchedule(
         currentUser,
-        habits,
-        progress,
+        userHabits,
+        userProgress,
         selectedDate
       );
       setSmartSchedule(schedule);
@@ -48,9 +36,19 @@ export function SmartDailyDashboard({
       setIsLoading(false);
     }
   };
+  
+  const onToggleHabit = (habitId: string) => {
+    const today = new Date().toISOString().split('T')[0];
+    toggleCompletion(habitId, today);
+  };
+  
+  const onEditHabit = (habitId: string) => {
+    // TODO: Implement edit habit functionality
+    console.log('Edit habit:', habitId);
+  };
 
   const getHabitProgress = (habitId: string) => {
-    return progress.find(p => p.habitId === habitId);
+    return userProgress.find(p => p.habitId === habitId);
   };
 
   const isHabitCompleted = (habitId: string) => {
@@ -67,7 +65,7 @@ export function SmartDailyDashboard({
   };
 
   const renderHabitStack = (stack: HabitStack) => {
-    const stackHabits = habits.filter(h => stack.habits.includes(h.id));
+    const stackHabits = userHabits.filter(h => stack.habits.includes(h.id));
     const completedCount = stackHabits.filter(h => isHabitCompleted(h.id)).length;
     const progressPercentage = (completedCount / stackHabits.length) * 100;
 
@@ -145,7 +143,7 @@ export function SmartDailyDashboard({
     if (!smartSchedule) return null;
 
     const stackedHabitIds = new Set(smartSchedule.stacks.flatMap(stack => stack.habits));
-    const flexibleHabits = habits.filter(h => !stackedHabitIds.has(h.id));
+    const flexibleHabits = userHabits.filter(h => !stackedHabitIds.has(h.id));
 
     if (flexibleHabits.length === 0) return null;
 
@@ -179,7 +177,7 @@ export function SmartDailyDashboard({
   const renderAllHabits = () => {
     return (
       <div className="space-y-4">
-        {habits.map(habit => (
+        {userHabits.map(habit => (
           <EnhancedHabitCard
             key={habit.id}
             habit={habit}
@@ -323,19 +321,19 @@ export function SmartDailyDashboard({
         <div className="grid grid-cols-3 gap-6">
           <div className="text-center">
             <div className="text-2xl font-bold text-compassion-700">
-              {habits.filter(h => isHabitCompleted(h.id)).length}
+              {userHabits.filter(h => isHabitCompleted(h.id)).length}
             </div>
             <div className="text-sm text-compassion-600">Completed</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-progress-700">
-              {Math.round((habits.filter(h => isHabitCompleted(h.id)).length / habits.length) * 100)}%
+              {Math.round((userHabits.filter(h => isHabitCompleted(h.id)).length / userHabits.length) * 100)}%
             </div>
             <div className="text-sm text-progress-600">Success Rate</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-research-700">
-              {habits.reduce((sum, h) => sum + (h.timeMinutes || 10), 0)}
+              {userHabits.reduce((sum, h) => sum + (h.timeMinutes || 10), 0)}
             </div>
             <div className="text-sm text-research-600">Minutes Planned</div>
           </div>

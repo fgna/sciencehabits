@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { OnboardingContainer } from './components/onboarding/index';
-import { DashboardLayout, TodayView } from './components/dashboard';
+import { DashboardLayout } from './components/dashboard';
+import { SmartDailyDashboard } from './components/dashboard/SmartDailyDashboard';
 import { initializeDatabase } from './services/storage/database';
 import { useUserStore } from './stores/userStore';
 import { ResearchProvider } from './contexts/ResearchContext';
@@ -73,7 +74,7 @@ function App() {
           user={currentUser}
           onSignOut={handleResetOnboarding}
         >
-          <TodayView />
+          <SmartDailyDashboard />
         </DashboardLayout>
       </ReminderProvider>
     </ResearchProvider>

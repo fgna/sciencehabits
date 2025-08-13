@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { ProgressIndicator } from './ProgressIndicator';
+import { OnboardingProgressTracker } from './OnboardingProgressTracker';
 import { WelcomeStep } from './WelcomeStep';
 import { ProgressiveGoalSelector } from './ProgressiveGoalSelector';
 import { PreferencesStep } from './PreferencesStep';
@@ -105,7 +106,10 @@ export function OnboardingContainer({ onComplete }: OnboardingContainerProps) {
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {currentStep !== 'welcome' && currentStep !== 'complete' && (
-          <ProgressIndicator currentStep={currentStep} />
+          <div className="space-y-4">
+            <ProgressIndicator currentStep={currentStep} />
+            <OnboardingProgressTracker />
+          </div>
         )}
         
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">

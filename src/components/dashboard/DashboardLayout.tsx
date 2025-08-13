@@ -7,6 +7,9 @@ import { ResearchArticles } from '../research';
 import { ContentLoaderDemo } from '../admin/ContentLoaderDemo';
 import { ReminderIndicator } from '../reminders/ReminderIndicator';
 import { RecoveryDashboard } from '../recovery';
+import { SmartDailyDashboard } from './SmartDailyDashboard';
+import { EnhancedProgressVisualization } from '../visualization/EnhancedProgressVisualization';
+import { MotivationalMessagingSystem } from '../motivation/MotivationalMessagingSystem';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -231,14 +234,22 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
         )}
       </header>
 
+      {/* Motivational Messaging System */}
+      <MotivationalMessagingSystem />
+
       {/* Main Content */}
       <main className="flex-1">
-        {/* Tab content - for now just show children for 'today' tab */}
+        {/* Tab content - Show children for today or SmartDailyDashboard */}
         {activeTab === 'today' && children}
         
         {activeTab === 'habits' && <HabitsView />}
         
-        {activeTab === 'progress' && <AnalyticsView />}
+        {activeTab === 'progress' && (
+          <div className="space-y-6">
+            <EnhancedProgressVisualization />
+            <AnalyticsView />
+          </div>
+        )}
         
         {activeTab === 'recovery' && <RecoveryDashboard />}
         
