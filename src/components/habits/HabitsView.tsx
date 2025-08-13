@@ -1,13 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, CardHeader, CardContent } from '../ui';
+import { Button, Card, CardContent } from '../ui';
 import { CreateHabitForm } from './CreateHabitForm';
 import { useHabitStore } from '../../stores/habitStore';
 import { useUserStore } from '../../stores/userStore';
 import { HabitChecklistCard } from '../dashboard/HabitChecklistCard';
+import { HabitResearchModal } from '../research/HabitResearchModal';
 import { Habit } from '../../types';
 
 export function HabitsView() {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [researchModal, setResearchModal] = useState<{
+    isOpen: boolean;
+    habitId: string;
+    habitTitle: string;
+    researchIds: string[];
+  }>({
+    isOpen: false,
+    habitId: '',
+    habitTitle: '',
+    researchIds: []
+  });
   
   const { 
     customHabits, 
@@ -52,6 +64,18 @@ export function HabitsView() {
       if (success) {
         await refreshProgress();
       }
+    }
+  };
+
+  const handleViewResearch = (habitId: string) => {
+    const habit = userHabits.find(h => h.id === habitId);
+    if (habit) {
+      setResearchModal({
+        isOpen: true,
+        habitId: habit.id,
+        habitTitle: habit.title,
+        researchIds: habit.researchIds || []
+      });
     }
   };
 
@@ -133,6 +157,7 @@ export function HabitsView() {
                   key={habit.id} 
                   habit={habit}
                   progress={userProgress.find(p => p.habitId === habit.id)}
+                  onViewResearch={handleViewResearch}
                 />
               ))}
             </div>
@@ -181,6 +206,7 @@ export function HabitsView() {
                   showActions
                   onEdit={() => handleEdit(habit)}
                   onDelete={() => handleDelete(habit)}
+                  onViewResearch={handleViewResearch}
                 />
               ))}
             </div>
@@ -195,6 +221,15 @@ export function HabitsView() {
           onSuccess={handleCreateSuccess}
         />
       )}
+      
+      {/* Research Modal */}
+      <HabitResearchModal
+        isOpen={researchModal.isOpen}
+        onClose={() => setResearchModal({ ...researchModal, isOpen: false })}
+        habitId={researchModal.habitId}
+        habitTitle={researchModal.habitTitle}
+        researchIds={researchModal.researchIds}
+      />
     </div>
   );
 }

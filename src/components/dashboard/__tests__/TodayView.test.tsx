@@ -9,7 +9,7 @@ import {
   createMockProgress,
   mockDate,
   waitForLoadingToFinish 
-} from '../../__tests__/utils/testUtils';
+} from '../../../__tests__/utils/testUtils';
 import { useUserStore } from '../../../stores/userStore';
 import { useCurrentDate } from '../../../hooks/useCurrentDate';
 
@@ -61,6 +61,7 @@ describe('TodayView Component', () => {
     
     // Mock current date
     mockUseCurrentDate.mockReturnValue({
+      currentDate: new Date('2023-01-15'),
       today: '2023-01-15',
       todayDisplay: 'Monday, January 15',
       isToday: jest.fn(date => date === '2023-01-15')

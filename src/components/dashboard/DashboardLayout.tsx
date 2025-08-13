@@ -11,6 +11,10 @@ import { SmartDailyDashboard } from './SmartDailyDashboard';
 import { EnhancedProgressVisualization } from '../visualization/EnhancedProgressVisualization';
 import { MotivationalMessagingSystem } from '../motivation/MotivationalMessagingSystem';
 import { useUserStore } from '../../stores/userStore';
+import { useUIPreferencesStore } from '../../stores/uiPreferencesStore';
+import { addSampleCompletionsToExistingProgress } from '../../utils/devDataGenerator';
+import { SimplifiedDashboard } from './SimplifiedDashboard';
+import { CleanNavigation } from '../navigation/CleanNavigation';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -22,11 +26,93 @@ type DashboardTab = 'today' | 'habits' | 'progress' | 'recovery' | 'research' | 
 
 export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutProps) {
   const [activeTab, setActiveTab] = useState<DashboardTab>('today');
+  const [simplifiedTab, setSimplifiedTab] = useState<'today' | 'habits'>('today');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   
   // Get data from store for components that need it
-  const { userHabits, userProgress } = useUserStore();
+  const { userHabits, userProgress, refreshProgress } = useUserStore();
+  const { layoutMode, setLayoutMode } = useUIPreferencesStore();
+
+  // Dev function to add sample progress data
+  const addSampleData = async () => {
+    if (process.env.NODE_ENV !== 'development') return;
+    
+    try {
+      console.log('🔧 Adding sample completions to existing progress...');
+      
+      if (userProgress.length === 0) {
+        console.log('No existing progress found. Please add some habits first.');
+        return;
+      }
+
+      const { dbHelpers } = await import('../../services/storage/database');
+      
+      // Add sample completions for the last 14 days to existing habits
+      const today = new Date();
+      const completionDates: string[] = [];
+      
+      // Generate a proper streak: complete today and the last few days consecutively
+      // Plus some scattered completions in the past
+      
+      // Add today and yesterday for sure (to create current streak)
+      completionDates.push(today.toISOString().split('T')[0]);
+      
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      completionDates.push(yesterday.toISOString().split('T')[0]);
+      
+      // Add 3 more consecutive days for a 5-day current streak
+      for (let i = 2; i <= 4; i++) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        completionDates.push(date.toISOString().split('T')[0]);
+      }
+      
+      // Add some random completions in the past 2 weeks (for longest streak calculation)
+      for (let i = 5; i < 14; i++) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        if (Math.random() < 0.6) { // 60% chance for older dates
+          completionDates.push(date.toISOString().split('T')[0]);
+        }
+      }
+
+      console.log(`Adding ${completionDates.length} sample completions to ${userProgress.length} habits...`);
+      console.log('Sample completion dates:', completionDates);
+
+      // Add completions to all existing habits
+      for (const progress of userProgress) {
+        console.log(`Processing habit ${progress.habitId}, existing completions:`, progress.completions.length);
+        
+        let addedCount = 0;
+        for (const date of completionDates) {
+          // Check if completion already exists
+          if (!progress.completions.includes(date)) {
+            try {
+              await dbHelpers.markHabitComplete(progress.userId, progress.habitId, date);
+              addedCount++;
+              console.log(`✓ Added completion for ${progress.habitId} on ${date}`);
+            } catch (error) {
+              console.warn(`Failed to add completion for ${progress.habitId} on ${date}:`, error);
+            }
+          } else {
+            console.log(`Skipping existing completion for ${progress.habitId} on ${date}`);
+          }
+        }
+        console.log(`Added ${addedCount} new completions for ${progress.habitId}`);
+      }
+      
+      // Refresh the store to get updated data
+      console.log('Refreshing progress data...');
+      await refreshProgress();
+      
+      // Log the updated progress
+      console.log('✅ Sample data added! Check Progress Visualization to see updated streaks.');
+    } catch (error) {
+      console.error('❌ Failed to add sample data:', error);
+    }
+  };
 
   // Listen for navigation events
   useEffect(() => {
@@ -109,6 +195,47 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
     });
   }
 
+  // If simplified mode is enabled, render the simplified dashboard
+  if (layoutMode === 'simplified') {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <CleanNavigation 
+          activeTab={simplifiedTab} 
+          onTabChange={setSimplifiedTab} 
+        />
+        
+        <main className="flex-1">
+          {simplifiedTab === 'today' && <SimplifiedDashboard />}
+          {simplifiedTab === 'habits' && <HabitsView />}
+        </main>
+        
+        {/* Settings toggle - temporary for development */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="fixed bottom-4 right-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setLayoutMode('enhanced')}
+              className="bg-white shadow-lg"
+              title="Switch to Enhanced Layout"
+            >
+              🔄 Enhanced
+            </Button>
+          </div>
+        )}
+        
+        {/* Profile Modal */}
+        {user && (
+          <ProfileModal 
+            isOpen={isProfileOpen} 
+            onClose={() => setIsProfileOpen(false)} 
+            user={user} 
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -159,6 +286,30 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
               <ReminderIndicator className="hidden sm:flex" />
               
               <div className="flex items-center space-x-2">
+                {/* Dev-only buttons */}
+                {process.env.NODE_ENV === 'development' && (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={addSampleData}
+                      className="hidden sm:inline-flex bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100"
+                      title="Add sample habit completions for testing"
+                    >
+                      📊 Sample Data
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setLayoutMode('simplified')}
+                      className="hidden sm:inline-flex bg-green-50 text-green-600 border-green-200 hover:bg-green-100"
+                      title="Switch to Simplified Layout"
+                    >
+                      🎯 Simplified
+                    </Button>
+                  </>
+                )}
+                
                 <Button
                   variant="outline"
                   size="sm"

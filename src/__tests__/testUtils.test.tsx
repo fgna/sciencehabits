@@ -18,7 +18,7 @@ describe('Test Utilities', () => {
     expect(user.id).toBeDefined();
     expect(user.name).toBe('Test User');
     expect(user.goals).toEqual(['reduce_stress', 'improve_sleep']);
-    expect(user.availableTime).toBe('10-15 minutes');
+    expect(user.dailyMinutes).toBe(15);
   });
 
   test('createMockUser should accept custom overrides', () => {
@@ -30,7 +30,7 @@ describe('Test Utilities', () => {
     expect(customUser.name).toBe('Custom User');
     expect(customUser.goals).toEqual(['exercise', 'nutrition']);
     // Other properties should use defaults
-    expect(customUser.availableTime).toBe('10-15 minutes');
+    expect(customUser.dailyMinutes).toBe(15);
   });
 
   test('createMockHabit should create valid habit object', () => {

@@ -1,0 +1,61 @@
+import React from 'react';
+
+interface CleanNavigationProps {
+  activeTab: 'today' | 'habits';
+  onTabChange: (tab: 'today' | 'habits') => void;
+}
+
+export function CleanNavigation({ activeTab, onTabChange }: CleanNavigationProps) {
+  const tabs = [
+    {
+      key: 'today' as const,
+      label: 'Today',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      ),
+      description: 'Focus on today\'s habits'
+    },
+    {
+      key: 'habits' as const,
+      label: 'My Habits',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+        </svg>
+      ),
+      description: 'Manage your habit library'
+    }
+  ];
+
+  return (
+    <nav className="bg-white border-b border-gray-200" role="tablist" aria-label="Main navigation">
+      <div className="max-w-md mx-auto px-4">
+        <div className="flex">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              role="tab"
+              aria-selected={activeTab === tab.key}
+              aria-controls={`${tab.key}-panel`}
+              tabIndex={activeTab === tab.key ? 0 : -1}
+              onClick={() => onTabChange(tab.key)}
+              className={`
+                flex-1 flex flex-col items-center py-4 px-2 text-sm font-medium transition-colors duration-200
+                ${activeTab === tab.key
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+                }
+              `}
+              title={tab.description}
+            >
+              <span className="mb-1">{tab.icon}</span>
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </nav>
+  );
+}

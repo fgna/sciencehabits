@@ -47,6 +47,43 @@ export function EnhancedProgressVisualization({ habits, progress, user, timefram
   const { animationsEnabled, emotionalDesign } = useUIPreferencesStore();
   const [activeView, setActiveView] = useState<'streaks' | 'heatmap' | 'categories' | 'trends'>('streaks');
 
+  // Debug logging to see what data we're receiving
+  const today = new Date().toISOString().split('T')[0];
+  const debugInfo = {
+    habitsCount: habits.length,
+    progressCount: progress.length,
+    userId: user.id,
+    timeframe,
+    today,
+    habits: habits.map(h => ({ id: h.id, title: h.title })),
+    progress: progress.map(p => ({ 
+      habitId: p.habitId, 
+      currentStreak: p.currentStreak, 
+      longestStreak: p.longestStreak,
+      completionsCount: p.completions.length,
+      completions: p.completions.slice(-5), // Show last 5 completions
+      hasCompletionToday: p.completions.includes(today),
+      lastCompletion: p.completions[p.completions.length - 1]
+    }))
+  };
+  
+  console.log('🔍 Progress Visualization Debug:', debugInfo);
+  
+  // Additional debugging for streak calculation issues
+  if (progress.length > 0) {
+    console.log('🔍 Streak Analysis:');
+    progress.forEach(p => {
+      const sortedCompletions = [...p.completions].sort();
+      console.log(`Habit ${p.habitId}:`, {
+        completions: sortedCompletions,
+        hasToday: sortedCompletions.includes(today),
+        currentStreak: p.currentStreak,
+        longestStreak: p.longestStreak,
+        totalDays: p.totalDays
+      });
+    });
+  }
+
   // Calculate streak visualizations
   const streakData = useMemo((): StreakVisualization[] => {
     return habits.map(habit => {

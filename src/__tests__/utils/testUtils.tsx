@@ -26,7 +26,7 @@ export const createMockUser = (overrides = {}) => ({
   name: 'Test User',
   createdAt: new Date().toISOString(),
   goals: ['reduce_stress', 'improve_sleep'],
-  availableTime: '10-15 minutes',
+  dailyMinutes: 15,
   preferredTime: 'morning' as const,
   lifestyle: 'professional' as const,
   language: 'en' as const,

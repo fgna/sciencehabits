@@ -4,9 +4,9 @@ import { render, createMockUser, createMockHabit, createMockProgress } from '../
 import { useUserStore } from '../../stores/userStore';
 import { useCurrentDate } from '../../hooks/useCurrentDate';
 import { TodayView } from '../../components/dashboard/TodayView';
-import { MyHabitsView } from '../../components/dashboard/MyHabitsView';
+import { HabitsView } from '../../components/habits/HabitsView';
 import { ResearchArticles } from '../../components/research/ResearchArticles';
-import { ProgressDashboard } from '../../components/progress/ProgressDashboard';
+import { AnalyticsView } from '../../components/analytics/AnalyticsView';
 
 // Mock the stores and hooks
 jest.mock('../../stores/userStore');
@@ -52,6 +52,7 @@ describe('Integration Tests: User Flows', () => {
     jest.clearAllMocks();
     
     mockUseCurrentDate.mockReturnValue({
+      currentDate: new Date('2023-01-15'),
       today: '2023-01-15',
       todayDisplay: 'Sunday, January 15',
       isToday: jest.fn(date => date === '2023-01-15')
@@ -87,7 +88,7 @@ describe('Integration Tests: User Flows', () => {
         ...mockStoreFunctions
       });
 
-      render(<MyHabitsView />);
+      render(<HabitsView />);
 
       // Should show empty state with suggestions
       expect(screen.getByText('No habits yet')).toBeInTheDocument();
@@ -120,7 +121,7 @@ describe('Integration Tests: User Flows', () => {
       });
 
       // Trigger re-render
-      render(<MyHabitsView />);
+      render(<HabitsView />);
 
       // Should now show the added habit
       expect(screen.getByText('5-Minute Breathing Exercise')).toBeInTheDocument();
@@ -137,7 +138,7 @@ describe('Integration Tests: User Flows', () => {
         ...mockStoreFunctions
       });
 
-      render(<MyHabitsView />);
+      render(<HabitsView />);
 
       // Should show all habits grouped by category
       expect(screen.getByText('Stress Management')).toBeInTheDocument();
@@ -323,7 +324,7 @@ describe('Integration Tests: User Flows', () => {
     });
 
     test('user can view comprehensive progress statistics', () => {
-      render(<ProgressDashboard />);
+      render(<AnalyticsView />);
 
       // Should show overall statistics
       expect(screen.getByTestId('total-completions')).toHaveTextContent('43');
@@ -340,7 +341,7 @@ describe('Integration Tests: User Flows', () => {
     });
 
     test('user can analyze habit performance trends', () => {
-      render(<ProgressDashboard />);
+      render(<AnalyticsView />);
 
       // Should show completion rate charts
       expect(screen.getByTestId('completion-rate-chart')).toBeInTheDocument();
@@ -361,7 +362,7 @@ describe('Integration Tests: User Flows', () => {
     });
 
     test('user can identify patterns and receive insights', () => {
-      render(<ProgressDashboard />);
+      render(<AnalyticsView />);
 
       // Should show insights section
       expect(screen.getByTestId('insights-section')).toBeInTheDocument();
@@ -513,7 +514,7 @@ describe('Integration Tests: User Flows', () => {
       });
 
       // Switch to Progress view
-      rerender(<ProgressDashboard />);
+      rerender(<AnalyticsView />);
 
       // Should show updated statistics
       expect(screen.getByTestId('total-completions')).toHaveTextContent('11');
@@ -555,7 +556,7 @@ describe('Integration Tests: User Flows', () => {
       });
 
       // Switch to My Habits view
-      rerender(<MyHabitsView />);
+      rerender(<HabitsView />);
 
       // Should show the newly added habit
       expect(screen.getByText('5-Minute Breathing Exercise')).toBeInTheDocument();
@@ -582,7 +583,7 @@ describe('Integration Tests: User Flows', () => {
       });
 
       // Start in My Habits view
-      const { rerender } = render(<MyHabitsView />);
+      const { rerender } = render(<HabitsView />);
 
       // Delete the habit
       fireEvent.click(screen.getByTestId('delete-habit-habit-1'));
@@ -607,7 +608,7 @@ describe('Integration Tests: User Flows', () => {
       expect(screen.getByText('No habits for today')).toBeInTheDocument();
 
       // Check Progress view
-      rerender(<ProgressDashboard />);
+      rerender(<AnalyticsView />);
       expect(screen.getByText('No progress data yet')).toBeInTheDocument();
     });
   });
@@ -657,10 +658,10 @@ describe('Integration Tests: User Flows', () => {
       const { rerender } = render(<TodayView />);
       expect(screen.getByTestId('loading-skeleton')).toBeInTheDocument();
 
-      rerender(<MyHabitsView />);
+      rerender(<HabitsView />);
       expect(screen.getByTestId('loading-skeleton')).toBeInTheDocument();
 
-      rerender(<ProgressDashboard />);
+      rerender(<AnalyticsView />);
       expect(screen.getByTestId('loading-skeleton')).toBeInTheDocument();
     });
   });

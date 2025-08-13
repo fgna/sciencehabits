@@ -8,10 +8,23 @@ import {
   TestWrapper 
 } from '../utils/testUtils';
 
+// Mock research context
+const mockResearchContext = {
+  articles: [],
+  studies: [],
+  loading: false,
+  error: null,
+  searchArticles: jest.fn(),
+  getArticleById: jest.fn(),
+  getArticlesByCategory: jest.fn(),
+  getRelatedArticles: jest.fn(),
+  loadArticles: jest.fn()
+};
+
 // Import existing components
 import { HabitChecklistCard } from '../../components/dashboard/HabitChecklistCard';
 import { Button } from '../../components/ui/Button';
-import { Card } from '../../components/ui/Card';
+import { Card, CardHeader, CardContent, CardFooter } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 
 // Extend Jest matchers
@@ -39,6 +52,11 @@ jest.mock('../../hooks/useCurrentDate', () => ({
     todayDisplay: 'Sunday, January 15',
     isToday: jest.fn(date => date === '2023-01-15')
   })
+}));
+
+jest.mock('../../contexts/ResearchContext', () => ({
+  useResearch: () => mockResearchContext,
+  ResearchProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>
 }));
 
 // Mock data
@@ -91,15 +109,15 @@ describe('Basic Accessibility Tests', () => {
       const { container } = render(
         <TestWrapper>
           <Card>
-            <Card.Header>
+            <CardHeader>
               <h2>Card Title</h2>
-            </Card.Header>
-            <Card.Content>
+            </CardHeader>
+            <CardContent>
               <p>This is card content with some text.</p>
-            </Card.Content>
-            <Card.Footer>
+            </CardContent>
+            <CardFooter>
               <Button variant="primary">Action</Button>
-            </Card.Footer>
+            </CardFooter>
           </Card>
         </TestWrapper>
       );
@@ -168,10 +186,9 @@ describe('Basic Accessibility Tests', () => {
           <HabitChecklistCard 
             habit={mockHabit} 
             progress={mockProgress}
-            isCompleted={false}
-            onComplete={jest.fn()}
-            showInstructions={true}
-            showDetails={true}
+            showActions={true}
+            onEdit={jest.fn()}
+            onDelete={jest.fn()}
           />
         </TestWrapper>
       );
@@ -185,11 +202,10 @@ describe('Basic Accessibility Tests', () => {
         <TestWrapper>
           <HabitChecklistCard 
             habit={mockHabit} 
-            progress={mockProgress}
-            isCompleted={true}
-            onComplete={jest.fn()}
-            showInstructions={true}
-            showDetails={true}
+            progress={{...mockProgress, completions: [new Date().toISOString().split('T')[0]]}}
+            showActions={true}
+            onEdit={jest.fn()}
+            onDelete={jest.fn()}
           />
         </TestWrapper>
       );
@@ -286,30 +302,42 @@ describe('Basic Accessibility Tests', () => {
     test('navigation elements should be accessible', async () => {
       const { container } = render(
         <TestWrapper>
-          <nav aria-label="Main navigation">
-            <ul role="tablist">
-              <li role="none">
-                <button 
-                  role="tab" 
-                  aria-selected="true" 
-                  aria-controls="today-panel"
-                  tabIndex={0}
-                >
-                  Today
-                </button>
-              </li>
-              <li role="none">
-                <button 
-                  role="tab" 
-                  aria-selected="false" 
-                  aria-controls="habits-panel"
-                  tabIndex={-1}
-                >
-                  My Habits
-                </button>
-              </li>
-            </ul>
-          </nav>
+          <div>
+            <nav aria-label="Main navigation">
+              <ul role="tablist">
+                <li role="none">
+                  <button 
+                    role="tab" 
+                    aria-selected="true" 
+                    aria-controls="today-panel"
+                    tabIndex={0}
+                  >
+                    Today
+                  </button>
+                </li>
+                <li role="none">
+                  <button 
+                    role="tab" 
+                    aria-selected="false" 
+                    aria-controls="habits-panel"
+                    tabIndex={-1}
+                  >
+                    My Habits
+                  </button>
+                </li>
+              </ul>
+            </nav>
+            
+            {/* Tab panels that the aria-controls reference */}
+            <div id="today-panel" role="tabpanel" aria-labelledby="today-tab">
+              <h2>Today's Habits</h2>
+              <p>Content for today's tab</p>
+            </div>
+            <div id="habits-panel" role="tabpanel" aria-labelledby="habits-tab" hidden>
+              <h2>My Habits</h2>
+              <p>Content for habits tab</p>
+            </div>
+          </div>
         </TestWrapper>
       );
 

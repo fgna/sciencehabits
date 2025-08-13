@@ -1,4 +1,6 @@
 // Basic test to verify Jest setup
+export {};
+
 describe('Basic Jest Setup', () => {
   test('should run basic math test', () => {
     expect(2 + 2).toBe(4);

@@ -11,9 +11,10 @@ interface HabitChecklistCardProps {
   showActions?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
+  onViewResearch?: (habitId: string) => void;
 }
 
-export function HabitChecklistCard({ habit, progress, showActions, onEdit, onDelete }: HabitChecklistCardProps) {
+export function HabitChecklistCard({ habit, progress, showActions, onEdit, onDelete, onViewResearch }: HabitChecklistCardProps) {
   const { updateUserProgress } = useUserStore();
   const { today, isToday } = useCurrentDate();
   const [isCompleting, setIsCompleting] = useState(false);
@@ -159,7 +160,7 @@ export function HabitChecklistCard({ habit, progress, showActions, onEdit, onDel
         />
         
         {/* Enhanced details */}
-        <HabitEnhancedDetails habit={habit} isCompleted={isCompletedToday} />
+        <HabitEnhancedDetails habit={habit} isCompleted={isCompletedToday} onViewResearch={onViewResearch} />
       </div>
     </Card>
   );
@@ -210,9 +211,10 @@ function HabitInstructions({ instructions, isCompleted }: HabitInstructionsProps
 interface HabitEnhancedDetailsProps {
   habit: Habit;
   isCompleted: boolean;
+  onViewResearch?: (habitId: string) => void;
 }
 
-function HabitEnhancedDetails({ habit, isCompleted }: HabitEnhancedDetailsProps) {
+function HabitEnhancedDetails({ habit, isCompleted, onViewResearch }: HabitEnhancedDetailsProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { getRelatedArticles } = useResearch();
   
@@ -291,7 +293,7 @@ function HabitEnhancedDetails({ habit, isCompleted }: HabitEnhancedDetailsProps)
           )}
 
           {/* Research Links */}
-          <ResearchLinksSection habit={habit} />
+          <ResearchLinksSection habit={habit} onViewResearch={onViewResearch} />
         </div>
       )}
     </div>
@@ -300,9 +302,10 @@ function HabitEnhancedDetails({ habit, isCompleted }: HabitEnhancedDetailsProps)
 
 interface ResearchLinksSectionProps {
   habit: Habit;
+  onViewResearch?: (habitId: string) => void;
 }
 
-function ResearchLinksSection({ habit }: ResearchLinksSectionProps) {
+function ResearchLinksSection({ habit, onViewResearch }: ResearchLinksSectionProps) {
   const { getRelatedArticles } = useResearch();
   const relatedArticles = getRelatedArticles(habit.id);
 
@@ -339,11 +342,15 @@ function ResearchLinksSection({ habit }: ResearchLinksSectionProps) {
               <div className="flex-1">
                 <button 
                   onClick={() => {
-                    // Scroll to research tab and select this article
-                    const event = new CustomEvent('showResearchArticle', { 
-                      detail: { articleId: article.id } 
-                    });
-                    window.dispatchEvent(event);
+                    if (onViewResearch) {
+                      onViewResearch(habit.id);
+                    } else {
+                      // Fallback to old event system
+                      const event = new CustomEvent('showResearchArticle', { 
+                        detail: { articleId: article.id } 
+                      });
+                      window.dispatchEvent(event);
+                    }
                   }}
                   className="text-blue-600 hover:text-blue-700 hover:underline text-left"
                 >
@@ -355,7 +362,15 @@ function ResearchLinksSection({ habit }: ResearchLinksSectionProps) {
               </div>
             </div>
           ))}
-          {relatedArticles.length > 2 && (
+          {relatedArticles.length > 2 && onViewResearch && (
+            <button
+              onClick={() => onViewResearch(habit.id)}
+              className="text-xs text-blue-600 hover:text-blue-700 hover:underline ml-3"
+            >
+              +{relatedArticles.length - 2} more research articles
+            </button>
+          )}
+          {relatedArticles.length > 2 && !onViewResearch && (
             <div className="text-xs text-gray-500 ml-3">
               +{relatedArticles.length - 2} more in Research tab
             </div>
