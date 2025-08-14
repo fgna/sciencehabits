@@ -62,7 +62,7 @@ export function ResearchArticles() {
     };
   }, [articles]);
 
-  const getCategoryColor = (category: string) => {
+  const getCategoryColor = (category: string | undefined) => {
     const colors = {
       nutritional_supplementation: 'bg-green-100 text-green-800',
       cognitive_enhancement: 'bg-blue-100 text-blue-800',
@@ -70,7 +70,7 @@ export function ResearchArticles() {
       sleep_optimization: 'bg-indigo-100 text-indigo-800',
       default: 'bg-gray-100 text-gray-800'
     };
-    return colors[category as keyof typeof colors] || colors.default;
+    return colors[(category || '') as keyof typeof colors] || colors.default;
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -94,11 +94,11 @@ export function ResearchArticles() {
         article.tags.some(tag => userGoals.some(goal => 
           goal.includes(tag) || tag.includes(goal.replace('_', ''))
         )) ||
-        // Check if article category relates to user goals
-        userGoals.some(goal => 
+        // Check if article category relates to user goals (if category exists)
+        (article.category && userGoals.some(goal => 
           article.category.includes(goal.replace('_', '')) || 
           goal.includes(article.category)
-        ) ||
+        )) ||
         // Check if article is about habits the user has or could have
         article.relatedHabits.length > 0; // For now, include articles with related habits
       
@@ -291,7 +291,7 @@ export function ResearchArticles() {
 interface ArticleCardProps {
   article: ResearchArticle;
   onReadMore: () => void;
-  getCategoryColor: (category: string) => string;
+  getCategoryColor: (category: string | undefined) => string;
   getDifficultyColor: (difficulty: string) => string;
 }
 
@@ -303,7 +303,7 @@ function ArticleCard({ article, onReadMore, getCategoryColor, getDifficultyColor
           {/* Header with badges */}
           <div className="flex flex-wrap items-center gap-2 mb-4">
             <span className={`text-xs px-2 py-1 rounded-full font-medium ${getCategoryColor(article.category)}`}>
-              {article.category.replace('_', ' ')}
+              {article.category?.replace('_', ' ') || 'Uncategorized'}
             </span>
             <span className={`text-xs px-2 py-1 rounded-full font-medium ${getDifficultyColor(article.difficulty)}`}>
               {article.difficulty}
@@ -384,7 +384,7 @@ function ArticleDetailView({ article, onBack }: ArticleDetailViewProps) {
         <div className="mb-8">
           <div className="flex flex-wrap items-center gap-2 mb-4">
             <span className="text-xs px-2 py-1 rounded-full font-medium bg-blue-100 text-blue-800">
-              {article.category.replace('_', ' ')}
+              {article.category?.replace('_', ' ') || 'Uncategorized'}
             </span>
             <span className="text-xs px-2 py-1 rounded-full font-medium bg-green-100 text-green-800">
               {article.difficulty}
