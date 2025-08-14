@@ -1,7 +1,7 @@
 import React from 'react';
 import { Habit } from '../../types';
 import { Progress } from '../../types';
-import '../../styles/CleanHabitCard.css';
+import { Card } from './Card';
 
 interface CleanHabitCardProps {
   habit: Habit;
@@ -25,108 +25,74 @@ export const CleanHabitCard: React.FC<CleanHabitCardProps> = ({
   onDelete
 }) => {
   const hasResearch = habit.researchIds && habit.researchIds.length > 0;
-  const currentStreak = progress?.currentStreak || 0;
   
   return (
-    <div className="clean-habit-card">
-      {/* Header Row */}
-      <div className="habit-header">
-        <div className="habit-title-section">
-          {hasResearch && !habit.isCustom && (
-            <span className="research-badge" aria-label="Research verified">
-              🔬
-            </span>
-          )}
-          <h3 
-            className="habit-title"
-            id={`habit-title-${habit.id}`}
-          >
-            {habit.title}
-          </h3>
-        </div>
-        
-        <button 
-          onClick={() => onComplete(habit.id)}
-          className={`completion-btn ${isCompleted ? 'completed' : 'pending'}`}
-          aria-label={`${isCompleted ? 'Mark incomplete' : 'Complete'} ${habit.title}`}
-          aria-pressed={isCompleted}
-        >
-          {habit.isCustom ? (isCompleted ? 'Done' : 'Start') : (isCompleted ? '✓' : '○')}
-        </button>
-      </div>
-
-      {/* Description */}
-      <p className="habit-description">
-        {habit.description}
-      </p>
-
-      {/* Metadata Row */}
-      <div className="habit-metadata">
-        <span className="time-estimate">
-          {habit.isCustom ? '' : '⏱ '}{habit.timeMinutes} min
-        </span>
-        
-        {currentStreak > 0 && (
-          <span className="streak-display">
-            {habit.isCustom ? '' : '🔥 '}{currentStreak} days
-          </span>
-        )}
-
-        {/* Effectiveness Score */}
-        {habit.effectivenessScore && (
-          <span className="effectiveness-score">
-            {habit.isCustom ? '' : '📈 '}{habit.effectivenessScore}/100
-          </span>
-        )}
-      </div>
-
-      {/* Action Row */}
-      <div className="habit-actions">
-        {/* Admin Actions for Custom Habits */}
-        {showActions && (
-          <div className="admin-actions">
-            {onEdit && (
+    <Card className={`transition-all ${isCompleted ? 'bg-green-50 border-green-200' : 'hover:shadow-md'}`}>
+      <div className="p-6">
+        <div className="flex items-center justify-between">
+          {/* Left side - Habit info */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center space-x-2 mb-1">
+              <h3 className={`text-lg font-semibold ${isCompleted ? 'text-green-900' : 'text-gray-900'}`}>
+                {habit.title}
+              </h3>
+            </div>
+            
+            {/* View Details link - small and subtle */}
+            {hasResearch && onViewResearch && (
               <button 
-                onClick={onEdit}
-                className="edit-btn secondary"
-                aria-label={`Edit ${habit.title}`}
+                onClick={() => onViewResearch(habit.id)}
+                className="text-xs text-blue-600 hover:text-blue-700 hover:underline"
               >
-                Edit
-              </button>
-            )}
-            {onDelete && (
-              <button 
-                onClick={onDelete}
-                className="delete-btn secondary"
-                aria-label={`Delete ${habit.title}`}
-              >
-                Delete
+                📚 View Details
               </button>
             )}
           </div>
-        )}
 
-        {/* Research and Completion Actions */}
-        <div className="habit-main-actions">
-          {hasResearch && onViewResearch && (
-            <button 
-              onClick={() => onViewResearch(habit.id)}
-              className="research-btn secondary"
-              aria-label={`View research for ${habit.title}`}
-            >
-              View Research
-            </button>
-          )}
-          
-          <button 
-            onClick={() => !isCompleted && onComplete(habit.id)}
-            disabled={isCompleted}
-            className="primary-action-btn"
-          >
-            {isCompleted ? 'Completed' : 'Start Habit'}
-          </button>
+          {/* Right side - Action button */}
+          <div className="ml-4 flex items-center space-x-2">
+            {/* Edit/Delete actions for custom habits */}
+            {showActions && (
+              <>
+                {onEdit && (
+                  <button
+                    onClick={onEdit}
+                    className="text-xs px-2 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded"
+                  >
+                    Edit
+                  </button>
+                )}
+                {onDelete && (
+                  <button
+                    onClick={onDelete}
+                    className="text-xs px-2 py-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded"
+                  >
+                    Delete
+                  </button>
+                )}
+              </>
+            )}
+            
+            {/* Completion status - matching Today page design */}
+            {isCompleted ? (
+              <div className="flex items-center space-x-2 text-green-600 bg-green-100 px-4 py-2 rounded-lg">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span className="text-sm font-medium">Done!</span>
+              </div>
+            ) : (
+              <button
+                onClick={() => onComplete(habit.id)}
+                className="w-8 h-8 rounded-full border-2 border-gray-300 hover:border-green-500 flex items-center justify-center transition-colors"
+                aria-label={`Complete ${habit.title}`}
+              >
+                <span className="text-gray-400 hover:text-green-500">○</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
