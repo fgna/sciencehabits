@@ -1,0 +1,150 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # Quick validation for PR
+  quick-checks:
+    name: Quick PR Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint check
+        run: npm run lint
+
+      - name: TypeScript check
+        run: npm run type-check
+
+      - name: Build check
+        run: npm run build
+
+      - name: Quick tests
+        run: npm test -- --testPathPattern="(basic|simple-a11y)" --watchAll=false
+
+  # PR size and complexity check
+  pr-analysis:
+    name: PR Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: PR Size Check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const additions = pr.additions;
+            const deletions = pr.deletions;
+            const changedFiles = pr.changed_files;
+
+            console.log(`PR Stats: +${additions} -${deletions} lines, ${changedFiles} files`);
+
+            let message = "## 📊 PR Analysis\n\n";
+            message += `**Size**: +${additions} -${deletions} lines across ${changedFiles} files\n\n`;
+
+            if (additions > 1000) {
+              message += "⚠️ **Large PR**: Consider breaking this into smaller PRs\n\n";
+            } else if (additions > 500) {
+              message += "📏 **Medium PR**: Good size for review\n\n";
+            } else {
+              message += "✅ **Small PR**: Great size for quick review\n\n";
+            }
+
+            // Check if PR affects critical files
+            const files = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number
+            });
+
+            const criticalFiles = files.data.filter(file => 
+              file.filename.includes('package.json') ||
+              file.filename.includes('tsconfig.json') ||
+              file.filename.includes('.github/workflows') ||
+              file.filename.includes('cypress.config')
+            );
+
+            if (criticalFiles.length > 0) {
+              message += "🔧 **Critical files changed**: Extra review needed\n";
+              criticalFiles.forEach(file => {
+                message += `- ${file.filename}\n`;
+              });
+            }
+
+            github.rest.issues.createComment({
+              issue_number: pr.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
+
+  # Auto-assign reviewers based on changed files
+  assign-reviewers:
+    name: Auto-assign Reviewers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Auto-assign reviewers
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            
+            // Get changed files
+            const files = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number
+            });
+
+            let reviewers = [];
+            
+            // Assign reviewers based on changed files
+            const changedFiles = files.data.map(f => f.filename);
+            
+            if (changedFiles.some(f => f.includes('components/'))) {
+              reviewers.push('frontend-team');
+            }
+            
+            if (changedFiles.some(f => f.includes('__tests__/') || f.includes('cypress/'))) {
+              reviewers.push('qa-team');
+            }
+            
+            if (changedFiles.some(f => f.includes('.github/workflows'))) {
+              reviewers.push('devops-team');
+            }
+
+            // Add accessibility expert if UI components changed
+            if (changedFiles.some(f => f.includes('components/ui/'))) {
+              reviewers.push('accessibility-team');
+            }
+
+            if (reviewers.length > 0) {
+              console.log(`Assigning reviewers: ${reviewers.join(', ')}`);
+              
+              github.rest.pulls.requestReviewers({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                team_reviewers: reviewers
+              });
+            }
