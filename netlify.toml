@@ -6,3 +6,16 @@
   from = "/*"
   to = "/index.html"
   status = 200
+  force = false
+
+# Ensure static assets are served correctly
+[[redirects]]
+  from = "/static/*"
+  to = "/static/:splat"
+  status = 200
+
+# Ensure data files are served correctly  
+[[redirects]]
+  from = "/data/*"
+  to = "/data/:splat"
+  status = 200

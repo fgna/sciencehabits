@@ -1,2 +1,7 @@
-# Netlify redirects file for React Router SPA
-/*    /index.html   200
+# Netlify redirects file for SPA
+# Serve static assets first
+/static/*  /static/:splat  200
+/data/*    /data/:splat    200
+
+# Fallback all other routes to index.html
+/*         /index.html     200
