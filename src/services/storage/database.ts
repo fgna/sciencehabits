@@ -1,11 +1,24 @@
 import Dexie, { Table } from 'dexie';
 import { User, Habit, Progress, ResearchStudy } from '../../types';
 
+// Offline queue item interface
+export interface OfflineQueueItem {
+  id: string;
+  type: 'HABIT_COMPLETION' | 'CUSTOM_HABIT' | 'PROGRESS_UPDATE' | 'HABIT_DELETION' | 'USER_UPDATE';
+  data: any;
+  timestamp: number;
+  retryCount: number;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  userId?: string;
+  lastError?: string;
+}
+
 export class ScienceHabitsDB extends Dexie {
   users!: Table<User, string>;
   habits!: Table<Habit, string>;
   progress!: Table<Progress, string>;
   research!: Table<ResearchStudy, string>;
+  offlineQueue!: Table<OfflineQueueItem, string>;
 
   constructor() {
     super('ScienceHabitsDB');
@@ -32,6 +45,15 @@ export class ScienceHabitsDB extends Dexie {
       progress: 'id, userId, habitId, dateStarted, currentStreak, longestStreak, lastCompletionDate, *completions',
       research: 'id, category, year, studyType, sampleSize, evidenceLevel, studyQuality, *habitRelevance'
     });
+
+    // Version 4: Offline queue support for service worker
+    this.version(4).stores({
+      users: 'id, name, createdAt, language, lifestyle, preferredTime, dailyMinutes',
+      habits: 'id, category, isCustom, difficulty, effectivenessScore, evidenceStrength, frequency.type, *goalTags, *lifestyleTags, *timeTags',
+      progress: 'id, userId, habitId, dateStarted, currentStreak, longestStreak, lastCompletionDate, *completions',
+      research: 'id, category, year, studyType, sampleSize, evidenceLevel, studyQuality, *habitRelevance',
+      offlineQueue: 'id, type, timestamp, priority, userId, retryCount'
+    });
   }
 }
 
@@ -42,7 +64,7 @@ export async function initializeDatabase() {
   try {
     // Check if we need to reload data (for enhanced data format)
     const currentVersion = localStorage.getItem('sciencehabits_data_version');
-    const expectedVersion = '3.0'; // Non-daily habit tracking support
+    const expectedVersion = '4.0'; // Offline queue support for service worker
     
     if (currentVersion !== expectedVersion) {
       console.log('Data version mismatch, clearing and reloading data...');
@@ -446,6 +468,67 @@ export const dbHelpers = {
       
       default:
         return progress.currentStreak;
+    }
+  },
+
+  // Offline Queue operations for service worker coordination
+  async addToOfflineQueue(item: Omit<OfflineQueueItem, 'id' | 'timestamp' | 'retryCount'>): Promise<string> {
+    const queueItem: OfflineQueueItem = {
+      id: crypto.randomUUID(),
+      timestamp: Date.now(),
+      retryCount: 0,
+      ...item
+    };
+
+    await db.offlineQueue.add(queueItem);
+    console.log('[DB] Added to offline queue:', queueItem.type, queueItem.id);
+    return queueItem.id;
+  },
+
+  async getOfflineQueue(): Promise<OfflineQueueItem[]> {
+    return await db.offlineQueue.orderBy('timestamp').toArray();
+  },
+
+  async removeFromOfflineQueue(itemId: string): Promise<void> {
+    await db.offlineQueue.delete(itemId);
+    console.log('[DB] Removed from offline queue:', itemId);
+  },
+
+  async updateOfflineQueueItem(itemId: string, updates: Partial<OfflineQueueItem>): Promise<void> {
+    await db.offlineQueue.update(itemId, updates);
+  },
+
+  async clearOfflineQueue(): Promise<void> {
+    await db.offlineQueue.clear();
+    console.log('[DB] Cleared offline queue');
+  },
+
+  async getOfflineQueueStats(): Promise<{ count: number; oldestTimestamp: number | null }> {
+    const items = await db.offlineQueue.toArray();
+    return {
+      count: items.length,
+      oldestTimestamp: items.length > 0 ? Math.min(...items.map(item => item.timestamp)) : null
+    };
+  },
+
+  // Enhanced habit completion with offline queue support
+  async markHabitCompleteWithOfflineSupport(userId: string, habitId: string, date?: string): Promise<void> {
+    const completionDate = date || new Date().toISOString().split('T')[0];
+
+    try {
+      // Try to mark complete immediately
+      await this.markHabitComplete(userId, habitId, completionDate);
+      console.log('[DB] Habit marked complete:', { userId, habitId, completionDate });
+    } catch (error) {
+      console.error('[DB] Failed to mark habit complete, queueing for offline sync:', error);
+      
+      // If it fails, add to offline queue
+      await this.addToOfflineQueue({
+        type: 'HABIT_COMPLETION',
+        data: { userId, habitId, date: completionDate },
+        priority: 'high',
+        userId
+      });
     }
   }
 };
