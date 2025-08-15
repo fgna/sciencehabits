@@ -34,10 +34,6 @@ export function TranslationDashboard() {
   const [selectedSeverity, setSelectedSeverity] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
-
   const loadDashboardData = async () => {
     setIsLoading(true);
     try {
@@ -56,6 +52,10 @@ export function TranslationDashboard() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
 
   const handleResolveAlert = async (alertId: string) => {
     try {
