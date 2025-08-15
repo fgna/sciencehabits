@@ -10,6 +10,16 @@ import { Habit } from '../../types';
 import { dbHelpers } from '../../services/storage/database';
 import { useUserStore } from '../../stores/userStore';
 
+interface Goal {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  tier: string;
+  category: string;
+  priority: number;
+}
+
 interface HabitBrowserProps {
   isOpen: boolean;
   onClose: () => void;
@@ -20,20 +30,22 @@ export function HabitBrowser({ isOpen, onClose, currentUserHabits }: HabitBrowse
   const [availableHabits, setAvailableHabits] = useState<Habit[]>([]);
   const [filteredHabits, setFilteredHabits] = useState<Habit[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedGoal, setSelectedGoal] = useState<string>('all');
   const [error, setError] = useState<string | null>(null);
+  const [userGoals, setUserGoals] = useState<Goal[]>([]);
   
   const { currentUser, refreshProgress } = useUserStore();
 
   useEffect(() => {
     if (isOpen) {
       loadAvailableHabits();
+      loadUserGoals();
     }
   }, [isOpen]);
 
   useEffect(() => {
     filterHabits();
-  }, [availableHabits, selectedCategory, currentUserHabits]);
+  }, [availableHabits, selectedGoal, currentUserHabits, userGoals]);
 
   const loadAvailableHabits = async () => {
     if (!currentUser) return;
@@ -60,13 +72,51 @@ export function HabitBrowser({ isOpen, onClose, currentUserHabits }: HabitBrowse
     }
   };
 
+  const loadUserGoals = async () => {
+    try {
+      // Load goals.json to get goal details
+      const response = await fetch('/data/goals.json');
+      const goalsData = await response.json();
+      
+      if (currentUser && currentUser.goals) {
+        // Filter to only show goals the user has selected
+        const relevantGoals = goalsData.goals.filter((goal: Goal) => 
+          currentUser.goals.includes(goal.id)
+        );
+        setUserGoals(relevantGoals);
+      }
+    } catch (error) {
+      console.error('Failed to load user goals:', error);
+    }
+  };
+
   const filterHabits = () => {
     let filtered = availableHabits;
     
-    if (selectedCategory !== 'all') {
-      filtered = availableHabits.filter(habit => 
-        habit.category?.toLowerCase() === selectedCategory.toLowerCase()
-      );
+    if (selectedGoal !== 'all') {
+      // Map goal IDs to their corresponding tags/keywords that might appear in goalTags
+      const goalTagMappings: Record<string, string[]> = {
+        'reduce_stress': ['stress', 'relaxation', 'mindfulness', 'meditation', 'anxiety'],
+        'increase_focus': ['focus', 'concentration', 'attention', 'productivity', 'cognitive'],
+        'improve_mood': ['mood', 'happiness', 'depression', 'emotional', 'wellbeing'],
+        'increase_energy': ['energy', 'fatigue', 'vitality', 'motivation'],
+        'improve_health': ['health', 'fitness', 'nutrition', 'exercise', 'wellness'],
+        'better_sleep': ['sleep', 'insomnia', 'rest', 'recovery']
+      };
+      
+      const relevantTags = goalTagMappings[selectedGoal] || [selectedGoal];
+      
+      filtered = availableHabits.filter(habit => {
+        if (!habit.goalTags) return false;
+        
+        // Check if any of the habit's goalTags match the selected goal's keywords
+        return habit.goalTags.some(tag => 
+          relevantTags.some(relevantTag => 
+            tag.toLowerCase().includes(relevantTag.toLowerCase()) ||
+            relevantTag.toLowerCase().includes(tag.toLowerCase())
+          )
+        );
+      });
     }
     
     setFilteredHabits(filtered);
@@ -93,9 +143,13 @@ export function HabitBrowser({ isOpen, onClose, currentUserHabits }: HabitBrowse
     }
   };
 
-  const categories = [
-    'all',
-    ...new Set(availableHabits.map(h => h.category).filter(Boolean))
+  const goalOptions = [
+    { id: 'all', title: 'All Goals', icon: '🎯' },
+    ...userGoals.map(goal => ({
+      id: goal.id,
+      title: goal.title,
+      icon: goal.icon
+    }))
   ];
 
   if (!isOpen) return null;
@@ -118,19 +172,19 @@ export function HabitBrowser({ isOpen, onClose, currentUserHabits }: HabitBrowse
           </Button>
         </div>
 
-        {/* Category Filter */}
+        {/* Goal Filter */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Filter by Category
+            Filter by Your Goals
           </label>
           <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            value={selectedGoal}
+            onChange={(e) => setSelectedGoal(e.target.value)}
             className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full md:w-auto"
           >
-            {categories.map(category => (
-              <option key={category} value={category}>
-                {category === 'all' ? 'All Categories' : category.charAt(0).toUpperCase() + category.slice(1)}
+            {goalOptions.map(goal => (
+              <option key={goal.id} value={goal.id}>
+                {goal.icon} {goal.title}
               </option>
             ))}
           </select>
@@ -159,7 +213,7 @@ export function HabitBrowser({ isOpen, onClose, currentUserHabits }: HabitBrowse
                 <p className="text-gray-600">
                   {availableHabits.length === 0 
                     ? "You're already tracking all available science-backed habits!"
-                    : "No habits match the selected category."
+                    : "No habits match the selected goal."
                   }
                 </p>
               </div>
