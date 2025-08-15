@@ -1,0 +1,80 @@
+{
+  "app": {
+    "name": "ScienceHabits",
+    "tagline": "Science-backed habit tracking"
+  },
+  "navigation": {
+    "today": "Today",
+    "overview": "Overview",
+    "habits": "My Habits",
+    "analytics": "Analytics",
+    "progress": "Progress",
+    "recovery": "Recovery", 
+    "research": "Research",
+    "settings": "Settings"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "refresh": "Refresh",
+    "close": "Close"
+  },
+  "habits": {
+    "title": "My Habits",
+    "addNew": "Add New Habit",
+    "markComplete": "Mark Complete",
+    "streak": "Streak",
+    "days": "days",
+    "completionRate": "Completion Rate",
+    "category": "Category",
+    "difficulty": "Difficulty",
+    "timeMinutes": "{{minutes}} min"
+  },
+  "analytics": {
+    "title": "Your Progress",
+    "overallCompletion": "Overall Completion",
+    "totalCompletions": "Total Completions",
+    "longestStreak": "Longest Streak",
+    "activeHabits": "Active Habits",
+    "timeRange": "Time Range",
+    "lastWeek": "Last Week",
+    "lastMonth": "Last Month",
+    "last3Months": "Last 3 Months",
+    "lastYear": "Last Year",
+    "allTime": "All Time"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "selectLanguage": "Select Language",
+    "profile": "Profile",
+    "cloudSync": "Cloud Sync",
+    "layout": "Layout",
+    "export": "Export",
+    "notifications": "Notifications"
+  },
+  "onboarding": {
+    "welcome": "Welcome to ScienceHabits",
+    "whatMatters": "What matters most to you?",
+    "selectGoals": "Select all that apply. We'll recommend habits that help you achieve what matters most.",
+    "personalizedHabits": "Your Personalized Habits",
+    "foundHabits": "We found {{count}} science-backed habits that match your goals.",
+    "chooseHabits": "Choose the ones you'd like to start with.",
+    "selectAtLeastOne": "Please select at least one goal to continue"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Network error. Please check your connection.",
+    "notFound": "Content not found.",
+    "loadingFailed": "Failed to load content."
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "app": {
+    "name": "ScienceHabits",
+    "tagline": "Wissenschaftsbasierte Gewohnheitsverfolgung"
+  },
+  "navigation": {
+    "today": "Heute",
+    "overview": "Übersicht",
+    "habits": "Meine Gewohnheiten",
+    "analytics": "Analytik",
+    "progress": "Fortschritt",
+    "recovery": "Erholung",
+    "research": "Forschung",
+    "settings": "Einstellungen"
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "continue": "Weiter",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "refresh": "Aktualisieren",
+    "close": "Schließen"
+  },
+  "habits": {
+    "title": "Meine Gewohnheiten",
+    "addNew": "Neue Gewohnheit hinzufügen",
+    "markComplete": "Als erledigt markieren",
+    "streak": "Serie",
+    "days": "Tage",
+    "completionRate": "Abschlussrate",
+    "category": "Kategorie",
+    "difficulty": "Schwierigkeit",
+    "timeMinutes": "{{minutes}} Min"
+  },
+  "analytics": {
+    "title": "Ihr Fortschritt",
+    "overallCompletion": "Gesamtabschluss",
+    "totalCompletions": "Gesamte Abschlüsse",
+    "longestStreak": "Längste Serie",
+    "activeHabits": "Aktive Gewohnheiten",
+    "timeRange": "Zeitraum",
+    "lastWeek": "Letzte Woche",
+    "lastMonth": "Letzter Monat",
+    "last3Months": "Letzte 3 Monate",
+    "lastYear": "Letztes Jahr",
+    "allTime": "Gesamtzeit"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "language": "Sprache",
+    "selectLanguage": "Sprache auswählen",
+    "autoDetect": "Automatisch erkennen",
+    "autoDetectLanguage": "Sprache automatisch erkennen",
+    "autoDetectDescription": "Systemsprache automatisch verwenden",
+    "currentLanguage": "Aktuelle Sprache",
+    "systemLanguage": "Systemsprache",
+    "languageDescription": "Wählen Sie Ihre bevorzugte Sprache für die Benutzeroberfläche",
+    "languageSupport": "Sprachunterstützung",
+    "uiTranslation": "Übersetzung der Benutzeroberfläche",
+    "contentTranslation": "Übersetzung von Gewohnheiten und Forschungsinhalten",
+    "dateFormatting": "Lokalisierte Datums- und Zahlenformatierung",
+    "culturalAdaptation": "Kulturelle Anpassung für verschiedene Regionen",
+    "comingSoon": "Bald verfügbar",
+    "additionalLanguages": "Zusätzliche Sprachen werden in zukünftigen Updates basierend auf der Benutzernachfrage verfügbar sein.",
+    "profile": "Profil",
+    "cloudSync": "Cloud-Synchronisation",
+    "layout": "Layout",
+    "export": "Exportieren",
+    "notifications": "Benachrichtigungen"
+  },
+  "onboarding": {
+    "welcome": "Willkommen bei ScienceHabits",
+    "whatMatters": "Was ist Ihnen am wichtigsten?",
+    "selectGoals": "Wählen Sie alles Zutreffende aus. Wir empfehlen Gewohnheiten, die Ihnen helfen, das zu erreichen, was Ihnen am wichtigsten ist.",
+    "personalizedHabits": "Ihre personalisierten Gewohnheiten",
+    "foundHabits": "Wir haben {{count}} wissenschaftlich fundierte Gewohnheiten gefunden, die zu Ihren Zielen passen.",
+    "chooseHabits": "Wählen Sie diejenigen aus, mit denen Sie beginnen möchten.",
+    "selectAtLeastOne": "Bitte wählen Sie mindestens ein Ziel aus, um fortzufahren"
+  },
+  "errors": {
+    "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.",
+    "notFound": "Inhalt nicht gefunden.",
+    "loadingFailed": "Fehler beim Laden des Inhalts."
+  },
+  "time": {
+    "inDays": "in {{count}} Tag",
+    "inDays_plural": "in {{count}} Tagen",
+    "daysAgo": "vor {{count}} Tag",
+    "daysAgo_plural": "vor {{count}} Tagen",
+    "inHours": "in {{count}} Stunde",
+    "inHours_plural": "in {{count}} Stunden",
+    "hoursAgo": "vor {{count}} Stunde",
+    "hoursAgo_plural": "vor {{count}} Stunden",
+    "inMinutes": "in {{count}} Minute",
+    "inMinutes_plural": "in {{count}} Minuten",
+    "minutesAgo": "vor {{count}} Minute",
+    "minutesAgo_plural": "vor {{count}} Minuten"
+  }
+}

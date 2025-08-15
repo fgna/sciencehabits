@@ -12,9 +12,14 @@ export class AdminAuthService {
   private version = 1;
   private db: IDBDatabase | null = null;
   private currentSession: { user: AdminUser; token: string; expiresAt: Date } | null = null;
+  private initPromise: Promise<void>;
 
   constructor() {
-    this.initializeDB();
+    this.initPromise = this.initializeDB();
+  }
+
+  private async ensureInitialized(): Promise<void> {
+    await this.initPromise;
   }
 
   private async initializeDB(): Promise<void> {
@@ -35,6 +40,40 @@ export class AdminAuthService {
           const usersStore = db.createObjectStore('admin_users', { keyPath: 'id' });
           usersStore.createIndex('email', 'email', { unique: true });
           usersStore.createIndex('role', 'role', { unique: false });
+          
+          // Create default super admin user during upgrade transaction
+          const defaultAdmin: AdminUser = {
+            id: 'admin-001',
+            email: 'admin@sciencehabits.app',
+            role: 'super_admin',
+            permissions: [
+              {
+                resource: 'habits',
+                actions: ['create', 'read', 'update', 'delete', 'publish']
+              },
+              {
+                resource: 'research',
+                actions: ['create', 'read', 'update', 'delete', 'publish']
+              },
+              {
+                resource: 'translations',
+                actions: ['create', 'read', 'update', 'delete']
+              },
+              {
+                resource: 'users',
+                actions: ['create', 'read', 'update', 'delete']
+              },
+              {
+                resource: 'system',
+                actions: ['create', 'read', 'update', 'delete']
+              }
+            ],
+            lastLogin: new Date(),
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+          usersStore.add(defaultAdmin);
         }
         
         // Admin sessions store
@@ -42,12 +81,10 @@ export class AdminAuthService {
           const sessionsStore = db.createObjectStore('admin_sessions', { keyPath: 'token' });
           sessionsStore.createIndex('userId', 'userId', { unique: false });
         }
-
-        // Create default super admin user
-        this.createDefaultSuperAdmin(db);
       };
     });
   }
+
 
   private async createDefaultSuperAdmin(db: IDBDatabase): Promise<void> {
     const defaultAdmin: AdminUser = {
@@ -92,6 +129,8 @@ export class AdminAuthService {
    */
   async login(email: string, password: string): Promise<AuthResult> {
     try {
+      await this.ensureInitialized();
+      
       // In production, this would validate against a secure backend
       // For development, we'll use a simplified approach
       
@@ -142,6 +181,7 @@ export class AdminAuthService {
    */
   async validateSession(token: string): Promise<AdminUser | null> {
     try {
+      await this.ensureInitialized();
       if (!this.db) return null;
 
       const session = await this.getSession(token);
@@ -261,6 +301,7 @@ export class AdminAuthService {
    */
   async listAdminUsers(): Promise<AdminUser[]> {
     await this.requirePermission('users', 'read');
+    await this.ensureInitialized();
 
     if (!this.db) return [];
 
@@ -307,6 +348,7 @@ export class AdminAuthService {
   }
 
   private async getUserByEmail(email: string): Promise<AdminUser | null> {
+    await this.ensureInitialized();
     if (!this.db) return null;
 
     return new Promise((resolve) => {
@@ -321,6 +363,7 @@ export class AdminAuthService {
   }
 
   private async getUserById(id: string): Promise<AdminUser | null> {
+    await this.ensureInitialized();
     if (!this.db) return null;
 
     return new Promise((resolve) => {
@@ -334,6 +377,7 @@ export class AdminAuthService {
   }
 
   private async saveUser(user: AdminUser): Promise<void> {
+    await this.ensureInitialized();
     if (!this.db) return;
 
     return new Promise((resolve, reject) => {
@@ -352,6 +396,7 @@ export class AdminAuthService {
   }
 
   private async createSession(userId: string, token: string, expiresAt: Date): Promise<void> {
+    await this.ensureInitialized();
     if (!this.db) return;
 
     const session = {
@@ -372,6 +417,7 @@ export class AdminAuthService {
   }
 
   private async getSession(token: string): Promise<{ userId: string; expiresAt: Date } | null> {
+    await this.ensureInitialized();
     if (!this.db) return null;
 
     return new Promise((resolve) => {
@@ -385,6 +431,7 @@ export class AdminAuthService {
   }
 
   private async deleteSession(token: string): Promise<void> {
+    await this.ensureInitialized();
     if (!this.db) return;
 
     return new Promise((resolve) => {

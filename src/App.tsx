@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { OnboardingContainer } from './components/onboarding/index';
 import { DashboardLayout } from './components/dashboard';
 import { SmartDailyDashboard } from './components/dashboard/SmartDailyDashboard';
+import { TranslationDashboard } from './components/admin/TranslationDashboard';
+import { AdminDashboard } from './components/admin/AdminDashboard';
 import { initializeDatabase } from './services/storage/database';
 import { useUserStore } from './stores/userStore';
 import { ResearchProvider } from './contexts/ResearchContext';
@@ -9,7 +11,21 @@ import { ReminderProvider } from './contexts/ReminderContext';
 
 function App() {
   const [isOnboarded, setIsOnboarded] = useState<boolean | null>(null);
+  const [currentView, setCurrentView] = useState<string>('dashboard');
   const { loadUserData, clearUser, currentUser } = useUserStore();
+
+  // Simple routing based on URL hash
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1);
+      setCurrentView(hash || 'dashboard');
+    };
+
+    handleHashChange(); // Set initial view
+    window.addEventListener('hashchange', handleHashChange);
+    
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   useEffect(() => {
     checkOnboardingStatus();
@@ -64,6 +80,80 @@ function App() {
   // Show onboarding if not completed
   if (!isOnboarded) {
     return <OnboardingContainer onComplete={handleOnboardingComplete} />;
+  }
+
+  // Admin dashboard view (no authentication required for demo)
+  if (currentView === 'admin') {
+    return (
+      <ResearchProvider>
+        <ReminderProvider>
+          <div className="min-h-screen bg-gray-50">
+            {/* Admin header */}
+            <div className="bg-white shadow-sm border-b">
+              <div className="max-w-7xl mx-auto px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={() => window.location.hash = 'dashboard'}
+                      className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                    >
+                      ← Back to App
+                    </button>
+                    <span className="text-gray-300">|</span>
+                    <h1 className="text-xl font-semibold text-gray-900">Admin Panel</h1>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <a
+                      href="#translation-dashboard"
+                      className="text-sm text-blue-600 hover:text-blue-700"
+                    >
+                      Translation Dashboard
+                    </a>
+                    <div className="text-sm text-gray-500">
+                      ScienceHabits CMS
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <AdminDashboard />
+          </div>
+        </ReminderProvider>
+      </ResearchProvider>
+    );
+  }
+
+  // Translation dashboard view
+  if (currentView === 'translation-dashboard') {
+    return (
+      <ResearchProvider>
+        <ReminderProvider>
+          <div className="min-h-screen bg-gray-50">
+            {/* Admin header */}
+            <div className="bg-white shadow-sm border-b">
+              <div className="max-w-7xl mx-auto px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={() => window.location.hash = 'admin'}
+                      className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                    >
+                      ← Back to CMS
+                    </button>
+                    <span className="text-gray-300">|</span>
+                    <h1 className="text-xl font-semibold text-gray-900">Translation Dashboard</h1>
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    Multi-Language Quality Control
+                  </div>
+                </div>
+              </div>
+            </div>
+            <TranslationDashboard />
+          </div>
+        </ReminderProvider>
+      </ResearchProvider>
+    );
   }
 
   // Main dashboard view
