@@ -8,6 +8,7 @@ import { ProgressOverview } from './ProgressOverview';
 import { HabitPerformanceChart } from './HabitPerformanceChart';
 import { GoalProgressTracker } from './GoalProgressTracker';
 import { ReportExporter } from './ReportExporter';
+import { TrendProgressView } from '../recovery/TrendProgressView';
 
 type TimeRange = 'week' | 'month' | '3months' | 'year';
 
@@ -219,6 +220,23 @@ export function SimpleAnalyticsView() {
           </CardContent>
         </Card>
       )}
+
+      {/* Progress Trends Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">Progress Trends</h2>
+            <p className="text-gray-600">Focus on consistency over perfection</p>
+          </div>
+        </div>
+        {userHabits.map(habit => (
+          <TrendProgressView 
+            key={habit.id} 
+            habitId={habit.id} 
+            className="mb-6"
+          />
+        ))}
+      </div>
     </div>
   );
 }

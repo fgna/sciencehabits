@@ -121,7 +121,7 @@ export function ResearchArticles() {
         article.title.toLowerCase().includes(query) ||
         article.tags.some(tag => tag.toLowerCase().includes(query)) ||
         article.keyTakeaways.some(takeaway => takeaway.toLowerCase().includes(query)) ||
-        article.studyDetails.journal.toLowerCase().includes(query)
+        (article.studyDetails?.journal && article.studyDetails.journal.toLowerCase().includes(query))
       );
     }
 
@@ -311,9 +311,11 @@ function ArticleCard({ article, onReadMore, getCategoryColor, getDifficultyColor
             <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
               {article.readingTime} min read
             </span>
-            <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
-              {article.studyDetails.evidenceLevel}
-            </span>
+            {article.studyDetails?.evidenceLevel && (
+              <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+                {article.studyDetails.evidenceLevel}
+              </span>
+            )}
           </div>
 
           {/* Title */}
@@ -323,18 +325,24 @@ function ArticleCard({ article, onReadMore, getCategoryColor, getDifficultyColor
 
           {/* Study details */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
-            <div className="flex items-center space-x-1">
-              <span>📊</span>
-              <span>{article.studyDetails.sampleSize.toLocaleString()} participants</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <span>📖</span>
-              <span>{article.studyDetails.journal}</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <span>📅</span>
-              <span>{article.studyDetails.year}</span>
-            </div>
+            {article.studyDetails?.sampleSize && (
+              <div className="flex items-center space-x-1">
+                <span>📊</span>
+                <span>{article.studyDetails.sampleSize.toLocaleString()} participants</span>
+              </div>
+            )}
+            {article.studyDetails?.journal && (
+              <div className="flex items-center space-x-1">
+                <span>📖</span>
+                <span>{article.studyDetails.journal}</span>
+              </div>
+            )}
+            {article.studyDetails?.year && (
+              <div className="flex items-center space-x-1">
+                <span>📅</span>
+                <span>{article.studyDetails.year}</span>
+              </div>
+            )}
           </div>
 
           {/* Key takeaways */}
@@ -401,12 +409,24 @@ function ArticleDetailView({ article, onBack }: ArticleDetailViewProps) {
         <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-8">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Study Details</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-            <div><strong>Journal:</strong> {article.studyDetails.journal}</div>
-            <div><strong>Year:</strong> {article.studyDetails.year}</div>
-            <div><strong>Sample Size:</strong> {article.studyDetails.sampleSize.toLocaleString()} participants</div>
-            <div><strong>Study Type:</strong> {article.studyDetails.studyType.replace('_', ' ')}</div>
-            <div><strong>Evidence Level:</strong> {article.studyDetails.evidenceLevel}</div>
-            <div><strong>Statistical Significance:</strong> {article.studyDetails.statisticalSignificance}</div>
+            {article.studyDetails?.journal && (
+              <div><strong>Journal:</strong> {article.studyDetails.journal}</div>
+            )}
+            {article.studyDetails?.year && (
+              <div><strong>Year:</strong> {article.studyDetails.year}</div>
+            )}
+            {article.studyDetails?.sampleSize && (
+              <div><strong>Sample Size:</strong> {article.studyDetails.sampleSize.toLocaleString()} participants</div>
+            )}
+            {article.studyDetails?.studyType && (
+              <div><strong>Study Type:</strong> {article.studyDetails.studyType.replace('_', ' ')}</div>
+            )}
+            {article.studyDetails?.evidenceLevel && (
+              <div><strong>Evidence Level:</strong> {article.studyDetails.evidenceLevel}</div>
+            )}
+            {article.studyDetails?.statisticalSignificance && (
+              <div><strong>Statistical Significance:</strong> {article.studyDetails.statisticalSignificance}</div>
+            )}
           </div>
         </div>
 
