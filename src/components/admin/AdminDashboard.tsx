@@ -11,7 +11,6 @@ import {
   AdminAuthService, 
   ContentManager, 
   JSONWorkflowService, 
-  I18nContentLoader,
   ResearchValidator,
   AdminUser,
   UploadResult,
@@ -30,7 +29,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [adminAuth] = useState(() => new AdminAuthService());
   const [contentManager] = useState(() => new ContentManager(adminAuth));
   const [jsonWorkflow] = useState(() => new JSONWorkflowService(adminAuth, contentManager));
-  const [i18nLoader] = useState(() => new I18nContentLoader(contentManager));
   const [researchValidator] = useState(() => new ResearchValidator(adminAuth));
 
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
