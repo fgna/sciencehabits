@@ -1,7 +1,13 @@
 {
+  "name": "ScienceHabits - Science-Backed Habit Coaching",
   "short_name": "ScienceHabits",
-  "name": "ScienceHabits - Science-Based Habit Tracking",
-  "description": "Build healthy habits based on peer-reviewed research. Track progress, get analytics, and achieve your goals with science-backed recommendations.",
+  "description": "Privacy-first habit tracking with German engineering standards. Build healthy habits based on peer-reviewed research.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,24 +16,50 @@
     },
     {
       "src": "logo192.png",
-      "type": "image/png",
       "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
       "src": "logo512.png",
-      "type": "image/png",
       "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "start_url": "./",
-  "display": "standalone",
-  "orientation": "portrait-primary",
-  "theme_color": "#3B82F6",
-  "background_color": "#ffffff",
+  
   "categories": ["health", "productivity", "lifestyle"],
   "lang": "en",
-  "scope": "./",
-  "prefer_related_applications": false
+  "dir": "ltr",
+  "scope": "/",
+  
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.sciencehabits.app"
+    }
+  ],
+  
+  "shortcuts": [
+    {
+      "name": "Today's Habits",
+      "short_name": "Today",
+      "description": "View and track today's habits",
+      "url": "/",
+      "icons": [{"src": "logo192.png", "sizes": "192x192"}]
+    },
+    {
+      "name": "Analytics", 
+      "short_name": "Analytics",
+      "description": "View progress analytics",
+      "url": "/#analytics",
+      "icons": [{"src": "logo192.png", "sizes": "192x192"}]
+    }
+  ],
+
+  "capture_links": "existing-client-navigate",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }

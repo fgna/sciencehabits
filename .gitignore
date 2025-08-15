@@ -208,3 +208,11 @@ coverage-summary.json
 test-temp/
 temp-test/
 *.test.temp
+.vercel
+
+# Android keystore files (security-sensitive)
+*.keystore
+*.jks
+keystore.base64
+*.p12
+*.pem
