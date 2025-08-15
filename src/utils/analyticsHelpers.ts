@@ -31,6 +31,16 @@ export interface AnalyticsData {
   completionTrend: number; // positive/negative percentage
   consistencyScore: number; // 0-100
   momentumScore: number; // 0-100
+  
+  // Science-based weekly tracking
+  weeklyConsistencyRate: number; // 0-100 - average weekly consistency
+  weeklyConsistencyTrend: number; // percentage change in weekly consistency
+  optimalWeekCount: number; // weeks at 70-80% consistency (sweet spot)
+  recentWeeklyPerformance: WeeklyConsistencyData[];
+  
+  // Formation milestones based on research
+  formationMilestones: FormationMilestoneData;
+  habitsMilestoneProgress: HabitMilestoneProgress[];
 }
 
 export interface DailyStats {
@@ -48,6 +58,50 @@ export interface WeeklyStats {
   totalPossible: number;
   completionRate: number;
   weekNumber: number;
+}
+
+export interface WeeklyConsistencyData {
+  weekStart: string;
+  weekEnd: string;
+  consistencyRate: number; // 0-100
+  isOptimalZone: boolean; // 70-80% range
+  habitBreakdown: Array<{
+    habitId: string;
+    habitTitle: string;
+    weeklyCompletions: number;
+    weeklyTarget: number;
+    weeklyRate: number;
+  }>;
+  qualityScore: number; // factors in distribution and timing
+}
+
+export interface FormationMilestoneData {
+  day21Milestone: {
+    habitsReached: number;
+    totalHabits: number;
+    percentage: number;
+    description: string;
+  };
+  day66Milestone: {
+    habitsReached: number;
+    totalHabits: number;
+    percentage: number;
+    description: string;
+  };
+  averageFormationDays: number;
+  expectedCompletionDays: number; // when all current habits expected to reach 66 days
+}
+
+export interface HabitMilestoneProgress {
+  habitId: string;
+  habitTitle: string;
+  daysActive: number;
+  isAt21Days: boolean;
+  isAt66Days: boolean;
+  daysTo21: number;
+  daysTo66: number;
+  formationStage: 'early' | 'building' | 'forming' | 'established';
+  milestoneAchievements: string[];
 }
 
 export interface MonthlyStats {
@@ -72,6 +126,15 @@ export interface HabitAnalytics {
   consistencyScore: number;
   lastCompleted: string | null;
   daysTracked: number;
+  // Formation milestone data
+  daysActive: number;
+  formationStage: 'early' | 'building' | 'forming' | 'established';
+  milestoneProgress: {
+    isAt21Days: boolean;
+    isAt66Days: boolean;
+    daysTo21: number;
+    daysTo66: number;
+  };
 }
 
 export interface CategoryAnalytics {
@@ -104,10 +167,10 @@ export function calculateAnalytics(
   const start = startDate || new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000); // 90 days ago
   const end = endDate || now;
 
-  // Filter progress data by date range if provided
+  // Filter progress data by date range if provided and deduplicate completions
   const filteredProgress = progress.map(p => ({
     ...p,
-    completions: p.completions.filter(date => {
+    completions: [...new Set(p.completions)].filter(date => {
       const completionDate = new Date(date);
       return completionDate >= start && completionDate <= end;
     })
@@ -115,10 +178,10 @@ export function calculateAnalytics(
 
   const totalCompletions = filteredProgress.reduce((sum, p) => sum + p.completions.length, 0);
   
-  // Find the earliest date the user started tracking habits
+  // Find the earliest date when any habit was actively started in the filtered set
   let earliestDate = end; // Initialize to end date so we can find earlier dates
-  progress.forEach(p => {
-    // Use dateStarted if available, otherwise use first completion
+  filteredProgress.forEach(p => {
+    // Use dateStarted if available, otherwise use first completion from filtered data
     if (p.dateStarted) {
       const startDate = new Date(p.dateStarted);
       if (startDate >= start && startDate < earliestDate) {
@@ -133,18 +196,21 @@ export function calculateAnalytics(
   });
   
   // Calculate days since actual usage started, not the full period
-  const actualStartDate = earliestDate > start ? earliestDate : start;
-  const totalDaysInRange = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+  const actualStartDate = earliestDate < end ? earliestDate : start;
   const actualDaysSinceStart = Math.max(1, Math.ceil((end.getTime() - actualStartDate.getTime()) / (1000 * 60 * 60 * 24)));
   
-  // Use actual days since start for completion rate calculation
-  const totalPossibleCompletions = progress.length * actualDaysSinceStart;
+  // Use filtered progress length and actual days for realistic calculation
+  const totalPossibleCompletions = filteredProgress.length * actualDaysSinceStart;
+
+  // Calculate science-based weekly consistency metrics
+  const weeklyConsistencyMetrics = calculateWeeklyConsistencyMetrics(filteredProgress, habits, start, end);
 
   return {
     totalDaysTracked: actualDaysSinceStart, // Use actual days since starting the app
     totalCompletions,
-    overallCompletionRate: totalPossibleCompletions > 0 ? (totalCompletions / totalPossibleCompletions) * 100 : 0,
-    activeHabitsCount: progress.length,
+    overallCompletionRate: totalPossibleCompletions > 0 ? 
+      Math.min(100, (totalCompletions / totalPossibleCompletions) * 100) : 0, // Logical cap as final safeguard
+    activeHabitsCount: filteredProgress.length, // Use filtered progress count
     
     currentStreaks: progress.map(p => p.currentStreak),
     longestOverallStreak: Math.max(...progress.map(p => p.longestStreak), 0),
@@ -164,7 +230,17 @@ export function calculateAnalytics(
     
     completionTrend: calculateCompletionTrend(filteredProgress, start, end),
     consistencyScore: calculateConsistencyScore(filteredProgress, start, end),
-    momentumScore: calculateMomentumScore(filteredProgress)
+    momentumScore: calculateMomentumScore(filteredProgress),
+    
+    // Science-based weekly tracking
+    weeklyConsistencyRate: weeklyConsistencyMetrics.averageWeeklyConsistency,
+    weeklyConsistencyTrend: weeklyConsistencyMetrics.consistencyTrend,
+    optimalWeekCount: weeklyConsistencyMetrics.optimalWeekCount,
+    recentWeeklyPerformance: weeklyConsistencyMetrics.recentWeeks,
+    
+    // Formation milestones
+    formationMilestones: calculateFormationMilestones(progress, habits, actualStartDate),
+    habitsMilestoneProgress: calculateHabitMilestoneProgress(progress, habits, actualStartDate)
   };
 }
 
@@ -272,7 +348,6 @@ function calculateMonthlyStats(
     const month = currentDate.getMonth();
     const monthStr = currentDate.toLocaleDateString('en-US', { month: 'long' });
     
-    const monthStart = new Date(year, month, 1);
     const monthEnd = new Date(year, month + 1, 0);
     const daysInMonth = monthEnd.getDate();
 
@@ -312,10 +387,39 @@ function calculateHabitPerformance(
   start: Date, 
   end: Date
 ): HabitAnalytics[] {
+  const now = new Date();
+  
   return progress.map(p => {
     const habit = habits.find(h => h.id === p.habitId);
-    const totalDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-    const completionRate = (p.completions.length / totalDays) * 100;
+    
+    // Use actual days since habit started, not the full analysis period
+    const habitStart = p.dateStarted ? new Date(p.dateStarted) : 
+                       p.completions.length > 0 ? new Date(p.completions[0]) : start;
+    const habitStartDate = habitStart < start ? start : habitStart;
+    const actualDaysSinceStart = Math.max(1, Math.ceil((end.getTime() - habitStartDate.getTime()) / (1000 * 60 * 60 * 24)));
+    
+    // Calculate completion rate based on actual days since habit started
+    const completionRate = (p.completions.length / actualDaysSinceStart) * 100;
+    
+    // Calculate days active for formation milestones (reuse habitStart)
+    const daysActive = Math.ceil((now.getTime() - habitStart.getTime()) / (1000 * 60 * 60 * 24));
+    
+    // Formation stage and milestone progress
+    const isAt21Days = daysActive >= 21;
+    const isAt66Days = daysActive >= 66;
+    const daysTo21 = Math.max(0, 21 - daysActive);
+    const daysTo66 = Math.max(0, 66 - daysActive);
+    
+    let formationStage: 'early' | 'building' | 'forming' | 'established';
+    if (daysActive < 7) {
+      formationStage = 'early';
+    } else if (daysActive < 21) {
+      formationStage = 'building';
+    } else if (daysActive < 66) {
+      formationStage = 'forming';
+    } else {
+      formationStage = 'established';
+    }
     
     // Calculate average gap between completions
     const sortedCompletions = [...p.completions].sort();
@@ -345,14 +449,22 @@ function calculateHabitPerformance(
       habitTitle: habit?.title || 'Unknown Habit',
       habitCategory: habit?.category || 'unknown',
       totalCompletions: p.completions.length,
-      completionRate,
+      completionRate: Math.min(100, completionRate), // Logical cap as safeguard
       currentStreak: p.currentStreak,
       longestStreak: p.longestStreak,
       averageGapBetweenCompletions: averageGap,
       trendDirection,
       consistencyScore,
       lastCompleted: p.completions.length > 0 ? p.completions[p.completions.length - 1] : null,
-      daysTracked: totalDays
+      daysTracked: actualDaysSinceStart,
+      daysActive,
+      formationStage,
+      milestoneProgress: {
+        isAt21Days,
+        isAt66Days,
+        daysTo21,
+        daysTo66
+      }
     };
   });
 }
@@ -581,6 +693,261 @@ function calculateMomentumScore(progress: Progress[]): number {
   });
 
   return Math.min(100, totalMomentum / progress.length);
+}
+
+// Science-based weekly consistency calculation
+function calculateWeeklyConsistencyMetrics(
+  progress: Progress[], 
+  habits: Habit[], 
+  start: Date, 
+  end: Date
+): {
+  averageWeeklyConsistency: number;
+  consistencyTrend: number;
+  optimalWeekCount: number;
+  recentWeeks: WeeklyConsistencyData[];
+} {
+  const weeklyData: WeeklyConsistencyData[] = [];
+  const currentDate = new Date(start);
+  
+  // Start from the beginning of the week
+  const dayOfWeek = currentDate.getDay();
+  currentDate.setDate(currentDate.getDate() - dayOfWeek);
+  
+  while (currentDate < end) {
+    const weekStart = new Date(currentDate);
+    const weekEnd = new Date(currentDate);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    
+    const habitBreakdown = progress.map(p => {
+      const habit = habits.find(h => h.id === p.habitId);
+      let weeklyCompletions = 0;
+      
+      // Count completions in this week
+      for (let i = 0; i < 7; i++) {
+        const dayStr = new Date(weekStart.getTime() + i * 24 * 60 * 60 * 1000)
+          .toISOString().split('T')[0];
+        if (p.completions.includes(dayStr)) {
+          weeklyCompletions++;
+        }
+      }
+      
+      // Calculate how many days this habit was actually active during this week
+      const habitStart = p.dateStarted ? new Date(p.dateStarted) : 
+                         p.completions.length > 0 ? new Date(p.completions[0]) : weekStart;
+      const habitActiveStart = habitStart > weekStart ? habitStart : weekStart;
+      const habitActiveDays = Math.min(7, Math.max(0, Math.ceil((weekEnd.getTime() - habitActiveStart.getTime()) / (1000 * 60 * 60 * 24)) + 1));
+      
+      // Weekly target should be the days this habit was actually trackable in this week
+      const weeklyTarget = habitActiveDays;
+      const weeklyRate = weeklyTarget > 0 ? (weeklyCompletions / weeklyTarget) * 100 : 0;
+      
+      return {
+        habitId: p.habitId,
+        habitTitle: habit?.title || 'Unknown Habit',
+        weeklyCompletions,
+        weeklyTarget,
+        weeklyRate
+      };
+    });
+    
+    // Calculate week consistency rate (average across all habits)
+    const consistencyRate = habitBreakdown.length > 0 
+      ? habitBreakdown.reduce((sum, h) => sum + h.weeklyRate, 0) / habitBreakdown.length
+      : 0;
+    
+    // Check if in optimal zone (70-80% consistency)
+    const isOptimalZone = consistencyRate >= 70 && consistencyRate <= 80;
+    
+    // Quality score considers both rate and distribution
+    const qualityScore = calculateWeekQualityScore(habitBreakdown, consistencyRate);
+    
+    weeklyData.push({
+      weekStart: weekStart.toISOString().split('T')[0],
+      weekEnd: weekEnd.toISOString().split('T')[0],
+      consistencyRate: consistencyRate, // Remove artificial cap
+      isOptimalZone,
+      habitBreakdown,
+      qualityScore
+    });
+    
+    currentDate.setDate(currentDate.getDate() + 7);
+  }
+  
+  // Calculate metrics
+  const averageWeeklyConsistency = weeklyData.length > 0 
+    ? weeklyData.reduce((sum, w) => sum + w.consistencyRate, 0) / weeklyData.length
+    : 0;
+  
+  const optimalWeekCount = weeklyData.filter(w => w.isOptimalZone).length;
+  
+  // Calculate trend (comparing first and second half)
+  let consistencyTrend = 0;
+  if (weeklyData.length >= 4) {
+    const midPoint = Math.floor(weeklyData.length / 2);
+    const firstHalf = weeklyData.slice(0, midPoint);
+    const secondHalf = weeklyData.slice(midPoint);
+    
+    const firstHalfAvg = firstHalf.reduce((sum, w) => sum + w.consistencyRate, 0) / firstHalf.length;
+    const secondHalfAvg = secondHalf.reduce((sum, w) => sum + w.consistencyRate, 0) / secondHalf.length;
+    
+    consistencyTrend = firstHalfAvg > 0 ? ((secondHalfAvg - firstHalfAvg) / firstHalfAvg) * 100 : 0;
+  }
+  
+  // Return most recent 8 weeks for detailed view
+  const recentWeeks = weeklyData.slice(-8);
+  
+  return {
+    averageWeeklyConsistency: Math.min(100, Math.max(0, averageWeeklyConsistency)), // Logical bounds
+    consistencyTrend,
+    optimalWeekCount,
+    recentWeeks
+  };
+}
+
+function calculateWeekQualityScore(
+  habitBreakdown: Array<{
+    habitId: string;
+    habitTitle: string;
+    weeklyCompletions: number;
+    weeklyTarget: number;
+    weeklyRate: number;
+  }>,
+  consistencyRate: number
+): number {
+  if (habitBreakdown.length === 0) return 0;
+  
+  // Base score from consistency rate
+  let qualityScore = consistencyRate;
+  
+  // Bonus for balanced habit completion (not all-or-nothing)
+  const habitRates = habitBreakdown.map(h => h.weeklyRate);
+  const variance = calculateVariance(habitRates);
+  const balanceBonus = Math.max(0, 10 - (variance / 10)); // Less variance = better balance
+  
+  // Bonus for hitting the science-backed optimal zone (70-80%)
+  const optimalZoneBonus = (consistencyRate >= 70 && consistencyRate <= 80) ? 5 : 0;
+  
+  return Math.min(100, qualityScore + balanceBonus + optimalZoneBonus);
+}
+
+function calculateVariance(numbers: number[]): number {
+  if (numbers.length === 0) return 0;
+  
+  const mean = numbers.reduce((sum, n) => sum + n, 0) / numbers.length;
+  const squaredDiffs = numbers.map(n => Math.pow(n - mean, 2));
+  return squaredDiffs.reduce((sum, diff) => sum + diff, 0) / numbers.length;
+}
+
+// Formation milestone calculations based on scientific research
+function calculateFormationMilestones(
+  progress: Progress[], 
+  habits: Habit[], 
+  actualStartDate: Date
+): FormationMilestoneData {
+  const now = new Date();
+  const habitMilestones = progress.map(p => {
+    const habit = habits.find(h => h.id === p.habitId);
+    
+    // Calculate days active for this habit
+    const habitStart = p.dateStarted ? new Date(p.dateStarted) : 
+                       p.completions.length > 0 ? new Date(p.completions[0]) : actualStartDate;
+    const daysActive = Math.ceil((now.getTime() - habitStart.getTime()) / (1000 * 60 * 60 * 24));
+    
+    return {
+      habitId: p.habitId,
+      habitTitle: habit?.title || 'Unknown Habit',
+      daysActive
+    };
+  });
+  
+  // Count habits that have reached milestones
+  const habitsAt21Days = habitMilestones.filter(h => h.daysActive >= 21).length;
+  const habitsAt66Days = habitMilestones.filter(h => h.daysActive >= 66).length;
+  
+  // Calculate average formation days across all habits
+  const averageFormationDays = habitMilestones.length > 0 
+    ? habitMilestones.reduce((sum, h) => sum + h.daysActive, 0) / habitMilestones.length
+    : 0;
+  
+  // Estimate when all current habits will reach 66 days
+  const maxDaysToReach66 = Math.max(...habitMilestones.map(h => Math.max(0, 66 - h.daysActive)), 0);
+  const expectedCompletionDays = maxDaysToReach66;
+  
+  return {
+    day21Milestone: {
+      habitsReached: habitsAt21Days,
+      totalHabits: progress.length,
+      percentage: progress.length > 0 ? (habitsAt21Days / progress.length) * 100 : 0,
+      description: 'Initial neural pathway strengthening'
+    },
+    day66Milestone: {
+      habitsReached: habitsAt66Days,
+      totalHabits: progress.length,
+      percentage: progress.length > 0 ? (habitsAt66Days / progress.length) * 100 : 0,
+      description: 'Research-backed average formation time'
+    },
+    averageFormationDays: Math.round(averageFormationDays),
+    expectedCompletionDays
+  };
+}
+
+function calculateHabitMilestoneProgress(
+  progress: Progress[], 
+  habits: Habit[], 
+  actualStartDate: Date
+): HabitMilestoneProgress[] {
+  const now = new Date();
+  
+  return progress.map(p => {
+    const habit = habits.find(h => h.id === p.habitId);
+    
+    // Calculate days active for this habit
+    const habitStart = p.dateStarted ? new Date(p.dateStarted) : 
+                       p.completions.length > 0 ? new Date(p.completions[0]) : actualStartDate;
+    const daysActive = Math.ceil((now.getTime() - habitStart.getTime()) / (1000 * 60 * 60 * 24));
+    
+    const isAt21Days = daysActive >= 21;
+    const isAt66Days = daysActive >= 66;
+    const daysTo21 = Math.max(0, 21 - daysActive);
+    const daysTo66 = Math.max(0, 66 - daysActive);
+    
+    // Determine formation stage based on research
+    let formationStage: 'early' | 'building' | 'forming' | 'established';
+    if (daysActive < 7) {
+      formationStage = 'early';
+    } else if (daysActive < 21) {
+      formationStage = 'building';
+    } else if (daysActive < 66) {
+      formationStage = 'forming';
+    } else {
+      formationStage = 'established';
+    }
+    
+    // Generate milestone achievements
+    const milestoneAchievements: string[] = [];
+    if (isAt21Days) {
+      milestoneAchievements.push('🧠 Neural pathway strengthening');
+    }
+    if (isAt66Days) {
+      milestoneAchievements.push('⚡ Automaticity threshold reached');
+    }
+    if (daysActive >= 100) {
+      milestoneAchievements.push('🏆 Long-term mastery');
+    }
+    
+    return {
+      habitId: p.habitId,
+      habitTitle: habit?.title || 'Unknown Habit',
+      daysActive,
+      isAt21Days,
+      isAt66Days,
+      daysTo21,
+      daysTo66,
+      formationStage,
+      milestoneAchievements
+    };
+  });
 }
 
 // Date utility functions

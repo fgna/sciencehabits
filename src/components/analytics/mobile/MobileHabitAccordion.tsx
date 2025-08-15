@@ -51,9 +51,19 @@ export function MobileHabitAccordion({ habits, progress, analytics }: MobileHabi
     const today = new Date();
     const daysSinceStart = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
     
-    // Calculate completion rate
+    // Calculate overall completion rate (total completions / total days since start)
     const totalPossibleDays = Math.max(daysSinceStart, 1);
     const completionRate = (habitProgress.completions.length / totalPossibleDays) * 100;
+    
+    // Calculate recent consistency rate (last 30 days for better accuracy)
+    const last30Days = 30;
+    const recentPeriod = Math.min(daysSinceStart, last30Days);
+    const recentCompletions = habitProgress.completions.filter(completion => {
+      const completionDate = new Date(completion);
+      const daysAgo = Math.floor((today.getTime() - completionDate.getTime()) / (1000 * 60 * 60 * 24));
+      return daysAgo <= last30Days;
+    });
+    const consistencyRate = recentPeriod > 0 ? (recentCompletions.length / recentPeriod) * 100 : 0;
     
     // Determine trend (simplified)
     let trend: 'improving' | 'stable' | 'declining' | 'starting' = 'stable';
@@ -68,11 +78,11 @@ export function MobileHabitAccordion({ habits, progress, analytics }: MobileHabi
     return {
       id: habit.id,
       name: habit.title,
-      consistency: Math.round(completionRate),
+      consistency: Math.round(consistencyRate), // Recent 30-day consistency rate
       currentStreak: habitProgress.currentStreak,
       longestStreak: habitProgress.longestStreak,
       trend,
-      completionRate,
+      completionRate: Math.round(completionRate), // Overall completion rate since start
       daysSinceStart
     };
   });
@@ -234,17 +244,34 @@ function HabitDetailView({ habit }: HabitDetailViewProps) {
         </div>
       </div>
       
-      {/* Progress Bar */}
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-xs font-medium text-gray-700">Consistency Rate</span>
-          <span className="text-xs text-gray-500">{habit.consistency}%</span>
+      {/* Dual Progress Metrics */}
+      <div className="space-y-3">
+        {/* Recent Consistency (30-day) */}
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs font-medium text-gray-700">Recent Consistency</span>
+            <span className="text-xs text-gray-500">{Math.round(habit.consistency)}%</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div 
+              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${Math.min(Math.max(habit.consistency, 0), 100)}%` }}
+            />
+          </div>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${Math.min(habit.consistency, 100)}%` }}
-          />
+        
+        {/* Overall Completion Rate */}
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs font-medium text-gray-700">Overall Completion</span>
+            <span className="text-xs text-gray-500">{Math.round(habit.completionRate)}%</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div 
+              className="bg-green-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${Math.min(Math.max(habit.completionRate, 0), 100)}%` }}
+            />
+          </div>
         </div>
       </div>
       
@@ -252,9 +279,13 @@ function HabitDetailView({ habit }: HabitDetailViewProps) {
       <div className="bg-blue-50 rounded-lg p-3">
         <h5 className="text-xs font-semibold text-blue-900 mb-1">💡 Insight</h5>
         <p className="text-xs text-blue-800">
-          {habit.consistency >= 70 
-            ? "Excellent consistency! You're building strong neural pathways."
-            : habit.consistency >= 50
+          {habit.consistency >= 70 && habit.completionRate >= 70
+            ? "Excellent consistency and completion! You're building strong neural pathways."
+            : habit.consistency >= 70 && habit.completionRate < 70
+            ? "Great recent consistency! Your overall completion rate shows you're improving."
+            : habit.consistency < 70 && habit.completionRate >= 70
+            ? "Strong overall performance. Focus on recent consistency to maintain momentum."
+            : habit.consistency >= 50 || habit.completionRate >= 50
             ? "Good progress. Small improvements compound over time."
             : habit.trend === 'starting'
             ? "Just getting started. Focus on small, consistent actions."

@@ -39,7 +39,7 @@ export function MobileQuickStats({ analytics }: MobileQuickStatsProps) {
       icon: "🎯",
       value: analytics?.weeklyConsistencyRate ? `${Math.round(analytics.weeklyConsistencyRate)}%` : "0%",
       label: "Consistency Rate",
-      subtitle: "Optimal zone",
+      subtitle: "",
       color: "green"
     },
     {
@@ -96,9 +96,11 @@ function StatCard({ icon, value, label, subtitle, color }: StatCardProps) {
         <div className="text-xs font-medium text-gray-700 leading-tight">
           {label}
         </div>
-        <div className="text-xs text-gray-500">
-          {subtitle}
-        </div>
+        {subtitle && (
+          <div className="text-xs text-gray-500">
+            {subtitle}
+          </div>
+        )}
       </div>
     </div>
   );
