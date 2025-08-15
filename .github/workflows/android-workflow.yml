@@ -116,6 +116,8 @@ jobs:
             echo "⚠️ No keystore found in secrets, generating unsigned APK"
             exit 0
           fi
+
+          
           
           cd ScienceHabits-android
           
@@ -133,7 +135,7 @@ jobs:
           
       # Build unsigned APK if no secrets
       - name: 🔨 Build Unsigned APK
-        if: ${{ github.event_name != 'push' || (!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/main') || !secrets.ANDROID_KEYSTORE }}
+        if: ${{ github.event_name != 'push' || (!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/main') || !secrets.ANDROID_KEYSTORE == '' }}
         run: |
           echo "🔨 Building unsigned APK for testing..."
           cd ScienceHabits-android
