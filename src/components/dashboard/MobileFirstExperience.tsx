@@ -10,7 +10,7 @@ import { MobileFirstDashboard } from './MobileFirstDashboard';
 import { MobileFirstHabitsView } from '../habits/MobileFirstHabitsView';
 import { MobileFirstAnalyticsView } from '../analytics/MobileFirstAnalyticsView';
 import { MobileFirstNavigation } from '../navigation/MobileFirstNavigation';
-import { ProfileSettings } from '../profile/ProfileSettings';
+import { ProfileSettings } from '../profile';
 import { useUserStore } from '../../stores/userStore';
 import { useUIPreferencesStore } from '../../stores/uiPreferencesStore';
 

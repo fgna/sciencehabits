@@ -4,7 +4,7 @@ import { HabitsView } from '../habits';
 import { AnalyticsView } from '../analytics/AnalyticsView';
 import { ResponsiveAnalyticsView } from '../analytics/ResponsiveAnalyticsView';
 import { ProfileModal } from '../profile';
-import { ProfileSettings } from '../profile/ProfileSettings';
+import { ProfileSettings } from '../profile';
 import { ResearchArticles } from '../research';
 import { ContentLoaderDemo } from '../admin/ContentLoaderDemo';
 import { ReminderIndicator } from '../reminders/ReminderIndicator';
