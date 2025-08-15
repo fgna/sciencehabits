@@ -18,6 +18,7 @@ interface UserState {
   updateUserProgress: (habitId: string, date?: string) => Promise<void>;
   toggleHabitCompletion: (habitId: string, date?: string) => Promise<void>;
   refreshProgress: () => Promise<void>;
+  saveCloudConfig: (cloudConfig: User['cloudConfig']) => Promise<void>;
   setError: (error: string | null) => void;
   clearUser: () => void;
 }
@@ -211,6 +212,27 @@ export const useUserStore = create<UserState>((set, get) => ({
       set({ userProgress: progress });
     } catch (error) {
       console.error('Failed to refresh progress:', error);
+    }
+  },
+
+  saveCloudConfig: async (cloudConfig) => {
+    const { currentUser } = get();
+    if (!currentUser) return;
+
+    try {
+      set({ isLoading: true, error: null });
+      
+      // Update user with cloud configuration
+      await get().updateUser({ cloudConfig });
+      
+      console.log('Cloud configuration saved successfully:', cloudConfig);
+      
+    } catch (error) {
+      console.error('Failed to save cloud config:', error);
+      set({ 
+        error: error instanceof Error ? error.message : 'Failed to save cloud configuration',
+        isLoading: false 
+      });
     }
   },
 

@@ -16,6 +16,10 @@ import { addSampleCompletionsToExistingProgress } from '../../utils/devDataGener
 import { SimplifiedDashboard } from './SimplifiedDashboard';
 import { CleanNavigation } from '../navigation/CleanNavigation';
 import { Analytics } from '../analytics/Analytics';
+import { CloudProviderSelector } from '../auth/CloudProviderSelector';
+import { ReportExporter } from '../analytics/ReportExporter';
+import { CloudConfig } from '../../types/sync';
+import { useAnalyticsStore } from '../../stores/analyticsStore';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -25,9 +29,75 @@ interface DashboardLayoutProps {
 
 type DashboardTab = 'today' | 'habits' | 'progress' | 'recovery' | 'research' | 'settings' | 'content-demo';
 
+// Settings Navigation Component
+function SettingsNavigation({ activeTab, onTabChange }: { 
+  activeTab: 'sync' | 'profile' | 'layout' | 'export';
+  onTabChange: (tab: 'sync' | 'profile' | 'layout' | 'export') => void;
+}) {
+  const tabs = [
+    { id: 'sync' as const, name: 'Cloud Sync', icon: '☁️' },
+    { id: 'profile' as const, name: 'Profile', icon: '👤' },
+    { id: 'layout' as const, name: 'Layout', icon: '🎯' },
+    { id: 'export' as const, name: 'Export', icon: '📤' }
+  ];
+
+  return (
+    <div className="border-b border-gray-200 mb-6">
+      <nav className="-mb-px flex space-x-8">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => onTabChange(tab.id)}
+            className={`flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
+              activeTab === tab.id
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <span>{tab.icon}</span>
+            <span>{tab.name}</span>
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
+}
+
+// Analytics Export Section Component
+function AnalyticsExportSection() {
+  const { analyticsData, selectedTimeRange } = useAnalyticsStore();
+  const { userProgress, userHabits } = useUserStore();
+
+  if (!analyticsData || userProgress.length === 0 || userHabits.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">📤 Export Analytics</h2>
+        <p className="text-gray-600">
+          Export functionality will be available once you have habit tracking data.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">📤 Export Analytics</h2>
+      <p className="text-gray-600 mb-4">
+        Export your habit tracking data and analytics reports in various formats.
+      </p>
+      <ReportExporter 
+        analytics={analyticsData}
+        habitPerformance={analyticsData.habitPerformance}
+        timeRange={selectedTimeRange}
+      />
+    </div>
+  );
+}
+
 export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutProps) {
   const [activeTab, setActiveTab] = useState<DashboardTab>('today');
   const [simplifiedTab, setSimplifiedTab] = useState<'today' | 'habits' | 'analytics' | 'settings'>('today');
+  const [settingsTab, setSettingsTab] = useState<'sync' | 'profile' | 'layout' | 'export'>('sync');
 
   const handleTabChange = (tab: 'today' | 'habits' | 'analytics' | 'settings') => {
     setSimplifiedTab(tab);
@@ -36,7 +106,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   
   // Get data from store for components that need it
-  const { userHabits, userProgress, refreshProgress } = useUserStore();
+  const { userHabits, userProgress, refreshProgress, saveCloudConfig } = useUserStore();
   const { layoutMode, setLayoutMode } = useUIPreferencesStore();
 
   // Dev function to add sample progress data
@@ -222,7 +292,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
         <main className="flex-1">
           {simplifiedTab === 'today' && <SimplifiedDashboard />}
           {simplifiedTab === 'habits' && <HabitsView />}
-          {simplifiedTab === 'analytics' && <Analytics />}
+          {simplifiedTab === 'analytics' && <AnalyticsView />}
           {simplifiedTab === 'settings' && (
             <div className="max-w-4xl mx-auto p-6">
               <div className="mb-6">
@@ -230,57 +300,83 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
                 <p className="text-gray-600">Manage your app preferences and cloud sync</p>
               </div>
               
-              {/* Cloud Sync Section */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">☁️ Cloud Sync</h2>
-                <p className="text-gray-600 mb-4">
-                  Keep your habits synchronized across all your devices with secure cloud storage.
-                </p>
-                {/* Add CloudProviderSelector here */}
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <p className="text-blue-700 text-sm">
-                    🚀 <strong>Google Drive sync is now available!</strong> Simple one-click setup to sync your habits across all devices.
+              <SettingsNavigation 
+                activeTab={settingsTab} 
+                onTabChange={setSettingsTab} 
+              />
+              
+              {/* Cloud Sync Tab */}
+              {settingsTab === 'sync' && (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">☁️ Cloud Sync</h2>
+                  <p className="text-gray-600 mb-4">
+                    Keep your habits synchronized across all your devices with secure cloud storage.
+                  </p>
+                  <CloudProviderSelector 
+                    onProviderSelected={async (config) => {
+                      if (config) {
+                        console.log('Cloud provider selected:', config);
+                        await saveCloudConfig({
+                          type: config.type,
+                          serverUrl: config.serverUrl,
+                          username: config.username,
+                          appPassword: config.appPassword,
+                          syncPath: config.syncPath,
+                          projectId: config.projectId,
+                          bucketName: config.bucketName,
+                          region: config.region,
+                          credentials: config.credentials
+                        });
+                      }
+                    }}
+                  />
+                </div>
+              )}
+              
+              {/* Profile Tab */}
+              {settingsTab === 'profile' && (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">👤 Profile & Preferences</h2>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsProfileOpen(true)}
+                    className="mb-4"
+                  >
+                    Open Profile Settings
+                  </Button>
+                  <p className="text-gray-600 text-sm">
+                    Update your goals, daily time commitment, and personal preferences.
                   </p>
                 </div>
-              </div>
-              
-              {/* Profile & Preferences */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">👤 Profile & Preferences</h2>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsProfileOpen(true)}
-                  className="mb-4"
-                >
-                  Open Profile Settings
-                </Button>
-                <p className="text-gray-600 text-sm">
-                  Update your goals, daily time commitment, and personal preferences.
-                </p>
-              </div>
+              )}
 
-              {/* Layout Mode */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">🎯 Layout Mode</h2>
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setLayoutMode('simplified')}
-                    className={layoutMode === 'simplified' ? 'bg-blue-600 text-white border-blue-600' : ''}
-                  >
-                    Simplified
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setLayoutMode('enhanced')}
-                  >
-                    Enhanced
-                  </Button>
+              {/* Layout Tab */}
+              {settingsTab === 'layout' && (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">🎯 Layout Mode</h2>
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => setLayoutMode('simplified')}
+                      className={layoutMode === 'simplified' ? 'bg-blue-600 text-white border-blue-600' : ''}
+                    >
+                      Simplified
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setLayoutMode('enhanced')}
+                    >
+                      Enhanced
+                    </Button>
+                  </div>
+                  <p className="text-gray-600 text-sm mt-2">
+                    Choose between a clean simplified interface or the full-featured enhanced view.
+                  </p>
                 </div>
-                <p className="text-gray-600 text-sm mt-2">
-                  Choose between a clean simplified interface or the full-featured enhanced view.
-                </p>
-              </div>
+              )}
+
+              {/* Export Tab */}
+              {settingsTab === 'export' && <AnalyticsExportSection />}
             </div>
           )}
         </main>
@@ -520,57 +616,83 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
               <p className="text-gray-600">Manage your app preferences and cloud sync</p>
             </div>
             
-            {/* Cloud Sync Section */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">☁️ Cloud Sync</h2>
-              <p className="text-gray-600 mb-4">
-                Keep your habits synchronized across all your devices with secure cloud storage.
-              </p>
-              {/* Add CloudProviderSelector here */}
-              <div className="bg-blue-50 rounded-lg p-4">
-                <p className="text-blue-700 text-sm">
-                  🚀 <strong>Google Drive sync is now available!</strong> Simple one-click setup to sync your habits across all devices.
+            <SettingsNavigation 
+              activeTab={settingsTab} 
+              onTabChange={setSettingsTab} 
+            />
+            
+            {/* Cloud Sync Tab */}
+            {settingsTab === 'sync' && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">☁️ Cloud Sync</h2>
+                <p className="text-gray-600 mb-4">
+                  Keep your habits synchronized across all your devices with secure cloud storage.
+                </p>
+                <CloudProviderSelector 
+                  onProviderSelected={async (config) => {
+                    if (config) {
+                      console.log('Cloud provider selected:', config);
+                      await saveCloudConfig({
+                        type: config.type,
+                        serverUrl: config.serverUrl,
+                        username: config.username,
+                        appPassword: config.appPassword,
+                        syncPath: config.syncPath,
+                        projectId: config.projectId,
+                        bucketName: config.bucketName,
+                        region: config.region,
+                        credentials: config.credentials
+                      });
+                    }
+                  }}
+                />
+              </div>
+            )}
+            
+            {/* Profile Tab */}
+            {settingsTab === 'profile' && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">👤 Profile & Preferences</h2>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsProfileOpen(true)}
+                  className="mb-4"
+                >
+                  Open Profile Settings
+                </Button>
+                <p className="text-gray-600 text-sm">
+                  Update your goals, daily time commitment, and personal preferences.
                 </p>
               </div>
-            </div>
-            
-            {/* Profile & Preferences */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">👤 Profile & Preferences</h2>
-              <Button
-                variant="outline"
-                onClick={() => setIsProfileOpen(true)}
-                className="mb-4"
-              >
-                Open Profile Settings
-              </Button>
-              <p className="text-gray-600 text-sm">
-                Update your goals, daily time commitment, and personal preferences.
-              </p>
-            </div>
+            )}
 
-            {/* Layout Mode */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">🎯 Layout Mode</h2>
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setLayoutMode('simplified')}
-                >
-                  Simplified
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setLayoutMode('enhanced')}
-                  className={layoutMode === 'enhanced' ? 'bg-blue-600 text-white border-blue-600' : ''}
-                >
-                  Enhanced
-                </Button>
+            {/* Layout Tab */}
+            {settingsTab === 'layout' && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">🎯 Layout Mode</h2>
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => setLayoutMode('simplified')}
+                  >
+                    Simplified
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setLayoutMode('enhanced')}
+                    className={layoutMode === 'enhanced' ? 'bg-blue-600 text-white border-blue-600' : ''}
+                  >
+                    Enhanced
+                  </Button>
+                </div>
+                <p className="text-gray-600 text-sm mt-2">
+                  Choose between a clean simplified interface or the full-featured enhanced view.
+                </p>
               </div>
-              <p className="text-gray-600 text-sm mt-2">
-                Choose between a clean simplified interface or the full-featured enhanced view.
-              </p>
-            </div>
+            )}
+
+            {/* Export Tab */}
+            {settingsTab === 'export' && <AnalyticsExportSection />}
           </div>
         )}
         

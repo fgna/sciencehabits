@@ -9,7 +9,8 @@ import React, { useState } from 'react';
 import { Button, Card, CardContent } from '../ui';
 import { CloudProviderFactory } from '../../services/sync/CloudProviderFactory';
 import { CloudConfig, CloudProviderType } from '../../types/sync';
-import { GoogleDrivePermissions } from './GoogleDrivePermissions';
+import { SimpleGoogleDriveAuth } from './SimpleGoogleDriveAuth';
+import { HabitSyncService } from '../../services/habitSyncService';
 
 interface CloudProviderSelectorProps {
   onProviderSelected: (config: CloudConfig | null) => void;
@@ -56,12 +57,19 @@ export const CloudProviderSelector: React.FC<CloudProviderSelectorProps> = ({
     
     if (selectedProvider === 'google-drive') {
       return (
-        <GoogleDrivePermissions
-          onAuthComplete={(success) => {
+        <SimpleGoogleDriveAuth
+          onAuthComplete={async (success) => {
             if (success) {
-              handleConfigComplete({
-                type: 'google-drive'
-              });
+              // Enable sync service
+              const syncResult = await HabitSyncService.enableGoogleDriveSync();
+              if (syncResult.success) {
+                handleConfigComplete({
+                  type: 'google-drive'
+                });
+              } else {
+                console.error('Failed to enable sync:', syncResult.error);
+                setIsConfiguring(false);
+              }
             } else {
               setIsConfiguring(false);
             }

@@ -374,18 +374,38 @@ class SimpleContentValidator {
       recommendations.push('🚨 Fix critical errors before deployment');
     }
 
-    const missingResearchCount = this.inconsistencies.filter(i => i.type === 'MISSING_RESEARCH').length;
+    // More accurate counting for habits with missing research
+    const missingResearchInconsistencies = this.inconsistencies.filter(i => i.type === 'MISSING_RESEARCH');
+    const uniqueHabitsWithMissingResearch = new Set(missingResearchInconsistencies.map(i => i.habitId));
+    const missingResearchCount = uniqueHabitsWithMissingResearch.size;
+    
+    // Count total missing research references
+    const totalMissingReferences = missingResearchInconsistencies.reduce((total, inconsistency) => {
+      return total + (inconsistency.details?.missingIds?.length || 1);
+    }, 0);
+    
     if (missingResearchCount > 0) {
-      recommendations.push(`📚 Add research articles for ${missingResearchCount} habits`);
+      recommendations.push(`📚 Fix ${totalMissingReferences} missing research references across ${missingResearchCount} habits`);
     }
 
-    const orphanedResearchCount = this.inconsistencies.filter(i => i.type === 'ORPHANED_RESEARCH').length;
+    // More accurate counting for orphaned research
+    const orphanedResearchInconsistencies = this.inconsistencies.filter(i => i.type === 'ORPHANED_RESEARCH');
+    const orphanedResearchCount = orphanedResearchInconsistencies.length;
     if (orphanedResearchCount > 0) {
-      recommendations.push(`🔗 Link ${orphanedResearchCount} orphaned research articles`);
+      recommendations.push(`🔗 Link ${orphanedResearchCount} orphaned research articles to habits`);
+    }
+
+    // Count other inconsistency types
+    const goalTagIssues = this.inconsistencies.filter(i => 
+      i.type === 'MISSING_GOAL_TAGS' || i.type === 'INVALID_GOAL_TAGS'
+    ).length;
+    
+    if (goalTagIssues > 0) {
+      recommendations.push(`🏷️ Fix goal tag issues in ${goalTagIssues} habits`);
     }
 
     if (this.warnings.length > 5) {
-      recommendations.push('📝 Review content quality warnings');
+      recommendations.push(`📝 Review ${this.warnings.length} content quality warnings`);
     }
 
     if (recommendations.length === 0) {
@@ -424,13 +444,24 @@ async function main() {
 
     if (result.inconsistencies.length > 0) {
       console.warn(`\n⚠️ Found ${result.inconsistencies.length} data inconsistencies:`);
-      result.inconsistencies.slice(0, 5).forEach(inconsistency => {
-        console.warn(`   - ${inconsistency.message}`);
-      });
       
-      if (result.inconsistencies.length > 5) {
-        console.warn(`   ... and ${result.inconsistencies.length - 5} more`);
-      }
+      // Group inconsistencies by type for better reporting
+      const inconsistencyGroups = result.inconsistencies.reduce((groups, inconsistency) => {
+        const type = inconsistency.type || 'UNKNOWN';
+        if (!groups[type]) groups[type] = [];
+        groups[type].push(inconsistency);
+        return groups;
+      }, {});
+      
+      Object.entries(inconsistencyGroups).forEach(([type, items]) => {
+        console.warn(`   📊 ${type}: ${items.length} issues`);
+        items.slice(0, 2).forEach(item => {
+          console.warn(`      - ${item.message}`);
+        });
+        if (items.length > 2) {
+          console.warn(`      ... and ${items.length - 2} more`);
+        }
+      });
       
       console.warn('\n📝 App will continue with graceful degradation');
     }

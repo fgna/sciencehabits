@@ -62,8 +62,8 @@ export const GoogleDrivePermissions: React.FC<GoogleDrivePermissionsProps> = ({
       return 'Pop-up was blocked. Please allow pop-ups for this site and try again.';
     }
     
-    if (error?.message?.includes('client_id')) {
-      return 'Google Drive setup is not yet configured. Please try NextCloud or Local mode instead.';
+    if (error?.message?.includes('client_id') || error?.message?.includes('1234567890')) {
+      return 'Google Drive sync requires OAuth setup. Please configure a Google client ID in .env.local or use "Stay Local Only" for now.';
     }
     
     return 'Connection failed. Please check your internet connection and try again.';
@@ -116,118 +116,81 @@ export const GoogleDrivePermissions: React.FC<GoogleDrivePermissionsProps> = ({
   }
 
   return (
-    <Card className={`w-full max-w-2xl mx-auto ${className}`}>
-      <CardContent className="p-6">
-        {/* Header */}
-        <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-              <path d="M12 1C7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+    <Card className={`w-full max-w-md mx-auto ${className}`}>
+      <CardContent className="p-6 text-center space-y-6">
+        {/* Step Progress Indicator */}
+        <div className="flex items-center justify-center mb-6">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">✓</div>
+            <div className="w-12 h-1 bg-blue-600"></div>
+            <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">2</div>
+          </div>
+        </div>
+
+        {/* Google Drive Icon */}
+        <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+          <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path d="M12 1C7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+        </div>
+        
+        <h2 className="text-xl font-bold text-gray-900">
+          Almost Done!
+        </h2>
+        
+        <p className="text-gray-600 leading-relaxed">
+          Google will ask for permission to store your encrypted habit data. 
+          We'll create a private folder in your Google Drive just for ScienceHabits.
+        </p>
+
+        {/* What we ask for */}
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-left">
+          <div className="flex items-start gap-2 text-green-800 font-medium mb-2">
+            <svg className="w-4 h-4 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
+            <span>What we ask Google for:</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Connect Your Google Drive
-          </h1>
-          <p className="text-gray-600 text-lg leading-relaxed">
-            Safely sync your habits across all devices with simple Google sign-in.
-            Your data stays private and encrypted.
-          </p>
-        </div>
-
-        {/* Benefits Section */}
-        <div className="bg-blue-50 rounded-xl p-5 mb-6">
-          <h3 className="font-semibold text-gray-900 text-center mb-4">
-            ✨ What you get with Google Drive sync
-          </h3>
-          <div className="grid gap-3 text-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-              <span>Access habits on phone, tablet, and computer</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-              <span>Automatic backup to your Google Drive</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-              <span>End-to-end encryption keeps your data private</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-              <span>Uses your existing Google account - no new passwords</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Permission Explanation */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-5 mb-6">
-          <div className="flex items-start gap-3 mb-3">
-            <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-              <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
-              </svg>
-            </div>
-            <div>
-              <h4 className="font-semibold text-green-900 mb-2">
-                What Google will ask permission for:
-              </h4>
-              <ul className="text-sm text-green-700 space-y-1">
-                <li>✅ Create a "ScienceHabits" folder in your Drive</li>
-                <li>✅ Save your encrypted habit backups there</li>
-                <li>✅ Access only files created by this app</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* What We DON'T Access */}
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-5 mb-6">
-          <div className="flex items-start gap-3">
-            <div className="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-              <svg className="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-2">
-                What we CAN'T access:
-              </h4>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>❌ Your other Google Drive files</li>
-                <li>❌ Your emails or Gmail</li>
-                <li>❌ Your photos or personal documents</li>
-                <li>❌ Your contacts or calendar</li>
-              </ul>
-            </div>
-          </div>
+          <ul className="text-sm text-green-700 space-y-1 ml-6">
+            <li>✅ Create a "ScienceHabits" folder in your Drive</li>
+            <li>✅ Save your encrypted habit backups there</li>
+            <li>❌ We can't see your other files</li>
+            <li>❌ We can't read your emails or personal data</li>
+          </ul>
         </div>
 
         {/* Error Display */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <div className="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg className="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01" />
+              <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
               </div>
-              <div>
-                <h4 className="font-semibold text-red-900 mb-1">Connection Issue</h4>
-                <p className="text-sm text-red-700">{error}</p>
+              <div className="flex-1 text-left">
+                <h4 className="font-semibold text-amber-900 mb-1">Setup Needed</h4>
+                <p className="text-sm text-amber-800 mb-3">{error}</p>
+                <button 
+                  onClick={onBack}
+                  className="text-xs text-amber-700 hover:text-amber-800 underline"
+                >
+                  Try a different sync option
+                </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div className="space-y-4">
+        {/* Action Button */}
+        {!error && (
           <Button
             onClick={handleSignIn}
             disabled={isAuthenticating}
-            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-3"
+            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -235,27 +198,23 @@ export const GoogleDrivePermissions: React.FC<GoogleDrivePermissionsProps> = ({
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
               <path d="M12 1C7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
-            {isAuthenticating ? 'Connecting...' : 'Sign in with Google'}
+            {isAuthenticating ? 'Connecting...' : 'Continue to Google'}
           </Button>
+        )}
+        
+        {onBack && (
+          <button 
+            onClick={onBack}
+            className="text-gray-500 text-sm hover:text-gray-700"
+          >
+            ← Back to sync options
+          </button>
+        )}
 
-          {onBack && (
-            <Button
-              variant="secondary"
-              onClick={onBack}
-              className="w-full py-2 px-4 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50 transition-colors"
-            >
-              ← Back to sync options
-            </Button>
-          )}
-        </div>
-
-        {/* Trust Indicators */}
-        <div className="text-center pt-6 border-t border-gray-100 mt-6">
-          <p className="text-xs text-gray-500 mb-2">
-            🔒 Your data is encrypted before it leaves your device
-          </p>
+        {/* Trust indicator */}
+        <div className="text-center pt-4 border-t border-gray-100">
           <p className="text-xs text-gray-500">
-            ✅ We use Google's secure authentication - no passwords stored
+            🔒 Your data is encrypted before it leaves your device
           </p>
         </div>
       </CardContent>

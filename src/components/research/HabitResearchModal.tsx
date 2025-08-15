@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Modal } from '../ui/Modal';
 import { ResearchArticleCard } from '../ui/ResearchArticleCard';
 import { useResearch } from '../../contexts/ResearchContext';
+import { useUserStore } from '../../stores/userStore';
+import { researchEngagementService } from '../../services/analytics/ResearchEngagementService';
 
 interface HabitResearchModalProps {
   isOpen: boolean;
@@ -20,18 +22,12 @@ export function HabitResearchModal({
   researchIds 
 }: HabitResearchModalProps) {
   const { articles } = useResearch();
+  const { currentUser } = useUserStore();
   const [fullArticleView, setFullArticleView] = useState<{article: any, isOpen: boolean}>({
     article: null,
     isOpen: false
   });
-
-  const handleReadFullArticle = (article: any) => {
-    setFullArticleView({ article, isOpen: true });
-  };
-
-  const handleCloseFullArticle = () => {
-    setFullArticleView({ article: null, isOpen: false });
-  };
+  const [viewStartTime, setViewStartTime] = useState<number | null>(null);
 
   // Filter articles based on the habit's research IDs
   // Support both exact matches and partial matches (with/without _article suffix)
@@ -44,6 +40,36 @@ export function HabitResearchModal({
       researchId.startsWith(article.id.replace('_article', ''))
     )
   );
+
+  // Track modal opening
+  useEffect(() => {
+    if (isOpen && currentUser && relatedArticles.length > 0) {
+      // Track that user opened research modal for this habit
+      relatedArticles.forEach(article => {
+        researchEngagementService.trackResearchView(currentUser.id, article.id, habitId);
+      });
+      setViewStartTime(Date.now());
+    }
+  }, [isOpen, currentUser, habitId, relatedArticles]);
+
+  const handleReadFullArticle = (article: any) => {
+    setFullArticleView({ article, isOpen: true });
+    
+    // Track full article opening
+    if (currentUser) {
+      researchEngagementService.trackArticleOpen(currentUser.id, article.id, habitId);
+    }
+  };
+
+  const handleCloseFullArticle = () => {
+    // Track reading time if article was open
+    if (fullArticleView.article && currentUser && viewStartTime) {
+      const durationMs = Date.now() - viewStartTime;
+      researchEngagementService.trackReadingTime(currentUser.id, fullArticleView.article.id, durationMs);
+    }
+    
+    setFullArticleView({ article: null, isOpen: false });
+  };
 
   // Debug logging
   console.log('🔬 Research matching debug:', {

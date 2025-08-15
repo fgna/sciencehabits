@@ -1,0 +1,116 @@
+{
+  "research_articles": [
+    {
+      "id": "study_001",
+      "title": "Die Auswirkungen von täglicher Meditation auf die Stressreduktion",
+      "authors": "Schmidt, M., Müller, J., Weber, A.",
+      "year": 2023,
+      "journal": "Zeitschrift für Verhaltenspsychologie",
+      "doi": "10.1234/meditation.stress.2023",
+      "summary": "Diese umfassende Meta-Analyse untersuchte die Auswirkungen täglicher Meditationspraxis auf das Stressniveau bei 1.247 Teilnehmern über einen Zeitraum von 8 Wochen. Die Ergebnisse zeigten eine signifikante Reduzierung der Cortisolwerte und selbst berichteter Stresssymptome bei Personen, die täglich 10-20 Minuten meditierten.",
+      "finding": "Die tägliche Meditation führte zu einer durchschnittlichen Reduzierung des Stressniveaus um 35% und einer Verbesserung der Schlafqualität um 28%. Besonders deutliche Effekte zeigten sich bei Achtsamkeitsmeditation im Vergleich zu anderen Meditationsformen.",
+      "translationStatus": "reviewed",
+      "translatedBy": "claude",
+      "reviewedBy": "admin",
+      "reviewedAt": "2025-08-14T10:30:00Z",
+      "confidence": 92,
+      "qualityWarnings": [],
+      "culturalNotes": "Angepasst für deutsche Gesundheitssystem-Terminologie"
+    },
+    {
+      "id": "study_002", 
+      "title": "Einfluss der 21-90-Regel auf die Gewohnheitsbildung",
+      "authors": "Hoffmann, K., Fischer, S.",
+      "year": 2024,
+      "journal": "Deutsche Zeitschrift für Sozialpsychologie",
+      "doi": "10.5678/habits.formation.2024",
+      "summary": "Diese Longitudinalstudie verfolgte 486 Personen über 180 Tage beim Aufbau neuer Gewohnheiten. Die Forschung untersuchte die Gültigkeit der populären '21-Tage-Regel' für Gewohnheitsbildung und entwickelte ein präziseres Modell basierend auf Gewohnheitskomplexität und individuellen Faktoren.",
+      "finding": "Die Daten zeigten, dass einfache Gewohnheiten durchschnittlich 66 Tage zur Automatisierung benötigten, während komplexere Verhaltensweisen bis zu 254 Tage erfordern konnten. Die 21-Tage-Regel erwies sich als erheblich zu optimistisch für die meisten Gewohnheitstypen.",
+      "translationStatus": "unreviewed",
+      "translatedBy": "claude", 
+      "reviewedBy": null,
+      "reviewedAt": null,
+      "confidence": 87,
+      "qualityWarnings": [
+        {
+          "type": "terminology_check",
+          "severity": "medium", 
+          "message": "Begriff 'Automatisierung' könnte in psychologischem Kontext präziser sein",
+          "suggestion": "Erwägen Sie 'Habituation' oder 'automatische Ausführung'"
+        }
+      ],
+      "culturalNotes": "Deutsche Präzision bei Zahlen und Zeitangaben berücksichtigt"
+    },
+    {
+      "id": "study_003",
+      "title": "Soziale Unterstützung und Erfolg beim Gewichtsverlust",
+      "authors": "Wagner, L., Becker, R., Klein, T.",
+      "year": 2023,
+      "journal": "Gesundheitspsychologie Aktuell",
+      "doi": "10.9012/social.weight.2023",
+      "summary": "Eine randomisierte kontrollierte Studie mit 1.892 übergewichtigen Erwachsenen untersuchte die Rolle sozialer Unterstützung bei Gewichtsverlustprogrammen. Teilnehmer wurden in Gruppen mit unterschiedlichen Levels sozialer Unterstützung eingeteilt und 12 Monate lang beobachtet.",
+      "finding": "Teilnehmer mit starker sozialer Unterstützung erreichten im Durchschnitt 3,2-mal mehr Gewichtsverlust als die Kontrollgruppe. Online-Communities zeigten vergleichbare Effektivität wie persönliche Unterstützungsgruppen, mit 73% der Teilnehmer, die ihre Ziele erreichten.",
+      "translationStatus": "flagged",
+      "translatedBy": "claude",
+      "reviewedBy": "admin",
+      "reviewedAt": "2025-08-13T14:15:00Z", 
+      "confidence": 79,
+      "qualityWarnings": [
+        {
+          "type": "cultural_adaptation",
+          "severity": "high",
+          "message": "Deutsche Datenschutzbestimmungen für Online-Communities nicht berücksichtigt",
+          "suggestion": "DSGVO-Konformität und deutsche Gesundheitsdaten-Richtlinien erwähnen"
+        },
+        {
+          "type": "measurement_units",
+          "severity": "low",
+          "message": "Gewichtsangaben sollten in metrischen Einheiten sein",
+          "suggestion": "Kilogramm statt Pfund verwenden für deutsche Zielgruppe"
+        }
+      ],
+      "culturalNotes": "Anpassung an deutsche Gesundheitssystem- und Datenschutzstandards erforderlich"
+    },
+    {
+      "id": "study_004",
+      "title": "Zirkadiane Rhythmen und optimale Trainingszeiten",
+      "authors": "Richter, P., Neumann, D.",
+      "year": 2024,
+      "journal": "Chronobiologie und Sport",
+      "doi": "10.3456/circadian.exercise.2024",
+      "summary": "Diese Studie analysierte die Trainingsleistung von 324 Athleten zu verschiedenen Tageszeiten über einen Zeitraum von 6 Monaten. Messungen umfassten Kraft, Ausdauer, Reaktionszeit und subjektive Energielevel in Relation zu individuellen Chronotypen.",
+      "finding": "Morgendliche Trainingseinheiten (6:00-9:00 Uhr) zeigten eine 22% höhere Fettverbrennung, während abendliche Einheiten (18:00-20:00 Uhr) zu 18% besserer Kraftleistung führten. Individuelle Chronotypen beeinflussten diese Muster erheblich.",
+      "translationStatus": "unreviewed",
+      "translatedBy": "claude",
+      "reviewedBy": null,
+      "reviewedAt": null,
+      "confidence": 94,
+      "qualityWarnings": [],
+      "culturalNotes": "Deutsche Zeitformate (24-Stunden-System) verwendet"
+    },
+    {
+      "id": "study_005",
+      "title": "Mikrogewohnheiten und nachhaltiger Verhaltenschange",
+      "authors": "Scholz, A., Braun, M., Wolf, C.",
+      "year": 2024,
+      "journal": "Verhaltensänderung und Motivation",
+      "doi": "10.7890/micro.habits.2024", 
+      "summary": "Eine 18-monatige Längsschnittstudie mit 2.156 Teilnehmern untersuchte die Wirksamkeit von Mikrogewohnheiten (1-2 Minuten täglich) gegenüber traditionellen Verhaltensänderungsansätzen. Die Studie verfolgte Adhärenz, Motivation und langfristige Aufrechterhaltung.",
+      "finding": "Mikrogewohnheiten zeigten eine 89% höhere Adhärenzrate nach 12 Monaten im Vergleich zu traditionellen Ansätzen (34%). Teilnehmer berichteten von einer 'Schneeball-Effekt', bei dem kleine Gewohnheiten zu spontaner Ausweitung auf verwandte Bereiche führten.",
+      "translationStatus": "unreviewed",
+      "translatedBy": "claude",
+      "reviewedBy": null, 
+      "reviewedAt": null,
+      "confidence": 91,
+      "qualityWarnings": [
+        {
+          "type": "terminology_consistency",
+          "severity": "low",
+          "message": "Begriff 'Adhärenz' vs. 'Compliance' inkonsistent verwendet",
+          "suggestion": "Konsistente Verwendung von 'Therapietreue' oder 'Adhärenz' im deutschen Kontext"
+        }
+      ],
+      "culturalNotes": "Deutsche Präferenz für wissenschaftliche Genauigkeit berücksichtigt"
+    }
+  ]
+}

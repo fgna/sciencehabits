@@ -1,0 +1,114 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2025-08-11",
+  "goals": [
+    {
+      "id": "reduce_stress",
+      "title": "Reduce Stress",
+      "description": "Feel calmer and more relaxed throughout the day",
+      "icon": "🧘‍♀️",
+      "tier": "free",
+      "category": "mental_health",
+      "priority": 1
+    },
+    {
+      "id": "increase_focus",
+      "title": "Increase Focus",
+      "description": "Improve concentration and mental clarity",
+      "icon": "🎯",
+      "tier": "free",
+      "category": "cognitive",
+      "priority": 2
+    },
+    {
+      "id": "improve_mood",
+      "title": "Improve Mood",
+      "description": "Boost happiness and emotional well-being",
+      "icon": "😊",
+      "tier": "free",
+      "category": "mental_health",
+      "priority": 3
+    },
+    {
+      "id": "increase_energy",
+      "title": "Increase Energy",
+      "description": "Feel more energized and motivated throughout the day",
+      "icon": "⚡",
+      "tier": "free",
+      "category": "physical_health",
+      "priority": 4
+    },
+    {
+      "id": "improve_health",
+      "title": "Improve Health",
+      "description": "Build healthier daily habits and routines",
+      "icon": "💪",
+      "tier": "free",
+      "category": "physical_health",
+      "priority": 5
+    },
+    {
+      "id": "better_sleep",
+      "title": "Better Sleep",
+      "description": "Improve sleep quality and duration",
+      "icon": "😴",
+      "tier": "premium",
+      "category": "physical_health",
+      "priority": 6
+    },
+    {
+      "id": "enhance_memory",
+      "title": "Enhance Memory",
+      "description": "Boost memory retention and cognitive performance",
+      "icon": "🧠",
+      "tier": "premium",
+      "category": "cognitive",
+      "priority": 7
+    },
+    {
+      "id": "boost_creativity",
+      "title": "Boost Creativity",
+      "description": "Unlock creative potential and innovative thinking",
+      "icon": "🎨",
+      "tier": "premium",
+      "category": "cognitive",
+      "priority": 8
+    },
+    {
+      "id": "build_resilience",
+      "title": "Build Resilience",
+      "description": "Develop mental toughness and adaptability",
+      "icon": "🛡️",
+      "tier": "premium",
+      "category": "mental_health",
+      "priority": 9
+    },
+    {
+      "id": "optimize_performance",
+      "title": "Optimize Performance",
+      "description": "Maximize productivity and peak performance",
+      "icon": "🚀",
+      "tier": "premium",
+      "category": "performance",
+      "priority": 10
+    },
+    {
+      "id": "longevity",
+      "title": "Longevity & Anti-aging",
+      "description": "Science-based habits for healthy aging",
+      "icon": "🌟",
+      "tier": "premium",
+      "category": "longevity",
+      "priority": 11
+    },
+    {
+      "id": "biohacking",
+      "title": "Biohacking & Optimization",
+      "description": "Advanced techniques for body and mind optimization",
+      "icon": "⚗️",
+      "tier": "premium",
+      "category": "advanced",
+      "priority": 12
+    }
+  ]
+}

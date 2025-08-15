@@ -79,7 +79,7 @@ function HabitCard({ habit, isSelected, onToggle }: HabitCardProps) {
       
       <div className="text-xs text-gray-500">
         <div className="mb-1">
-          <strong>Goals:</strong> {habit.goalTags.join(', ')}
+          {habit.goalTags.join(', ')}
         </div>
         <div>
           <strong>Research studies:</strong> {habit.researchIds.length} backing this habit
@@ -216,7 +216,7 @@ export function RecommendationsStep() {
         
         {selectedGoals.length > 0 && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
-            <strong>Focusing on:</strong> {selectedGoals.join(', ')}
+            {selectedGoals.join(', ')}
           </div>
         )}
       </div>

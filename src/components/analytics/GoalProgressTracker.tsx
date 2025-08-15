@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Card, CardHeader, CardContent, Button } from '../ui';
 import { AnalyticsData, HabitAnalytics } from '../../utils/analyticsHelpers';
-import { formatPercentage } from '../../stores/analyticsStore';
+// import { formatPercentage } from '../../stores/analyticsStore';
 
 interface Goal {
   id: string;
@@ -25,6 +25,7 @@ interface GoalProgressTrackerProps {
 
 export function GoalProgressTracker({ analytics, habitPerformance }: GoalProgressTrackerProps) {
   const [viewMode, setViewMode] = useState<'active' | 'completed' | 'all'>('active');
+  const [showCompletedGoals, setShowCompletedGoals] = useState(false);
 
   const goals = useMemo(() => {
     return generateSmartGoals(analytics, habitPerformance);
@@ -47,28 +48,47 @@ export function GoalProgressTracker({ analytics, habitPerformance }: GoalProgres
                 {completedGoals.length} completed • {activeGoals.length} in progress
               </p>
             </div>
-            <div className="flex space-x-2">
-              <Button
-                variant={viewMode === 'active' ? 'primary' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('active')}
-              >
-                🎯 Active ({activeGoals.length})
-              </Button>
-              <Button
-                variant={viewMode === 'completed' ? 'primary' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('completed')}
-              >
-                ✅ Completed ({completedGoals.length})
-              </Button>
-              <Button
-                variant={viewMode === 'all' ? 'primary' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('all')}
-              >
-                📋 All Goals
-              </Button>
+            {/* Smart Goal Status Toggle */}
+            <div className="flex items-center space-x-3">
+              {completedGoals.length > 0 && (
+                <label className="flex items-center space-x-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={showCompletedGoals}
+                    onChange={(e) => {
+                      setShowCompletedGoals(e.target.checked);
+                      if (e.target.checked && viewMode === 'active') {
+                        setViewMode('all');
+                      } else if (!e.target.checked && viewMode !== 'active') {
+                        setViewMode('active');
+                      }
+                    }}
+                    className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  />
+                  <span className="text-gray-700">Show completed ({completedGoals.length})</span>
+                </label>
+              )}
+              <div className="flex space-x-1">
+                <Button
+                  variant={viewMode === 'active' ? 'primary' : 'outline'}
+                  size="sm"
+                  onClick={() => {
+                    setViewMode('active');
+                    setShowCompletedGoals(false);
+                  }}
+                >
+                  🎯 Active
+                </Button>
+                {showCompletedGoals && (
+                  <Button
+                    variant={viewMode === 'completed' ? 'primary' : 'outline'}
+                    size="sm"
+                    onClick={() => setViewMode('completed')}
+                  >
+                    ✅ Completed
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </CardHeader>
@@ -151,6 +171,7 @@ function GoalsList({ goals }: { goals: Goal[] }) {
 }
 
 function GoalCard({ goal }: { goal: Goal }) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const progress = Math.min(100, (goal.current / goal.target) * 100);
   const isCompleted = goal.current >= goal.target;
   const isNearCompletion = progress >= 80;
@@ -172,62 +193,109 @@ function GoalCard({ goal }: { goal: Goal }) {
   };
 
   return (
-    <div className={`p-4 rounded-lg border-2 transition-all ${getCardBorder()}`}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center space-x-2">
-          <span className="text-2xl">{goal.icon}</span>
-          <div>
-            <h6 className="font-medium text-gray-900">{goal.title}</h6>
-            <p className="text-xs text-gray-600">{goal.description}</p>
+    <div className={`rounded-lg border-2 transition-all hover:shadow-md ${getCardBorder()}`}>
+      {/* Collapsible Header */}
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full p-4 text-left hover:bg-opacity-50 transition-colors rounded-lg"
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex items-center space-x-2">
+            <span className="text-2xl">{goal.icon}</span>
+            <div className="flex-1">
+              <h6 className="font-medium text-gray-900">{goal.title}</h6>
+              <p className="text-xs text-gray-600 line-clamp-1">{goal.description}</p>
+            </div>
           </div>
-        </div>
-        {isCompleted && (
-          <div className="text-green-600">
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          <div className="flex items-center space-x-2">
+            {isCompleted && (
+              <div className="text-green-600">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+            )}
+            <svg 
+              className={`w-4 h-4 text-gray-400 transition-transform ${
+                isExpanded ? 'rotate-180' : ''
+              }`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </div>
-        )}
-      </div>
-
-      <div className="space-y-3">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600">Progress</span>
-          <span className="font-medium">
-            {formatGoalValue(goal.current, goal.type)} / {formatGoalValue(goal.target, goal.type)}
-          </span>
         </div>
-
-        <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-          <div
-            className={`h-full transition-all duration-500 ${getProgressColor()}`}
-            style={{ width: `${Math.max(3, progress)}%` }}
-          />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <span className={`text-sm font-medium ${isCompleted ? 'text-green-600' : 'text-gray-600'}`}>
-            {Math.round(progress)}% Complete
-          </span>
-          {goal.deadline && (
-            <span className="text-xs text-gray-500">
-              Due: {new Date(goal.deadline).toLocaleDateString()}
+        
+        {/* Progress Bar - Always Visible */}
+        <div className="mt-3">
+          <div className="flex items-center justify-between text-sm mb-1">
+            <span className={`font-medium ${
+              isCompleted ? 'text-green-600' : 'text-gray-600'
+            }`}>
+              {Math.round(progress)}% Complete
             </span>
+            <span className="text-gray-500 text-xs">
+              {formatGoalValue(goal.current, goal.type)} / {formatGoalValue(goal.target, goal.type)}
+            </span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+            <div
+              className={`h-full transition-all duration-500 ${getProgressColor()}`}
+              style={{ width: `${Math.max(3, progress)}%` }}
+            />
+          </div>
+        </div>
+      </button>
+
+      {/* Expandable Details */}
+      {isExpanded && (
+        <div className="px-4 pb-4 space-y-3 border-t border-gray-200 pt-3">
+          <div className="space-y-2">
+            <p className="text-sm text-gray-700">{goal.description}</p>
+            
+            {goal.deadline && (
+              <div className="flex items-center space-x-2 text-xs text-gray-600">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span>Due: {new Date(goal.deadline).toLocaleDateString()}</span>
+              </div>
+            )}
+            
+            {goal.habitId && (
+              <div className="flex items-center space-x-2 text-xs text-gray-600">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <span>Individual habit goal</span>
+              </div>
+            )}
+            
+            <div className="flex items-center space-x-2 text-xs text-gray-600">
+              <div className={`w-2 h-2 rounded-full ${
+                goal.priority === 'high' ? 'bg-red-500' : 
+                goal.priority === 'medium' ? 'bg-yellow-500' : 
+                'bg-green-500'
+              }`} />
+              <span className="capitalize">{goal.priority} priority</span>
+            </div>
+          </div>
+
+          {isNearCompletion && !isCompleted && (
+            <div className="text-xs text-yellow-700 bg-yellow-100 px-3 py-2 rounded-md">
+              🔥 Almost there! Keep going!
+            </div>
+          )}
+
+          {isCompleted && (
+            <div className="text-xs text-green-700 bg-green-100 px-3 py-2 rounded-md">
+              🎉 Goal completed! Great job!
+            </div>
           )}
         </div>
-
-        {isNearCompletion && !isCompleted && (
-          <div className="text-xs text-yellow-700 bg-yellow-100 px-2 py-1 rounded">
-            🔥 Almost there! Keep going!
-          </div>
-        )}
-
-        {isCompleted && (
-          <div className="text-xs text-green-700 bg-green-100 px-2 py-1 rounded">
-            🎉 Goal completed! Great job!
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }

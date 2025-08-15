@@ -1,0 +1,77 @@
+{
+  "project": {
+    "name": "ScienceHabits",
+    "type": "React PWA",
+    "autoDocumentation": true,
+    "regressionPrevention": true
+  },
+  "tools": {
+    "Read": { "enabled": true },
+    "Write": { "enabled": true },
+    "Edit": { "enabled": true },
+    "MultiEdit": { "enabled": true },
+    "Bash": { "enabled": true },
+    "Glob": { "enabled": true },
+    "Grep": { "enabled": true },
+    "TodoWrite": { "enabled": true }
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "condition": "fileContains('IMPROVEMENT IMPLEMENTED') || fileContains('DO NOT REVERT')",
+        "hooks": [
+          {
+            "type": "stop",
+            "message": "⚠️ WARNING: This file contains critical improvements that should not be reverted. File: {file_path}\\n\\nRecent improvements documented in this file. Please verify this change won't break existing functionality.\\n\\nContinue only if you're certain this won't cause regressions."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"$(date '+%Y-%m-%d %H:%M:%S'): Modified {file_path}\" >> .claude/activity.log"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"$(date '+%Y-%m-%d %H:%M:%S'): User prompt submitted\" >> .claude/session.log"
+          }
+        ]
+      }
+    ]
+  },
+  "commands": {
+    "log-improvement": {
+      "file": ".claude/commands/log-improvement.md",
+      "description": "Log a new improvement to project documentation"
+    },
+    "check-regressions": {
+      "file": ".claude/commands/check-regressions.md",
+      "description": "Scan for potential regression risks"
+    },
+    "project-status": {
+      "file": ".claude/commands/project-status.md", 
+      "description": "Generate comprehensive project status report"
+    },
+    "update-docs": {
+      "file": ".claude/commands/update-docs.md",
+      "description": "Refresh all documentation files"
+    }
+  },
+  "memory": {
+    "improvementTracking": true,
+    "sessionPersistence": true,
+    "performanceMonitoring": true
+  }
+}

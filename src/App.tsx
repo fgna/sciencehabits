@@ -4,6 +4,8 @@ import { DashboardLayout } from './components/dashboard';
 import { SmartDailyDashboard } from './components/dashboard/SmartDailyDashboard';
 import { TranslationDashboard } from './components/admin/TranslationDashboard';
 import { AdminDashboard } from './components/admin/AdminDashboard';
+import { AdminLogin } from './components/admin/AdminLogin';
+import { ResearchTranslationReview } from './components/admin/ResearchTranslationReview';
 import { initializeDatabase } from './services/storage/database';
 import { useUserStore } from './stores/userStore';
 import { ResearchProvider } from './contexts/ResearchContext';
@@ -12,6 +14,7 @@ import { ReminderProvider } from './contexts/ReminderContext';
 function App() {
   const [isOnboarded, setIsOnboarded] = useState<boolean | null>(null);
   const [currentView, setCurrentView] = useState<string>('dashboard');
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
   const { loadUserData, clearUser, currentUser } = useUserStore();
 
   // Simple routing based on URL hash
@@ -82,8 +85,12 @@ function App() {
     return <OnboardingContainer onComplete={handleOnboardingComplete} />;
   }
 
-  // Admin dashboard view (no authentication required for demo)
+  // Admin dashboard view with secure authentication
   if (currentView === 'admin') {
+    if (!isAdminAuthenticated) {
+      return <AdminLogin onLoginSuccess={() => setIsAdminAuthenticated(true)} />;
+    }
+
     return (
       <ResearchProvider>
         <ReminderProvider>
@@ -109,6 +116,15 @@ function App() {
                     >
                       Translation Dashboard
                     </a>
+                    <button
+                      onClick={() => {
+                        setIsAdminAuthenticated(false);
+                        window.location.hash = 'dashboard';
+                      }}
+                      className="text-sm text-gray-600 hover:text-gray-700"
+                    >
+                      Logout
+                    </button>
                     <div className="text-sm text-gray-500">
                       ScienceHabits CMS
                     </div>
@@ -150,6 +166,39 @@ function App() {
               </div>
             </div>
             <TranslationDashboard />
+          </div>
+        </ReminderProvider>
+      </ResearchProvider>
+    );
+  }
+
+  // Research translation review view
+  if (currentView === 'research-translation-review') {
+    return (
+      <ResearchProvider>
+        <ReminderProvider>
+          <div className="min-h-screen bg-gray-50">
+            {/* Admin header */}
+            <div className="bg-white shadow-sm border-b">
+              <div className="max-w-7xl mx-auto px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={() => window.location.hash = 'translation-dashboard'}
+                      className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                    >
+                      ← Back to Translation Dashboard
+                    </button>
+                    <span className="text-gray-300">|</span>
+                    <h1 className="text-xl font-semibold text-gray-900">German Research Review</h1>
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    Review & Approve German Translations
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ResearchTranslationReview />
           </div>
         </ReminderProvider>
       </ResearchProvider>

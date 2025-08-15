@@ -17,6 +17,17 @@ export interface User {
   };
   isPremium: boolean;
   preferredIntensity?: 'low' | 'medium' | 'high';
+  cloudConfig?: {
+    type: 'nextcloud' | 'google-cloud' | 'google-drive' | 'none';
+    serverUrl?: string;
+    username?: string;
+    appPassword?: string;
+    syncPath?: string;
+    projectId?: string;
+    bucketName?: string;
+    region?: string;
+    credentials?: any;
+  };
 }
 
 // Badge System Types

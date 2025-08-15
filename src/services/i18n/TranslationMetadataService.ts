@@ -36,6 +36,7 @@ export class TranslationMetadataService {
 
   constructor() {
     this.loadMetadataFromStorage();
+    this.discoverExistingTranslations();
   }
 
   /**
@@ -218,6 +219,13 @@ export class TranslationMetadataService {
   getTranslationStats(): TranslationStats {
     const allMetadata = Array.from(this.metadata.values());
     
+    // Debug logging
+    console.log(`📊 Getting translation stats for ${allMetadata.length} items:`);
+    allMetadata.forEach(metadata => {
+      const language = this.extractLanguageFromFileId(metadata.fileId);
+      console.log(`  - ${metadata.fileId} (${language || 'unknown'}) - ${metadata.reviewStatus}`);
+    });
+    
     const stats: TranslationStats = {
       totalTranslations: allMetadata.length,
       reviewedTranslations: allMetadata.filter(m => m.reviewStatus === 'reviewed').length,
@@ -340,6 +348,38 @@ export class TranslationMetadataService {
   }
 
   /**
+   * Manually trigger discovery of existing translations
+   */
+  async refreshTranslationRegistry(): Promise<void> {
+    console.log('🔍 Refreshing translation registry...');
+    console.log(`📦 Current metadata count: ${this.metadata.size}`);
+    await this.discoverExistingTranslations();
+  }
+
+  /**
+   * Debug method to show current localStorage state
+   */
+  debugMetadataState(): void {
+    console.log('🔍 Current Translation Metadata State:');
+    console.log(`Total items in memory: ${this.metadata.size}`);
+    
+    const stored = localStorage.getItem(this.storageKey);
+    if (stored) {
+      try {
+        const data = JSON.parse(stored);
+        console.log(`Items in localStorage: ${data.length}`);
+        data.forEach(([fileId, metadata]: [string, any]) => {
+          console.log(`  - ${fileId} (status: ${metadata.reviewStatus})`);
+        });
+      } catch (error) {
+        console.error('Failed to parse stored metadata:', error);
+      }
+    } else {
+      console.log('No data in localStorage');
+    }
+  }
+
+  /**
    * Clear all metadata (use with caution)
    */
   async clearAllMetadata(): Promise<void> {
@@ -349,6 +389,104 @@ export class TranslationMetadataService {
   }
 
   // Private helper methods
+
+  /**
+   * Scan for existing translation files and register them if not already tracked
+   */
+  private async discoverExistingTranslations(): Promise<void> {
+    try {
+      console.log('🔍 Starting translation discovery scan...');
+      
+      // Try to discover translation files by attempting to fetch them
+      // We'll scan for common translation patterns
+      const possibleTranslations = [
+        'bedroom_environment_2023_article_de.json',
+        'bedroom_environment_2023_article_fr.json',
+        'bedroom_environment_2023_article_es.json',
+        // Add more known translation files as they're created
+      ];
+
+      for (const filename of possibleTranslations) {
+        const fileId = filename.replace('.json', '');
+        
+        // Skip if already tracked
+        if (this.metadata.has(fileId)) {
+          continue;
+        }
+
+        try {
+          // Try to fetch the translation file
+          console.log(`🔍 Checking for translation file: /data/research-articles/${filename}`);
+          const response = await fetch(`/data/research-articles/${filename}`);
+          if (response.ok) {
+            await response.json();
+            
+            // Create metadata for discovered translation
+            const metadata: TranslationMetadata = {
+              fileId,
+              sourceFile: `${this.extractOriginalFileId(fileId)}.json`,
+              targetFile: filename,
+              translatedBy: 'claude',
+              translatedAt: new Date().toISOString(),
+              reviewStatus: 'unreviewed',
+              publishingStatus: 'live',
+              confidence: 85, // Default confidence for discovered files
+              qualityWarnings: []
+            };
+
+            console.log(`🔍 Discovered existing translation: ${fileId}`);
+            this.metadata.set(fileId, metadata);
+          }
+        } catch (error) {
+          // File doesn't exist or can't be loaded, skip
+          console.log(`❌ Failed to load ${filename}: ${error}`);
+          continue;
+        }
+      }
+
+      // Save discovered translations
+      const discoveredCount = this.metadata.size;
+      if (discoveredCount > 0) {
+        await this.saveMetadataToStorage();
+        console.log(`✅ Registered ${discoveredCount} translation files`);
+        
+        // Log all discovered translations
+        this.metadata.forEach((metadata, fileId) => {
+          console.log(`📝 Registered translation: ${fileId} (${metadata.sourceFile} → ${metadata.targetFile})`);
+        });
+      } else {
+        console.log('🔍 No new translations discovered');
+      }
+    } catch (error) {
+      console.warn('Failed to discover existing translations:', error);
+    }
+  }
+
+  /**
+   * Extract original file ID from translated file ID
+   */
+  private extractOriginalFileId(translatedFileId: string): string {
+    // Remove language suffix (e.g., "_de", "_fr")
+    return translatedFileId.replace(/_[a-z]{2}$/, '');
+  }
+
+  /**
+   * Estimate word count from content
+   */
+  private estimateWordCount(content: string): number {
+    if (!content) return 0;
+    
+    // Remove markdown syntax and count words
+    const cleanText = content
+      .replace(/#{1,6}\s/g, '') // Remove headers
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+      .replace(/\*(.*?)\*/g, '$1') // Remove italic
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Remove links
+      .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+      .replace(/`([^`]+)`/g, '$1'); // Remove inline code
+    
+    return cleanText.split(/\s+/).filter(word => word.length > 0).length;
+  }
 
   private calculatePriorityScore(metadata: TranslationMetadata): number {
     let score = 0;

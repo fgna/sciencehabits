@@ -22,6 +22,7 @@ interface BadgeState {
   checkForNewBadges: (userId: string, habitId?: string) => UserBadge[];
   markBadgeAsViewed: (badgeId: string) => void;
   getBadgeProgress: (badgeId: string, userId: string, habitId?: string) => number;
+  getBadgeProgressAsync: (badgeId: string, userId: string, habitId?: string) => Promise<number>;
   getDisplayBadges: (userId: string, habitId?: string) => BadgeDisplay[];
   getEarnedBadges: (userId: string) => UserBadge[];
   getTotalBadgeCount: (userId: string) => { earned: number; total: number };
@@ -31,7 +32,7 @@ interface BadgeState {
   calculateStreakProgress: (habitId: string, threshold: number) => number;
   calculateConsistencyProgress: (habitId: string, threshold: number, timeframe?: string) => number;
   calculateRecoveryProgress: (userId: string, habitId?: string, threshold?: number) => number;
-  calculateResearchEngagement: (userId: string) => number;
+  calculateResearchEngagement: (userId: string) => Promise<number>;
   calculateTotalCompletions: (userId: string, habitId?: string, timeframe?: string) => number;
 }
 
@@ -122,14 +123,66 @@ export const useBadgeStore = create<BadgeState>()(
               return get().calculateRecoveryProgress(userId, habitId, badge.requirement.threshold);
               
             case 'research_engagement':
-              return Math.min(
-                (get().calculateResearchEngagement(userId) / badge.requirement.threshold) * 100,
-                100
-              );
+              // For now, return 0 and handle async calculation separately
+              // This will be updated by the async checkBadgeProgressAsync method
+              return 0;
               
             default:
               return 0;
           }
+        },
+
+        getBadgeProgressAsync: async (badgeId: string, userId: string, habitId?: string) => {
+          const badge = get().availableBadges.find(b => b.id === badgeId);
+          if (!badge) return 0;
+          
+          // Check if already earned
+          const existingBadge = get().userBadges.find(ub => 
+            ub.badgeId === badge.id && 
+            ub.userId === userId &&
+            (!badge.requirement.habitSpecific || ub.habitId === habitId)
+          );
+          
+          if (existingBadge) return 100;
+
+          // Handle async research engagement calculation
+          if (badge.requirement.type === 'research_engagement') {
+            try {
+              const researchEngagement = await get().calculateResearchEngagement(userId);
+              return Math.min(
+                (researchEngagement / badge.requirement.threshold) * 100,
+                100
+              );
+            } catch (error) {
+              console.error('Failed to calculate research engagement:', error);
+              return 0;
+            }
+          }
+
+          // For non-async calculations, use the regular method
+          return get().getBadgeProgress(badgeId, userId, habitId);
+        },
+
+        checkBadgeProgressAsync: async (userId: string, badgeId: string, habitId?: string) => {
+          const badge = get().availableBadges.find((b: Badge) => b.id === badgeId);
+          if (!badge) return 0;
+
+          // Handle async research engagement calculation
+          if (badge.requirement.type === 'research_engagement') {
+            try {
+              const researchEngagement = await get().calculateResearchEngagement(userId);
+              return Math.min(
+                (researchEngagement / badge.requirement.threshold) * 100,
+                100
+              );
+            } catch (error) {
+              console.error('Failed to calculate research engagement:', error);
+              return 0;
+            }
+          }
+
+          // For non-async calculations, use the regular method
+          return get().getBadgeProgress(badgeId, userId, habitId);
         },
         
         calculateStreakProgress: (habitId: string, threshold: number) => {
@@ -202,13 +255,11 @@ export const useBadgeStore = create<BadgeState>()(
           return successfulRecoveries >= threshold ? 100 : (successfulRecoveries / threshold) * 100;
         },
         
-        calculateResearchEngagement: (userId: string) => {
-          // This would need to be tracked when users click on research explanations
-          // For now, we'll use a placeholder implementation
-          // In production, this would query actual research view tracking
-          const { userHabits } = useUserStore.getState();
-          const habitsWithResearch = userHabits.filter(h => h.researchIds && h.researchIds.length > 0);
-          return habitsWithResearch.length; // Count of habits where user has access to research
+        calculateResearchEngagement: async (userId: string) => {
+          // Use the research engagement service to get actual tracking data
+          const { researchEngagementService } = await import('../services/analytics/ResearchEngagementService');
+          const engagementData = await researchEngagementService.getEngagementForBadges(userId);
+          return engagementData.uniqueArticlesViewed;
         },
         
         calculateTotalCompletions: (userId: string, habitId?: string, timeframe?: string) => {

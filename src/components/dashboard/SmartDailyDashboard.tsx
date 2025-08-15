@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { EnhancedHabitCard } from '../habits/EnhancedHabitCard';
+import { CreateHabitForm } from '../habits/CreateHabitForm';
 import { useUIPreferencesStore } from '../../stores/uiPreferencesStore';
 import { useUserStore } from '../../stores/userStore';
+import { useHabitStore } from '../../stores/habitStore';
 import { Habit, HabitProgress } from '../../types';
 import { smartSchedulingService, SmartSchedule, HabitStack } from '../../services/smartSchedulingService';
 
 export function SmartDailyDashboard() {
   const { animationsEnabled, emotionalDesign } = useUIPreferencesStore();
   const { currentUser, userHabits, userProgress, toggleHabitCompletion } = useUserStore();
+  const habitStore = useHabitStore();
   
   const [smartSchedule, setSmartSchedule] = useState<SmartSchedule | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [activeView, setActiveView] = useState<'stacks' | 'all' | 'flexible'>('stacks');
   const [isLoading, setIsLoading] = useState(true);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   useEffect(() => {
     loadSmartSchedule();
@@ -79,8 +83,11 @@ export function SmartDailyDashboard() {
   };
   
   const onEditHabit = (habitId: string) => {
-    // TODO: Implement edit habit functionality
-    console.log('Edit habit:', habitId);
+    const habit = userHabits.find(h => h.id === habitId);
+    if (habit) {
+      habitStore.startEditing(habit);
+      setShowCreateForm(true);
+    }
   };
 
   const getHabitProgress = (habitId: string) => {
@@ -400,6 +407,20 @@ export function SmartDailyDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Create/Edit Habit Form */}
+      {showCreateForm && (
+        <CreateHabitForm
+          onClose={() => {
+            setShowCreateForm(false);
+            habitStore.resetForm();
+          }}
+          onSuccess={() => {
+            setShowCreateForm(false);
+            loadSmartSchedule();
+          }}
+        />
+      )}
     </div>
   );
 }
