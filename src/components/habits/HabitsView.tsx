@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, CardContent } from '../ui';
+import { Button, Card, CardContent, ConfirmDialog } from '../ui';
 import { CreateHabitForm } from './CreateHabitForm';
 import { useHabitStore } from '../../stores/habitStore';
 import { useUserStore } from '../../stores/userStore';
@@ -19,6 +19,14 @@ export function HabitsView() {
     habitId: '',
     habitTitle: '',
     researchIds: []
+  });
+  
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    isOpen: boolean;
+    habit: Habit | null;
+  }>({
+    isOpen: false,
+    habit: null
   });
   
   const { 
@@ -52,19 +60,25 @@ export function HabitsView() {
     setShowCreateForm(true);
   };
 
-  const handleDelete = async (habit: Habit) => {
-    if (!currentUser) return;
+  const handleDelete = (habit: Habit) => {
+    setDeleteConfirmation({
+      isOpen: true,
+      habit
+    });
+  };
+
+  const confirmDelete = async () => {
+    if (!currentUser || !deleteConfirmation.habit) return;
     
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${habit.title}"? This will also remove all progress data for this habit.`
-    );
-    
-    if (confirmed) {
-      const success = await deleteHabit(habit.id, currentUser.id);
-      if (success) {
-        await refreshProgress();
-      }
+    const success = await deleteHabit(deleteConfirmation.habit.id, currentUser.id);
+    if (success) {
+      await refreshProgress();
     }
+    
+    setDeleteConfirmation({
+      isOpen: false,
+      habit: null
+    });
   };
 
   const handleViewResearch = (habitId: string) => {
@@ -264,6 +278,29 @@ export function HabitsView() {
         habitId={researchModal.habitId}
         habitTitle={researchModal.habitTitle}
         researchIds={researchModal.researchIds}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deleteConfirmation.isOpen}
+        onClose={() => setDeleteConfirmation({ isOpen: false, habit: null })}
+        onConfirm={confirmDelete}
+        title="Delete Habit"
+        message={
+          deleteConfirmation.habit
+            ? `Are you sure you want to delete "${deleteConfirmation.habit.title}"? This will also remove all progress data for this habit. This action cannot be undone.`
+            : ''
+        }
+        confirmText="Delete Habit"
+        cancelText="Cancel"
+        confirmVariant="danger"
+        icon={
+          <div className="w-12 h-12 mx-auto flex items-center justify-center rounded-full bg-red-100">
+            <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </div>
+        }
       />
     </div>
   );
