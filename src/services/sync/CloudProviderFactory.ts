@@ -8,6 +8,7 @@
 import { CloudProvider, CloudConfig, CloudProviderType } from '../../types/sync';
 import { NextCloudProvider } from './NextCloudProvider';
 import { GoogleCloudProvider } from './GoogleCloudProvider';
+import { GoogleDriveProvider } from './GoogleDriveProvider';
 
 export class CloudProviderFactory {
   private static instances = new Map<string, CloudProvider>();
@@ -43,6 +44,10 @@ export class CloudProviderFactory {
           throw new Error('Invalid Google Cloud configuration');
         }
         provider = new GoogleCloudProvider(config);
+        break;
+        
+      case 'google-drive':
+        provider = new GoogleDriveProvider(config);
         break;
         
       case 'none':
@@ -195,7 +200,7 @@ export class CloudProviderFactory {
       throw new Error('Configuration is required');
     }
     
-    if (!config.type || !['nextcloud', 'google-cloud', 'none'].includes(config.type)) {
+    if (!config.type || !['nextcloud', 'google-cloud', 'google-drive', 'none'].includes(config.type)) {
       throw new Error(`Invalid provider type: ${config.type}`);
     }
     
@@ -233,6 +238,9 @@ export class CloudProviderFactory {
       case 'google-cloud':
         const gc = config as any;
         return `google-cloud:${gc.projectId}:${gc.bucketName}`;
+        
+      case 'google-drive':
+        return 'google-drive:default';
         
       default:
         return `${config.type}:default`;

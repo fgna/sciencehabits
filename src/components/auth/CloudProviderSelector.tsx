@@ -9,6 +9,7 @@ import React, { useState } from 'react';
 import { Button, Card, CardContent } from '../ui';
 import { CloudProviderFactory } from '../../services/sync/CloudProviderFactory';
 import { CloudConfig, CloudProviderType } from '../../types/sync';
+import { GoogleDrivePermissions } from './GoogleDrivePermissions';
 
 interface CloudProviderSelectorProps {
   onProviderSelected: (config: CloudConfig | null) => void;
@@ -53,6 +54,24 @@ export const CloudProviderSelector: React.FC<CloudProviderSelectorProps> = ({
       );
     }
     
+    if (selectedProvider === 'google-drive') {
+      return (
+        <GoogleDrivePermissions
+          onAuthComplete={(success) => {
+            if (success) {
+              handleConfigComplete({
+                type: 'google-drive'
+              });
+            } else {
+              setIsConfiguring(false);
+            }
+          }}
+          onBack={() => setIsConfiguring(false)}
+          className={className}
+        />
+      );
+    }
+    
     if (selectedProvider === 'google-cloud') {
       return (
         <GoogleCloudConfigForm
@@ -68,103 +87,128 @@ export const CloudProviderSelector: React.FC<CloudProviderSelectorProps> = ({
     <Card className={`w-full max-w-2xl mx-auto ${className}`}>
       <CardContent className="p-6">
         <div className="text-center mb-6">
-          <div className="text-4xl mb-2">☁️</div>
-          <h2 className="text-2xl font-bold text-gray-900">Choose Your Sync Method</h2>
-          <p className="text-gray-600 mt-1">
-            Keep your habits synchronized across all your devices
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Sync Your Habits Everywhere
+          </h1>
+          <p className="text-gray-600 text-lg leading-relaxed">
+            Keep your progress safe and access your habits on all your devices. 
+            Your data stays private and encrypted.
           </p>
         </div>
 
+        {/* Benefits Section */}
+        <div className="bg-blue-50 rounded-xl p-5 mb-6">
+          <h3 className="font-semibold text-gray-900 text-center mb-3">
+            ✨ What you get with sync
+          </h3>
+          <div className="grid gap-3 text-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <span>Access habits on phone, tablet, and computer</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <span>Automatic backup to your chosen cloud service</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <span>End-to-end encryption keeps your data private</span>
+            </div>
+          </div>
+        </div>
+
         <div className="space-y-4">
-          {/* Local Only Option */}
+          <h3 className="font-semibold text-gray-900">Choose your sync option:</h3>
+          
+          {/* Google Drive Option - Primary */}
           <div 
-            onClick={() => handleProviderChoice('none')}
-            className="p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors"
+            onClick={() => handleProviderChoice('google-drive')}
+            className="border-2 border-blue-200 bg-blue-50 rounded-xl p-5 cursor-pointer hover:border-blue-300 transition-colors"
           >
-            <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0 mt-1">
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-white border border-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path d="M12 1C7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-medium text-gray-900">Local Only</h3>
-                <p className="text-gray-600 text-sm mt-1">
-                  Keep your data on this device only. No cloud sync.
+                <h4 className="font-semibold text-gray-900 mb-1">
+                  Google Drive 
+                  <span className="text-sm bg-green-100 text-green-700 px-2 py-1 rounded-full ml-2">Recommended</span>
+                </h4>
+                <p className="text-sm text-gray-600 mb-3">
+                  Simple one-click setup. Your encrypted habits will be saved to your Google Drive.
                 </p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                    ✓ Complete Privacy
-                  </span>
-                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                    ✓ No Setup Required
-                  </span>
-                  <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
-                    ⚠ Single Device Only
-                  </span>
+                <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  <span>Uses your existing Google account • No setup required</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Cloud Provider Options */}
-          {providers.map((provider) => (
-            <div 
-              key={provider.type}
-              onClick={() => handleProviderChoice(provider.type)}
-              className="p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 transition-colors"
-            >
-              <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 mt-1">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    {provider.type === 'nextcloud' ? (
-                      <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12.5 2C9.5 2 7 4.2 7 7c0 .4 0 .8.1 1.2C5.8 8.7 4.5 10.2 4.5 12c0 2.2 1.8 4 4 4h8c1.7 0 3-1.3 3-3 0-1.4-1-2.6-2.3-2.9C17.4 6.4 15.2 2 12.5 2z"/>
-                      </svg>
-                    ) : (
-                      <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M22 11v1c0 5.55-4.45 10-10 10S2 17.55 2 12 6.45 2 12 2c2.05 0 3.95.63 5.53 1.69l-2.08 2.08C14.47 5.29 13.28 5 12 5c-3.87 0-7 3.13-7 7s3.13 7 7 7 7-3.13 7-7v-1h-3l4-4 4 4h-3z"/>
-                      </svg>
-                    )}
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-medium text-gray-900">{provider.name}</h3>
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      provider.setup === 'easy' ? 'bg-green-100 text-green-800' :
-                      provider.setup === 'moderate' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {provider.setup} setup
-                    </span>
-                  </div>
-                  <p className="text-gray-600 text-sm mt-1">
-                    {provider.description}
-                  </p>
-                  
-                  <div className="mt-3 space-y-2">
-                    <div className="flex flex-wrap gap-2">
-                      {provider.pros.slice(0, 2).map((pro, index) => (
-                        <span key={index} className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                          ✓ {pro}
-                        </span>
-                      ))}
-                    </div>
-                    {provider.cons.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                          ⚠ {provider.cons[0]}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+          {/* NextCloud Option */}
+          <div 
+            onClick={() => handleProviderChoice('nextcloud')}
+            className="border border-gray-200 rounded-xl p-5 cursor-pointer hover:border-blue-300 transition-colors"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-white border border-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-900 mb-1">NextCloud</h4>
+                <p className="text-sm text-gray-600 mb-3">
+                  Use your own cloud server for maximum privacy. Perfect for EU users.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  <span>Self-hosted • GDPR compliant • Advanced users</span>
                 </div>
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* Local Only Option */}
+          <div 
+            onClick={() => handleProviderChoice('none')}
+            className="border border-gray-200 rounded-xl p-5 cursor-pointer hover:border-blue-300 transition-colors"
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-900 mb-1">Stay Local Only</h4>
+                <p className="text-sm text-gray-600 mb-3">
+                  Keep everything on this device only. Most private option, but no sync.
+                </p>
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L7.5 7.5m2.378 2.378a3 3 0 104.243 4.243m0 0L12 12m-2.378-2.378L12 12m0 0l2.121 2.121M12 12L9.879 9.879" />
+                  </svg>
+                  <span>No internet required • Maximum privacy</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         {onBack && (
@@ -179,8 +223,11 @@ export const CloudProviderSelector: React.FC<CloudProviderSelectorProps> = ({
           </div>
         )}
 
-        <div className="mt-6 text-xs text-gray-500 text-center">
-          <p>You can change your sync method later in settings</p>
+        {/* Trust indicators */}
+        <div className="text-center pt-6 border-t border-gray-100 mt-6">
+          <p className="text-xs text-gray-500 mb-2">🔒 Your data is encrypted before it leaves your device</p>
+          <p className="text-xs text-gray-500 mb-2">✅ We never see your personal information or cloud files</p>
+          <p className="text-xs text-gray-500">You can change your sync method later in settings</p>
         </div>
       </CardContent>
     </Card>

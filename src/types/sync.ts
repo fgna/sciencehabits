@@ -40,7 +40,7 @@ export interface DeviceInfo {
 }
 
 // Cloud Provider Types
-export type CloudProviderType = 'nextcloud' | 'google-cloud' | 'none';
+export type CloudProviderType = 'nextcloud' | 'google-cloud' | 'google-drive' | 'none';
 
 export interface CloudConfig {
   type: CloudProviderType;
@@ -68,6 +68,11 @@ export interface GoogleCloudConfig extends CloudConfig {
   bucketName: string;
   region: string;
   credentials: GoogleCredentials;
+}
+
+export interface GoogleDriveConfig extends CloudConfig {
+  type: 'google-drive';
+  clientId?: string; // Optional, can be configured later
 }
 
 export interface GoogleCredentials {
