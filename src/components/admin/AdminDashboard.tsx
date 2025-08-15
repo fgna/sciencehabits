@@ -5,7 +5,7 @@
  * Provides access to all CMS features with role-based permissions.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Card, CardContent } from '../ui';
 import { 
   AdminAuthService, 
@@ -17,7 +17,6 @@ import {
   UploadResult,
   LocalizedContent
 } from '../../services/cms';
-import { TranslationDashboard } from './TranslationDashboard';
 
 interface AdminDashboardProps {
   onClose?: () => void;
@@ -31,7 +30,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [adminAuth] = useState(() => new AdminAuthService());
   const [contentManager] = useState(() => new ContentManager(adminAuth));
   const [jsonWorkflow] = useState(() => new JSONWorkflowService(adminAuth, contentManager));
-  // const [i18nLoader] = useState(() => new I18nContentLoader(contentManager));
+  const [i18nLoader] = useState(() => new I18nContentLoader(contentManager));
   const [researchValidator] = useState(() => new ResearchValidator(adminAuth));
 
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
@@ -54,7 +53,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   useEffect(() => {
     checkAdminAuth();
     loadDashboardStats();
-  }, [loadDashboardStats]);
+  }, []);
 
   const checkAdminAuth = async () => {
     try {
@@ -99,7 +98,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
-  const loadDashboardStats = useCallback(async () => {
+  const loadDashboardStats = async () => {
     try {
       setIsLoading(true);
       
@@ -148,7 +147,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  };
 
   const handleJSONUpload = async (file: File, type: 'habits' | 'research') => {
     try {
@@ -442,300 +441,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           )}
         </CardContent>
       </Card>
-
-      {/* Translation Management Dashboard */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Translation Management</h3>
-            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-              Full Feature Set
-            </span>
-          </div>
-          <TranslationDashboard />
-        </CardContent>
-      </Card>
-    </div>
-  );
-
-  const renderContentTab = () => (
-    <div className="space-y-6">
-      {/* Content Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📝 Habits Management</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Total Habits:</span>
-                <span className="font-medium">{stats.totalHabits}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Published:</span>
-                <span className="font-medium text-green-600">{Math.floor(stats.totalHabits * 0.85)}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Draft:</span>
-                <span className="font-medium text-yellow-600">{Math.floor(stats.totalHabits * 0.12)}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Under Review:</span>
-                <span className="font-medium text-blue-600">{Math.floor(stats.totalHabits * 0.03)}</span>
-              </div>
-            </div>
-            <div className="mt-4 flex space-x-2">
-              <Button variant="primary" className="text-sm">View All Habits</Button>
-              <Button variant="secondary" className="text-sm">Add New Habit</Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📚 Research Management</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Total Studies:</span>
-                <span className="font-medium">{stats.totalResearch}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Validated:</span>
-                <span className="font-medium text-green-600">{Math.floor(stats.totalResearch * 0.91)}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Pending Review:</span>
-                <span className="font-medium text-yellow-600">{Math.floor(stats.totalResearch * 0.09)}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">High Quality Score:</span>
-                <span className="font-medium text-purple-600">{Math.floor(stats.totalResearch * 0.78)}</span>
-              </div>
-            </div>
-            <div className="mt-4 flex space-x-2">
-              <Button variant="primary" className="text-sm">View All Research</Button>
-              <Button variant="secondary" className="text-sm">Add New Study</Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Content Actions */}
-      <Card>
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Content Management Actions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left">
-              <div className="text-xl mb-2">✏️</div>
-              <h4 className="font-medium text-gray-900">Bulk Edit</h4>
-              <p className="text-sm text-gray-600">Edit multiple items at once</p>
-            </button>
-            
-            <button className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left">
-              <div className="text-xl mb-2">🔄</div>
-              <h4 className="font-medium text-gray-900">Sync Content</h4>
-              <p className="text-sm text-gray-600">Synchronize with external sources</p>
-            </button>
-
-            <button className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left">
-              <div className="text-xl mb-2">📋</div>
-              <h4 className="font-medium text-gray-900">Content Audit</h4>
-              <p className="text-sm text-gray-600">Review content quality and accuracy</p>
-            </button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Recent Content Activity */}
-      <Card>
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm">📝</div>
-                <div>
-                  <p className="font-medium text-sm">Updated "Morning Meditation" habit</p>
-                  <p className="text-xs text-gray-600">2 hours ago</p>
-                </div>
-              </div>
-              <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">Updated</span>
-            </div>
-
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-sm">📚</div>
-                <div>
-                  <p className="font-medium text-sm">Added new research study on sleep habits</p>
-                  <p className="text-xs text-gray-600">5 hours ago</p>
-                </div>
-              </div>
-              <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Added</span>
-            </div>
-
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-sm">🌍</div>
-                <div>
-                  <p className="font-medium text-sm">Completed German translation review</p>
-                  <p className="text-xs text-gray-600">1 day ago</p>
-                </div>
-              </div>
-              <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">Reviewed</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
-  const renderValidationTab = () => (
-    <div className="space-y-6">
-      {/* Validation Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Validation Issues</p>
-                <p className="text-2xl font-bold text-red-600">{stats.validationIssues}</p>
-              </div>
-              <div className="text-3xl">⚠️</div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Validated Content</p>
-                <p className="text-2xl font-bold text-green-600">{stats.totalHabits + stats.totalResearch - stats.validationIssues}</p>
-              </div>
-              <div className="text-3xl">✅</div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Last Validation Run</p>
-                <p className="text-sm font-medium text-gray-900">2 hours ago</p>
-              </div>
-              <div className="text-3xl">🔍</div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Validation Actions */}
-      <Card>
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Validation Tools</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button 
-              onClick={handleValidationRun}
-              className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left"
-              disabled={isLoading}
-            >
-              <div className="text-xl mb-2">🔍</div>
-              <h4 className="font-medium text-gray-900">Run Full Validation</h4>
-              <p className="text-sm text-gray-600">Check all content for issues and inconsistencies</p>
-            </button>
-
-            <button className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left">
-              <div className="text-xl mb-2">🔗</div>
-              <h4 className="font-medium text-gray-900">Validate Links</h4>
-              <p className="text-sm text-gray-600">Check all external links and references</p>
-            </button>
-
-            <button className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left">
-              <div className="text-xl mb-2">📊</div>
-              <h4 className="font-medium text-gray-900">Data Integrity Check</h4>
-              <p className="text-sm text-gray-600">Verify data consistency and relationships</p>
-            </button>
-
-            <button className="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-left">
-              <div className="text-xl mb-2">🏷️</div>
-              <h4 className="font-medium text-gray-900">Validate Metadata</h4>
-              <p className="text-sm text-gray-600">Check tags, categories, and classifications</p>
-            </button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Validation Issues */}
-      {stats.validationIssues > 0 && (
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Current Issues</h3>
-            <div className="space-y-3">
-              <div className="flex items-start space-x-3 p-3 bg-red-50 rounded-lg">
-                <div className="text-red-500 mt-0.5">⚠️</div>
-                <div className="flex-1">
-                  <p className="font-medium text-sm text-red-900">Missing Research Reference</p>
-                  <p className="text-sm text-red-700">Habit "Daily Walking" references non-existent study ID: study_789</p>
-                  <p className="text-xs text-red-600 mt-1">Found in: habits.json, line 45</p>
-                </div>
-                <Button variant="secondary" className="text-xs">Fix</Button>
-              </div>
-
-              <div className="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg">
-                <div className="text-yellow-500 mt-0.5">⚠️</div>
-                <div className="flex-1">
-                  <p className="font-medium text-sm text-yellow-900">Translation Missing</p>
-                  <p className="text-sm text-yellow-700">Research study "Sleep Quality 2024" missing German translation</p>
-                  <p className="text-xs text-yellow-600 mt-1">Priority: Medium</p>
-                </div>
-                <Button variant="secondary" className="text-xs">Translate</Button>
-              </div>
-
-              <div className="flex items-start space-x-3 p-3 bg-orange-50 rounded-lg">
-                <div className="text-orange-500 mt-0.5">⚠️</div>
-                <div className="flex-1">
-                  <p className="font-medium text-sm text-orange-900">Broken External Link</p>
-                  <p className="text-sm text-orange-700">Research DOI link returns 404 error</p>
-                  <p className="text-xs text-orange-600 mt-1">DOI: 10.1234/example.2024.001</p>
-                </div>
-                <Button variant="secondary" className="text-xs">Update</Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Validation History */}
-      <Card>
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Validation History</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-medium text-sm">Full validation completed</p>
-                <p className="text-xs text-gray-600">2 hours ago • 3 issues found</p>
-              </div>
-              <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">Issues Found</span>
-            </div>
-
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-medium text-sm">Link validation completed</p>
-                <p className="text-xs text-gray-600">6 hours ago • All links valid</p>
-              </div>
-              <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Passed</span>
-            </div>
-
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-medium text-sm">Data integrity check completed</p>
-                <p className="text-xs text-gray-600">1 day ago • 1 issue resolved</p>
-              </div>
-              <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">Resolved</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 
@@ -826,10 +531,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {!isLoading && (
           <>
             {activeTab === 'overview' && renderOverviewTab()}
-            {activeTab === 'content' && renderContentTab()}
             {activeTab === 'json' && renderJSONTab()}
             {activeTab === 'translations' && renderTranslationsTab()}
-            {activeTab === 'validation' && renderValidationTab()}
+            {(activeTab === 'content' || activeTab === 'validation') && (
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <div className="text-4xl mb-4">🚧</div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Coming Soon</h3>
+                  <p className="text-gray-600">
+                    This section is under development and will be available in the next update.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </>
         )}
       </div>
