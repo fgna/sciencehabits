@@ -27,9 +27,9 @@ type DashboardTab = 'today' | 'habits' | 'progress' | 'recovery' | 'research' | 
 
 export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutProps) {
   const [activeTab, setActiveTab] = useState<DashboardTab>('today');
-  const [simplifiedTab, setSimplifiedTab] = useState<'today' | 'habits' | 'analytics'>('today');
+  const [simplifiedTab, setSimplifiedTab] = useState<'today' | 'habits' | 'analytics' | 'settings'>('today');
 
-  const handleTabChange = (tab: 'today' | 'habits' | 'analytics') => {
+  const handleTabChange = (tab: 'today' | 'habits' | 'analytics' | 'settings') => {
     setSimplifiedTab(tab);
   };
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -223,6 +223,66 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
           {simplifiedTab === 'today' && <SimplifiedDashboard />}
           {simplifiedTab === 'habits' && <HabitsView />}
           {simplifiedTab === 'analytics' && <Analytics />}
+          {simplifiedTab === 'settings' && (
+            <div className="max-w-4xl mx-auto p-6">
+              <div className="mb-6">
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">Settings</h1>
+                <p className="text-gray-600">Manage your app preferences and cloud sync</p>
+              </div>
+              
+              {/* Cloud Sync Section */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">☁️ Cloud Sync</h2>
+                <p className="text-gray-600 mb-4">
+                  Keep your habits synchronized across all your devices with secure cloud storage.
+                </p>
+                {/* Add CloudProviderSelector here */}
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <p className="text-blue-700 text-sm">
+                    🚀 <strong>Google Drive sync is now available!</strong> Simple one-click setup to sync your habits across all devices.
+                  </p>
+                </div>
+              </div>
+              
+              {/* Profile & Preferences */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">👤 Profile & Preferences</h2>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsProfileOpen(true)}
+                  className="mb-4"
+                >
+                  Open Profile Settings
+                </Button>
+                <p className="text-gray-600 text-sm">
+                  Update your goals, daily time commitment, and personal preferences.
+                </p>
+              </div>
+
+              {/* Layout Mode */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">🎯 Layout Mode</h2>
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => setLayoutMode('simplified')}
+                    className={layoutMode === 'simplified' ? 'bg-blue-600 text-white border-blue-600' : ''}
+                  >
+                    Simplified
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setLayoutMode('enhanced')}
+                  >
+                    Enhanced
+                  </Button>
+                </div>
+                <p className="text-gray-600 text-sm mt-2">
+                  Choose between a clean simplified interface or the full-featured enhanced view.
+                </p>
+              </div>
+            </div>
+          )}
         </main>
         
         {/* Settings toggle - temporary for development */}
@@ -496,14 +556,13 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
                 <Button
                   variant="outline"
                   onClick={() => setLayoutMode('simplified')}
-                  className={layoutMode === 'simplified' ? 'bg-blue-600 text-white' : ''}
                 >
                   Simplified
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setLayoutMode('enhanced')}
-                  className={layoutMode === 'enhanced' ? 'bg-blue-600 text-white' : ''}
+                  className={layoutMode === 'enhanced' ? 'bg-blue-600 text-white border-blue-600' : ''}
                 >
                   Enhanced
                 </Button>
