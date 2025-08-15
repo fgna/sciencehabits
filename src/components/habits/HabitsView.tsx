@@ -3,7 +3,7 @@ import { Button, Card, CardContent } from '../ui';
 import { CreateHabitForm } from './CreateHabitForm';
 import { useHabitStore } from '../../stores/habitStore';
 import { useUserStore } from '../../stores/userStore';
-import { CleanHabitCard } from '../ui/CleanHabitCard';
+import { DetailedHabitCard } from './DetailedHabitCard';
 import { HabitResearchModal } from '../research/HabitResearchModal';
 import { Habit } from '../../types';
 
@@ -82,6 +82,12 @@ export function HabitsView() {
   const handleCompleteHabit = async (habitId: string) => {
     const { updateUserProgress } = useUserStore.getState();
     await updateUserProgress(habitId);
+  };
+
+  const handleSkipHabit = (habitId: string) => {
+    // For now, just show a message - can be enhanced later
+    console.log(`Skipped habit: ${habitId}`);
+    // Could add to localStorage or implement skip tracking system
   };
 
 
@@ -172,11 +178,12 @@ export function HabitsView() {
                 const progress = userProgress.find(p => p.habitId === habit.id);
                 const isCompleted = progress?.completions.includes(new Date().toISOString().split('T')[0]) || false;
                 return (
-                  <CleanHabitCard 
+                  <DetailedHabitCard 
                     key={habit.id} 
                     habit={habit}
                     progress={progress}
                     onComplete={handleCompleteHabit}
+                    onSkip={handleSkipHabit}
                     onViewResearch={handleViewResearch}
                     isCompleted={isCompleted}
                   />
@@ -223,11 +230,12 @@ export function HabitsView() {
                 const progress = userProgress.find(p => p.habitId === habit.id);
                 const isCompleted = progress?.completions.includes(new Date().toISOString().split('T')[0]) || false;
                 return (
-                  <CleanHabitCard 
+                  <DetailedHabitCard 
                     key={habit.id} 
                     habit={habit}
                     progress={progress}
                     onComplete={handleCompleteHabit}
+                    onSkip={handleSkipHabit}
                     onViewResearch={handleViewResearch}
                     isCompleted={isCompleted}
                     showActions
