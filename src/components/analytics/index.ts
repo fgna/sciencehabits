@@ -1,6 +1,14 @@
 // Export main analytics view (simplified)
 export { AnalyticsView } from './AnalyticsView';
 export { SimpleAnalyticsView } from './SimpleAnalyticsView';
+export { MobileAnalyticsView } from './MobileAnalyticsView';
+export { ResponsiveAnalyticsView } from './ResponsiveAnalyticsView';
+
+// Export mobile-specific components
+export { MobileMetricsGrid } from './mobile/MobileMetricsGrid';
+export { MobileFormationCarousel } from './mobile/MobileFormationCarousel';
+export { MobileHabitAccordion } from './mobile/MobileHabitAccordion';
+export { ScienceEducationModal } from './mobile/ScienceEducationModal';
 export { Analytics } from './Analytics';
 export { OverviewCard } from './OverviewCard';
 export { TimeRangeSelector } from './TimeRangeSelector';

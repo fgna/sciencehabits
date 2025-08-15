@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../ui';
 import { HabitsView } from '../habits';
 import { AnalyticsView } from '../analytics/AnalyticsView';
+import { ResponsiveAnalyticsView } from '../analytics/ResponsiveAnalyticsView';
 import { ProfileModal } from '../profile';
+import { ProfileSettings } from '../profile/ProfileSettings';
 import { ResearchArticles } from '../research';
 import { ContentLoaderDemo } from '../admin/ContentLoaderDemo';
 import { ReminderIndicator } from '../reminders/ReminderIndicator';
@@ -106,7 +108,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   
   // Get data from store for components that need it
-  const { userHabits, userProgress, refreshProgress, saveCloudConfig } = useUserStore();
+  const { userHabits, userProgress, refreshProgress, saveCloudConfig, currentUser } = useUserStore();
   const { layoutMode, setLayoutMode } = useUIPreferencesStore();
 
   // Dev function to add sample progress data
@@ -292,7 +294,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
         <main className="flex-1">
           {simplifiedTab === 'today' && <SimplifiedDashboard />}
           {simplifiedTab === 'habits' && <HabitsView />}
-          {simplifiedTab === 'analytics' && <AnalyticsView />}
+          {simplifiedTab === 'analytics' && <ResponsiveAnalyticsView />}
           {simplifiedTab === 'settings' && (
             <div className="max-w-4xl mx-auto p-6">
               <div className="mb-6">
@@ -336,17 +338,16 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
               {/* Profile Tab */}
               {settingsTab === 'profile' && (
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">👤 Profile & Preferences</h2>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsProfileOpen(true)}
-                    className="mb-4"
-                  >
-                    Open Profile Settings
-                  </Button>
-                  <p className="text-gray-600 text-sm">
-                    Update your goals, daily time commitment, and personal preferences.
-                  </p>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-6">👤 Profile & Preferences</h2>
+                  {currentUser ? (
+                    <ProfileSettings user={currentUser} />
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-4">👤</div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">Loading Profile...</h3>
+                      <p className="text-gray-600">Setting up your profile settings</p>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -652,17 +653,16 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
             {/* Profile Tab */}
             {settingsTab === 'profile' && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">👤 Profile & Preferences</h2>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsProfileOpen(true)}
-                  className="mb-4"
-                >
-                  Open Profile Settings
-                </Button>
-                <p className="text-gray-600 text-sm">
-                  Update your goals, daily time commitment, and personal preferences.
-                </p>
+                <h2 className="text-lg font-semibold text-gray-900 mb-6">👤 Profile & Preferences</h2>
+                {currentUser ? (
+                  <ProfileSettings user={currentUser} />
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="text-4xl mb-4">👤</div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Loading Profile...</h3>
+                    <p className="text-gray-600">Setting up your profile settings</p>
+                  </div>
+                )}
               </div>
             )}
 
