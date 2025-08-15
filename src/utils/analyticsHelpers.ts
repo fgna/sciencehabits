@@ -1,3 +1,5 @@
+// IMPROVEMENT: Fixed completion rate calculation - 2025-08-15
+// DO NOT REVERT: Critical for accurate user metrics based on actual usage days
 import { Progress, Habit } from '../types';
 
 export interface AnalyticsData {

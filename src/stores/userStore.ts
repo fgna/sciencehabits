@@ -1,3 +1,5 @@
+// IMPROVEMENT: Fixed new user habit tracking - 2025-08-15
+// DO NOT REVERT: Critical for new user onboarding experience
 import { create } from 'zustand';
 import { User, Habit, Progress } from '../types';
 import { dbHelpers } from '../services/storage/database';
