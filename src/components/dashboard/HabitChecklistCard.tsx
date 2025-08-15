@@ -3,7 +3,7 @@ import { Habit, Progress } from '../../types';
 import { useUserStore } from '../../stores/userStore';
 import { useCurrentDate } from '../../hooks/useCurrentDate';
 import { useResearch } from '../../contexts/ResearchContext';
-import { Card, Button } from '../ui';
+import { Card, Button, CompletionButton } from '../ui';
 
 interface HabitChecklistCardProps {
   habit: Habit;
@@ -133,36 +133,15 @@ export function HabitChecklistCard({ habit, progress, showActions, onEdit, onDel
                   </Button>
                 )}
               </div>
-            ) : isCompletedToday ? (
-              <button
-                onClick={handleToggleComplete}
-                disabled={isCompleting}
-                className="flex items-center space-x-2 text-green-600 bg-green-100 hover:bg-green-200 px-4 py-2 rounded-lg transition-colors cursor-pointer group"
-                title="Click to unmark as complete"
-              >
-                {isCompleting ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
-                ) : (
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                )}
-                <span className="text-sm font-medium">
-                  {isCompleting ? 'Updating...' : 'Done!'}
-                </span>
-                <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                  (click to undo)
-                </span>
-              </button>
             ) : (
-              <Button
-                onClick={handleToggleComplete}
+              <CompletionButton
+                isCompleted={isCompletedToday}
+                onToggle={handleToggleComplete}
+                habitId={habit.id}
                 disabled={isCompleting}
-                isLoading={isCompleting}
-                className="min-w-[120px]"
-              >
-                {isCompleting ? 'Completing...' : 'Complete'}
-              </Button>
+                size="md"
+                showLabel={true}
+              />
             )}
           </div>
         </div>

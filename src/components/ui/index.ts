@@ -8,3 +8,4 @@ export { MinimalHabitCard } from './MinimalHabitCard';
 export { SimpleProgress } from './SimpleProgress';
 export { CleanHabitCard } from './CleanHabitCard';
 export { ResearchArticleCard } from './ResearchArticleCard';
+export { CompletionButton } from './CompletionButton';

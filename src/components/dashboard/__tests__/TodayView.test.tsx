@@ -182,8 +182,8 @@ describe('TodayView Component', () => {
 
       render(<TodayView />);
       
-      expect(screen.getByText('No habits yet')).toBeInTheDocument();
-      expect(screen.getByText('Get Started')).toBeInTheDocument();
+      expect(screen.getByText('Welcome!')).toBeInTheDocument();
+      expect(screen.getByText('Add habits')).toBeInTheDocument();
     });
   });
 

@@ -54,10 +54,10 @@ export function TodayView() {
         <Card>
           <CardContent>
             <div className="text-center py-12">
-              <div className="text-4xl mb-4">🌱</div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">No habits yet</h2>
+              <div className="text-4xl mb-4">👋</div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Welcome!</h2>
               <p className="text-gray-600 mb-6">
-                Start your journey by setting up some science-backed habits.
+                Complete onboarding to start your science-backed habit journey
               </p>
               <button
                 onClick={() => {
@@ -66,7 +66,7 @@ export function TodayView() {
                 }}
                 className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
               >
-                Get Started
+                Add habits
               </button>
             </div>
           </CardContent>
@@ -79,7 +79,7 @@ export function TodayView() {
   const dailyHabits = userHabits.filter(h => h.frequency.type === 'daily');
   const weeklyHabits = userHabits.filter(h => h.frequency.type === 'weekly');
   
-  const todayCompletions = getTodayCompletions(userProgress);
+  const todayCompletions = getTodayCompletions(userProgress) || [];
   const stats = getDashboardStats(userProgress);
   
   // Calculate completion percentage based on daily habits for "today's progress"

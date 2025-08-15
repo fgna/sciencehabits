@@ -1,0 +1,183 @@
+/* Completion Button Styles */
+.completion-button {
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+
+.completion-button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Uncompleted hover state */
+.completion-button.uncompleted:hover {
+  background-color: #f0fdf4; /* Light green background */
+  transform: scale(1.05);
+}
+
+.completion-button.uncompleted:hover .empty-circle-icon circle {
+  stroke: #22c55e;
+}
+
+/* Completed hover state - show undo hint */
+.completion-button.completed:hover {
+  background-color: #fef2f2; /* Light red background */
+  transform: scale(1.05);
+}
+
+.completion-button.completed:hover .checkmark-icon circle {
+  fill: #ef4444;
+}
+
+/* Click animation */
+.completion-button:active {
+  transform: scale(0.95);
+}
+
+/* Success animation when completing */
+.completion-button.completing {
+  animation: successPulse 0.3s ease-in-out;
+}
+
+/* Undo animation when uncompleting */
+.completion-button.uncompleting {
+  animation: undoPulse 0.3s ease-in-out;
+}
+
+@keyframes successPulse {
+  0% { 
+    transform: scale(1); 
+    background-color: transparent;
+  }
+  50% { 
+    transform: scale(1.2); 
+    background-color: #dcfce7;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
+  }
+  100% { 
+    transform: scale(1); 
+    background-color: transparent;
+  }
+}
+
+@keyframes undoPulse {
+  0% { 
+    transform: scale(1); 
+    background-color: transparent;
+  }
+  50% { 
+    transform: scale(1.2); 
+    background-color: #fee2e2;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2);
+  }
+  100% { 
+    transform: scale(1); 
+    background-color: transparent;
+  }
+}
+
+/* Loading state */
+.completion-button.loading {
+  pointer-events: none;
+}
+
+.completion-button.loading .checkmark-icon circle,
+.completion-button.loading .empty-circle-icon circle {
+  opacity: 0.5;
+}
+
+/* Enhanced hover effects for better UX */
+.completion-button:not(:disabled):hover {
+  cursor: pointer;
+}
+
+.completion-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.completion-button:disabled:hover {
+  background-color: transparent !important;
+}
+
+/* Smooth transitions for all states */
+.completion-button * {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Tooltip styling */
+.completion-button .tooltip {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #374151;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.completion-button:hover .tooltip {
+  opacity: 1;
+}
+
+/* Focus states for accessibility */
+.completion-button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .completion-button.uncompleted .empty-circle-icon circle {
+    stroke: #000000;
+    stroke-width: 3;
+  }
+  
+  .completion-button.completed .checkmark-icon circle {
+    fill: #008000;
+  }
+  
+  .completion-button.completed .checkmark-icon path {
+    stroke: #ffffff;
+    stroke-width: 3;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .completion-button,
+  .completion-button *,
+  .completion-button.completing,
+  .completion-button.uncompleting {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .completion-button:hover {
+    transform: none;
+  }
+}
+
+/* Mobile touch targets */
+@media (max-width: 768px) {
+  .completion-button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px;
+  }
+}
