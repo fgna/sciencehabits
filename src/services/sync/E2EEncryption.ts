@@ -161,7 +161,7 @@ export class E2EEncryption {
       
       this.userKey = await crypto.subtle.importKey(
         'raw',
-        keyBytes,
+        keyBytes.buffer.slice(keyBytes.byteOffset, keyBytes.byteOffset + keyBytes.byteLength),
         { name: 'AES-GCM' },
         false,
         ['encrypt', 'decrypt']
