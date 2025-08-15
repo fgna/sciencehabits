@@ -307,7 +307,7 @@ export class UserAuthentication {
     return await crypto.subtle.deriveKey(
       {
         name: 'PBKDF2',
-        salt: salt.buffer.slice(salt.byteOffset, salt.byteOffset + salt.byteLength),
+        salt: new Uint8Array(salt),
         iterations: 100000,
         hash: 'SHA-256'
       },
