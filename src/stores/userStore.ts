@@ -84,14 +84,46 @@ export const useUserStore = create<UserState>((set, get) => ({
       const progress = await dbHelpers.getUserProgress(userId);
       console.log('Progress entries found:', progress.length, progress);
       
-      // Combine all habits and filter to only show those with progress (actively tracking)
+      // Combine all habits
       const allHabits = [...recommendedHabits, ...customHabits];
       console.log('All habits before filtering:', allHabits.length, allHabits);
       
-      const activeHabits = allHabits.filter(habit => 
-        progress.some(p => p.habitId === habit.id)
-      );
-      console.log('Active habits after filtering:', activeHabits.length, activeHabits);
+      // For new users or users with no progress, show recommended habits
+      // For existing users, only show habits with progress (actively tracking)
+      let activeHabits: Habit[];
+      
+      if (progress.length === 0 && recommendedHabits.length > 0) {
+        // New user case: show recommended habits and automatically create progress entries
+        console.log('New user detected, showing recommended habits and creating progress entries');
+        activeHabits = recommendedHabits.slice(0, 5); // Show first 5 recommended habits
+        
+        // Create progress entries for recommended habits
+        for (const habit of activeHabits) {
+          try {
+            await dbHelpers.createProgress(userId, habit.id);
+          } catch (error) {
+            console.error('Failed to create progress for habit:', habit.id, error);
+          }
+        }
+        
+        // Reload progress after creating entries
+        const newProgress = await dbHelpers.getUserProgress(userId);
+        console.log('Progress after creating entries for new user:', newProgress.length, newProgress);
+        
+        set({ 
+          currentUser: user,
+          userHabits: activeHabits,
+          userProgress: newProgress,
+          isLoading: false 
+        });
+        return;
+      } else {
+        // Existing user case: filter to only show those with progress (actively tracking)
+        activeHabits = allHabits.filter(habit => 
+          progress.some(p => p.habitId === habit.id)
+        );
+        console.log('Active habits after filtering:', activeHabits.length, activeHabits);
+      }
 
       // If no active habits but user has progress, there might be orphaned progress entries
       if (activeHabits.length === 0 && progress.length > 0) {
