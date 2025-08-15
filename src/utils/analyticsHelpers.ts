@@ -116,17 +116,17 @@ export function calculateAnalytics(
   const totalCompletions = filteredProgress.reduce((sum, p) => sum + p.completions.length, 0);
   
   // Find the earliest date the user started tracking habits
-  let earliestDate = start;
+  let earliestDate = end; // Initialize to end date so we can find earlier dates
   progress.forEach(p => {
     // Use dateStarted if available, otherwise use first completion
     if (p.dateStarted) {
       const startDate = new Date(p.dateStarted);
-      if (startDate > start && startDate < earliestDate) {
+      if (startDate >= start && startDate < earliestDate) {
         earliestDate = startDate;
       }
     } else if (p.completions.length > 0) {
       const firstCompletion = new Date(p.completions[0]);
-      if (firstCompletion > start && firstCompletion < earliestDate) {
+      if (firstCompletion >= start && firstCompletion < earliestDate) {
         earliestDate = firstCompletion;
       }
     }
