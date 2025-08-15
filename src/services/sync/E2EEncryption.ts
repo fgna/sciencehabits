@@ -159,9 +159,14 @@ export class E2EEncryption {
     try {
       const keyBytes = this.decodeBase58(backupKey);
       
+      // Create a clean ArrayBuffer for crypto.subtle.importKey
+      const arrayBuffer = new ArrayBuffer(keyBytes.length);
+      const uint8View = new Uint8Array(arrayBuffer);
+      uint8View.set(keyBytes);
+      
       this.userKey = await crypto.subtle.importKey(
         'raw',
-        keyBytes.buffer.slice(keyBytes.byteOffset, keyBytes.byteOffset + keyBytes.byteLength),
+        arrayBuffer,
         { name: 'AES-GCM' },
         false,
         ['encrypt', 'decrypt']
