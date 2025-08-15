@@ -70,7 +70,24 @@ export function HabitsView() {
   const confirmDelete = async () => {
     if (!currentUser || !deleteConfirmation.habit) return;
     
-    const success = await deleteHabit(deleteConfirmation.habit.id, currentUser.id);
+    const habit = deleteConfirmation.habit;
+    let success = false;
+    
+    if (habit.isCustom) {
+      // For custom habits, delete the habit entirely
+      success = await deleteHabit(habit.id, currentUser.id);
+    } else {
+      // For science-backed habits, just remove from user's tracking (delete progress)
+      try {
+        const { dbHelpers } = await import('../../services/storage/database');
+        await dbHelpers.deleteProgress(currentUser.id, habit.id);
+        success = true;
+      } catch (error) {
+        console.error('Failed to remove habit from tracking:', error);
+        setError('Failed to remove habit from tracking');
+      }
+    }
+    
     if (success) {
       await refreshProgress();
     }
@@ -200,6 +217,8 @@ export function HabitsView() {
                     onSkip={handleSkipHabit}
                     onViewResearch={handleViewResearch}
                     isCompleted={isCompleted}
+                    showActions
+                    onDelete={() => handleDelete(habit)}
                   />
                 );
               })}
@@ -285,13 +304,23 @@ export function HabitsView() {
         isOpen={deleteConfirmation.isOpen}
         onClose={() => setDeleteConfirmation({ isOpen: false, habit: null })}
         onConfirm={confirmDelete}
-        title="Delete Habit"
+        title={
+          deleteConfirmation.habit?.isCustom 
+            ? "Delete Habit" 
+            : "Stop Tracking Habit"
+        }
         message={
           deleteConfirmation.habit
-            ? `Are you sure you want to delete "${deleteConfirmation.habit.title}"? This will also remove all progress data for this habit. This action cannot be undone.`
+            ? deleteConfirmation.habit.isCustom
+              ? `Are you sure you want to delete "${deleteConfirmation.habit.title}"? This will permanently remove the habit and all progress data. This action cannot be undone.`
+              : `Are you sure you want to stop tracking "${deleteConfirmation.habit.title}"? This will remove it from your habit list and delete all progress data. You can always add it back later from the recommendations.`
             : ''
         }
-        confirmText="Delete Habit"
+        confirmText={
+          deleteConfirmation.habit?.isCustom 
+            ? "Delete Habit" 
+            : "Stop Tracking"
+        }
         cancelText="Cancel"
         confirmVariant="danger"
         icon={
