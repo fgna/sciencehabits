@@ -112,11 +112,34 @@ export function calculateAnalytics(
   }));
 
   const totalCompletions = filteredProgress.reduce((sum, p) => sum + p.completions.length, 0);
+  
+  // Find the earliest date the user started tracking habits
+  let earliestDate = start;
+  progress.forEach(p => {
+    // Use dateStarted if available, otherwise use first completion
+    if (p.dateStarted) {
+      const startDate = new Date(p.dateStarted);
+      if (startDate > start && startDate < earliestDate) {
+        earliestDate = startDate;
+      }
+    } else if (p.completions.length > 0) {
+      const firstCompletion = new Date(p.completions[0]);
+      if (firstCompletion > start && firstCompletion < earliestDate) {
+        earliestDate = firstCompletion;
+      }
+    }
+  });
+  
+  // Calculate days since actual usage started, not the full period
+  const actualStartDate = earliestDate > start ? earliestDate : start;
   const totalDaysInRange = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-  const totalPossibleCompletions = progress.length * totalDaysInRange;
+  const actualDaysSinceStart = Math.max(1, Math.ceil((end.getTime() - actualStartDate.getTime()) / (1000 * 60 * 60 * 24)));
+  
+  // Use actual days since start for completion rate calculation
+  const totalPossibleCompletions = progress.length * actualDaysSinceStart;
 
   return {
-    totalDaysTracked: totalDaysInRange,
+    totalDaysTracked: actualDaysSinceStart, // Use actual days since starting the app
     totalCompletions,
     overallCompletionRate: totalPossibleCompletions > 0 ? (totalCompletions / totalPossibleCompletions) * 100 : 0,
     activeHabitsCount: progress.length,

@@ -21,7 +21,29 @@ export function AnalyticsView() {
 
     // Calculate basic stats from Progress interface
     const totalCompletions = userProgress.reduce((total, progress) => total + progress.completions.length, 0);
-    const totalPossibleCompletions = userHabits.length * 7; // Last 7 days assumption
+    
+    // Find earliest date user started tracking (from progress entries)
+    let earliestDate = new Date();
+    userProgress.forEach(progress => {
+      if (progress.dateStarted) {
+        const startDate = new Date(progress.dateStarted);
+        if (startDate < earliestDate) {
+          earliestDate = startDate;
+        }
+      } else if (progress.completions.length > 0) {
+        const firstCompletion = new Date(progress.completions[0]);
+        if (firstCompletion < earliestDate) {
+          earliestDate = firstCompletion;
+        }
+      }
+    });
+    
+    // Calculate actual days since user started (not just last 7 days)
+    const today = new Date();
+    const daysSinceStart = Math.max(1, Math.ceil((today.getTime() - earliestDate.getTime()) / (1000 * 60 * 60 * 24)));
+    const cappedDays = Math.min(daysSinceStart, 30); // Cap at 30 days for reasonable display
+    
+    const totalPossibleCompletions = userHabits.length * cappedDays;
     const completionRate = totalPossibleCompletions > 0 ? (totalCompletions / totalPossibleCompletions) * 100 : 0;
 
     // Calculate current and longest streaks
