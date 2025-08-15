@@ -694,3 +694,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   <a href="https://github.com/sciencehabits/app/issues">🐛 Report Bug</a> •
   <a href="https://github.com/sciencehabits/app/discussions">💬 Discussions</a>
 </div>
+🤖 Android APK Pipeline Ready!
