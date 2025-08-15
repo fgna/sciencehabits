@@ -128,8 +128,9 @@ dist
 
 # Gatsby files
 .cache/
-public
-!public/_redirects
+# Note: public folder should NOT be ignored for React apps - contains essential static files
+# public - commented out for React app
+# !public/_redirects - not needed anymore
 
 # Serverless directories
 .serverless/
