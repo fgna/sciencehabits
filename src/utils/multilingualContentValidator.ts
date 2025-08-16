@@ -1,11 +1,11 @@
 /**
- * Bilingual Content Validator
+ * Multilingual Content Validator
  * 
- * Validates bilingual habit content against JSON schema and
+ * Validates multilingual habit content against JSON schema and
  * performs additional content quality checks.
  */
 
-import { BilingualHabit, SupportedLanguage } from '../types/localization';
+import { MultilingualHabit, SupportedLanguage } from '../types/localization';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -41,16 +41,16 @@ export interface ContentStats {
   categoryDistribution: Record<string, number>;
 }
 
-export class BilingualContentValidator {
+export class MultilingualContentValidator {
   private static readonly REQUIRED_LANGUAGES: SupportedLanguage[] = ['en', 'de'];
   private static readonly VALID_GOAL_CATEGORIES = ['better_sleep', 'get_moving', 'feel_better'];
   private static readonly MAX_EFFECTIVENESS_SCORE = 10.0;
   private static readonly MIN_EFFECTIVENESS_SCORE = 1.0;
 
   /**
-   * Validate a complete bilingual habits dataset
+   * Validate a complete multilingual habits dataset
    */
-  static validateHabitsCollection(habits: BilingualHabit[]): ValidationResult {
+  static validateHabitsCollection(habits: MultilingualHabit[]): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
 
@@ -95,7 +95,7 @@ export class BilingualContentValidator {
    * Validate a single habit
    */
   private static validateSingleHabit(
-    habit: BilingualHabit, 
+    habit: MultilingualHabit, 
     errors: ValidationError[], 
     warnings: ValidationWarning[]
   ): void {
@@ -287,7 +287,7 @@ export class BilingualContentValidator {
    * Validate consistency across habits
    */
   private static validateHabitConsistency(
-    habits: BilingualHabit[],
+    habits: MultilingualHabit[],
     errors: ValidationError[],
     warnings: ValidationWarning[]
   ): void {
@@ -332,7 +332,7 @@ export class BilingualContentValidator {
    * Validate ranking within a category
    */
   private static validateCategoryRanking(
-    habits: BilingualHabit[],
+    habits: MultilingualHabit[],
     category: string,
     errors: ValidationError[],
     warnings: ValidationWarning[]
@@ -367,7 +367,7 @@ export class BilingualContentValidator {
   /**
    * Check content quality
    */
-  private static checkContentQuality(habit: BilingualHabit, warnings: ValidationWarning[]): void {
+  private static checkContentQuality(habit: MultilingualHabit, warnings: ValidationWarning[]): void {
     // Check for research quantification
     Object.entries(habit.translations).forEach(([lang, translation]) => {
       if (!translation.researchEffectiveness.match(/\d+%/)) {
@@ -399,7 +399,7 @@ export class BilingualContentValidator {
   /**
    * Group habits by category
    */
-  private static groupByCategory(habits: BilingualHabit[]): Record<string, BilingualHabit[]> {
+  private static groupByCategory(habits: MultilingualHabit[]): Record<string, MultilingualHabit[]> {
     return habits.reduce((groups, habit) => {
       const category = habit.goalCategory;
       if (!groups[category]) {
@@ -407,13 +407,13 @@ export class BilingualContentValidator {
       }
       groups[category].push(habit);
       return groups;
-    }, {} as Record<string, BilingualHabit[]>);
+    }, {} as Record<string, MultilingualHabit[]>);
   }
 
   /**
    * Generate content statistics
    */
-  private static generateContentStats(habits: BilingualHabit[]): ContentStats {
+  private static generateContentStats(habits: MultilingualHabit[]): ContentStats {
     const totalHabits = habits.length;
     const languagesCovered: SupportedLanguage[] = ['en', 'de'];
     
@@ -453,7 +453,7 @@ export class BilingualContentValidator {
   private static createFailureResult(
     errors: ValidationError[],
     warnings: ValidationWarning[],
-    habits: BilingualHabit[]
+    habits: MultilingualHabit[]
   ): ValidationResult {
     return {
       isValid: false,
@@ -474,7 +474,7 @@ export class BilingualContentValidator {
   }> {
     // NOTE: Content validation now uses content API instead of local files
     // This method is kept for backward compatibility but returns empty results
-    console.warn('BilingualContentValidator: Using content API instead of local files');
+    console.warn('MultilingualContentValidator: Using content API instead of local files');
     
     const emptyResult: ValidationResult = {
       isValid: true,

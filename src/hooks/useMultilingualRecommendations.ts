@@ -1,5 +1,5 @@
 /**
- * React Hook for Bilingual Habit Recommendations
+ * React Hook for Multilingual Habit Recommendations
  * 
  * Provides easy access to personalized habit recommendations
  * with full localization support and effectiveness ranking.
@@ -12,7 +12,7 @@ import {
   RecommendationResponse,
   GoalCategoryRanking 
 } from '../services/localization/EffectivenessRankingService';
-import { BilingualHabit, SupportedLanguage } from '../types/localization';
+import { MultilingualHabit, SupportedLanguage } from '../types/localization';
 import { useLanguage } from './useLanguage';
 
 export interface UseRecommendationsOptions {
@@ -36,12 +36,12 @@ export interface UseRecommendationsReturn {
   loadCategoryRankings: () => Promise<void>;
 
   // Global data
-  topHabits: BilingualHabit[];
-  primaryRecommendations: BilingualHabit[];
+  topHabits: MultilingualHabit[];
+  primaryRecommendations: MultilingualHabit[];
   systemStats: any;
 }
 
-export const useBilingualRecommendations = (
+export const useMultilingualRecommendations = (
   options: UseRecommendationsOptions = {}
 ): UseRecommendationsReturn => {
   const { currentLanguage } = useLanguage();
@@ -52,8 +52,8 @@ export const useBilingualRecommendations = (
   
   // Category and global data
   const [categoryRankings, setCategoryRankings] = useState<GoalCategoryRanking[]>([]);
-  const [topHabits, setTopHabits] = useState<BilingualHabit[]>([]);
-  const [primaryRecommendations, setPrimaryRecommendations] = useState<BilingualHabit[]>([]);
+  const [topHabits, setTopHabits] = useState<MultilingualHabit[]>([]);
+  const [primaryRecommendations, setPrimaryRecommendations] = useState<MultilingualHabit[]>([]);
   const [systemStats, setSystemStats] = useState<any>(null);
 
   /**
@@ -126,12 +126,12 @@ export const useBilingualRecommendations = (
    */
   const loadGlobalData = useCallback(async () => {
     try {
-      // Cast to bilingual language type (only EN/DE supported for bilingual content)
-      const bilingualLanguage = (currentLanguage === 'de' ? 'de' : 'en') as 'en' | 'de';
+      // Cast to multilingual language type (only EN/DE supported for multilingual content)
+      const multilingualLanguage = (currentLanguage === 'de' ? 'de' : 'en') as 'en' | 'de';
       
       const [topHabitsData, primaryRecs, stats] = await Promise.all([
-        EffectivenessRankingService.getGlobalRankings(bilingualLanguage, 10),
-        EffectivenessRankingService.getPrimaryRecommendations(bilingualLanguage),
+        EffectivenessRankingService.getGlobalRankings(multilingualLanguage, 10),
+        EffectivenessRankingService.getPrimaryRecommendations(multilingualLanguage),
         EffectivenessRankingService.getRankingSystemStats()
       ]);
       
@@ -198,7 +198,7 @@ export const useQuickRecommendations = (
   userLevel: 'beginner' | 'intermediate' | 'advanced' = 'beginner'
 ) => {
   const { currentLanguage } = useLanguage();
-  const [recommendations, setRecommendations] = useState<BilingualHabit[]>([]);
+  const [recommendations, setRecommendations] = useState<MultilingualHabit[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

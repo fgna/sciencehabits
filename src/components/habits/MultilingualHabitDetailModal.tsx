@@ -1,29 +1,29 @@
 /**
- * Bilingual Habit Detail Modal
+ * Multilingual Habit Detail Modal
  * 
- * Displays comprehensive research details for bilingual habits
+ * Displays comprehensive research details for multilingual habits
  * with full localization support.
  */
 
 import React from 'react';
-import { BilingualHabit } from '../../types/localization';
+import { MultilingualHabit } from '../../types/localization';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Modal, Button } from '../ui';
 
-interface BilingualHabitDetailModalProps {
-  habit: BilingualHabit;
+interface MultilingualHabitDetailModalProps {
+  habit: MultilingualHabit;
   isOpen: boolean;
   onClose: () => void;
-  onAddHabit?: (habit: BilingualHabit) => void;
+  onAddHabit?: (habit: MultilingualHabit) => void;
 }
 
-export function BilingualHabitDetailModal({ 
+export function MultilingualHabitDetailModal({ 
   habit, 
   isOpen, 
   onClose, 
   onAddHabit 
-}: BilingualHabitDetailModalProps) {
+}: MultilingualHabitDetailModalProps) {
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation();
 

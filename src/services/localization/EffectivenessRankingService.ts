@@ -5,7 +5,7 @@
  * Provides logic for serving top recommendations per goal category.
  */
 
-import { BilingualHabit, SupportedLanguage as BilingualLanguage } from '../../types/localization';
+import { MultilingualHabit, SupportedLanguage as MultilingualLanguage } from '../../types/localization';
 import { SupportedLanguage } from '../../types/i18n';
 
 export interface RankingCriteria {
@@ -18,22 +18,22 @@ export interface RankingCriteria {
 export interface GoalCategoryRanking {
   goalCategory: 'better_sleep' | 'get_moving' | 'feel_better';
   totalHabits: number;
-  topThreeHabits: BilingualHabit[];
+  topThreeHabits: MultilingualHabit[];
   averageEffectiveness: number;
   researchStrength: 'high' | 'medium' | 'low';
 }
 
 export interface RecommendationRequest {
   goalCategories: ('better_sleep' | 'get_moving' | 'feel_better')[];
-  language: BilingualLanguage;
+  language: MultilingualLanguage;
   userLevel?: 'beginner' | 'intermediate' | 'advanced';
   timeAvailable?: number; // minutes per day
   currentHabits?: string[]; // habit IDs already adopted
 }
 
 export interface RecommendationResponse {
-  primaryRecommendations: BilingualHabit[]; // Top 3, one per requested goal
-  alternativeOptions: BilingualHabit[]; // Additional options if primaries don't fit
+  primaryRecommendations: MultilingualHabit[]; // Top 3, one per requested goal
+  alternativeOptions: MultilingualHabit[]; // Additional options if primaries don't fit
   reasoning: string;
   expectedBenefits: string[];
   estimatedTimeCommitment: number; // total minutes per day
@@ -50,7 +50,7 @@ export class EffectivenessRankingService {
   /**
    * Load all multilingual habits from the content API
    */
-  private static async loadAllHabits(): Promise<BilingualHabit[]> {
+  private static async loadAllHabits(): Promise<MultilingualHabit[]> {
     try {
       // Fetch from content API - update this URL to match your deployment
       const contentApiBase = process.env.REACT_APP_CONTENT_API_URL || 'http://localhost:3001';
@@ -70,7 +70,7 @@ export class EffectivenessRankingService {
       ]);
 
       // Convert to multilingual format
-      const bilingualHabits: BilingualHabit[] = enHabits.map((enHabit: any) => {
+      const multilingualHabits: MultilingualHabit[] = enHabits.map((enHabit: any) => {
         const deHabit = deHabits.find((de: any) => de.id === enHabit.id);
         
         return {
@@ -112,7 +112,7 @@ export class EffectivenessRankingService {
         };
       });
 
-      return bilingualHabits;
+      return multilingualHabits;
     } catch (error) {
       console.error('Failed to load habit data from content API:', error);
       
@@ -124,7 +124,7 @@ export class EffectivenessRankingService {
   /**
    * Fallback mock habits when content API is unavailable
    */
-  private static getMockHabits(): BilingualHabit[] {
+  private static getMockHabits(): MultilingualHabit[] {
     return [
       {
         id: 'sleep_001_478_breathing',
@@ -216,15 +216,15 @@ export class EffectivenessRankingService {
     request: RecommendationRequest
   ): Promise<RecommendationResponse> {
     const allHabits = await this.loadAllHabits();
-    const primaryRecommendations: BilingualHabit[] = [];
-    const alternativeOptions: BilingualHabit[] = [];
+    const primaryRecommendations: MultilingualHabit[] = [];
+    const alternativeOptions: MultilingualHabit[] = [];
 
     // Calculate how many recommendations per goal (always totaling 3)
     const goalCount = request.goalCategories.length;
     const recommendationsPerGoal = this.distributeRecommendations(goalCount);
 
     // Get filtered habits for each goal category
-    const goalHabitPools: { [key: string]: BilingualHabit[] } = {};
+    const goalHabitPools: { [key: string]: MultilingualHabit[] } = {};
     
     for (const goalCategory of request.goalCategories) {
       let categoryHabits = allHabits.filter(habit => 
@@ -300,9 +300,9 @@ export class EffectivenessRankingService {
    * Get all habits ranked by overall effectiveness across all categories
    */
   static async getGlobalRankings(
-    language: BilingualLanguage = 'en',
+    language: MultilingualLanguage = 'en',
     limit: number = 10
-  ): Promise<BilingualHabit[]> {
+  ): Promise<MultilingualHabit[]> {
     const allHabits = await this.loadAllHabits();
     
     return allHabits
@@ -314,8 +314,8 @@ export class EffectivenessRankingService {
    * Get habits specifically marked as primary recommendations
    */
   static async getPrimaryRecommendations(
-    language: BilingualLanguage = 'en'
-  ): Promise<BilingualHabit[]> {
+    language: MultilingualLanguage = 'en'
+  ): Promise<MultilingualHabit[]> {
     const allHabits = await this.loadAllHabits();
     
     return allHabits
@@ -327,7 +327,7 @@ export class EffectivenessRankingService {
    * Calculate effectiveness score based on multiple criteria
    */
   private static calculateWeightedScore(
-    habit: BilingualHabit,
+    habit: MultilingualHabit,
     criteria: RankingCriteria
   ): number {
     // Base effectiveness score (0-10 scale, normalize to 0-1)
@@ -353,7 +353,7 @@ export class EffectivenessRankingService {
   /**
    * Assess research quality based on study characteristics
    */
-  private static assessResearchQuality(habit: BilingualHabit): number {
+  private static assessResearchQuality(habit: MultilingualHabit): number {
     const researchSummary = habit.translations.en.researchSummary.toLowerCase();
     
     let score = 0.5; // Base score
@@ -376,7 +376,7 @@ export class EffectivenessRankingService {
   /**
    * Assess cultural relevance and adaptation quality
    */
-  private static assessCulturalRelevance(habit: BilingualHabit): number {
+  private static assessCulturalRelevance(habit: MultilingualHabit): number {
     const germanTranslation = habit.translations.de;
     
     let score = 0.5; // Base score for having translation
@@ -439,7 +439,7 @@ export class EffectivenessRankingService {
    * Generate human-readable reasoning for recommendations
    */
   private static generateRecommendationReasoning(
-    recommendations: BilingualHabit[],
+    recommendations: MultilingualHabit[],
     request: RecommendationRequest
   ): string {
     const totalEffectiveness = recommendations.reduce((sum, habit) => 
@@ -471,8 +471,8 @@ export class EffectivenessRankingService {
    * Extract expected benefits from habit research summaries
    */
   private static extractExpectedBenefits(
-    recommendations: BilingualHabit[],
-    language: BilingualLanguage
+    recommendations: MultilingualHabit[],
+    language: MultilingualLanguage
   ): string[] {
     const benefits: string[] = [];
     

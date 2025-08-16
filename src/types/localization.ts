@@ -1,5 +1,5 @@
 /**
- * TypeScript types for bilingual content management system
+ * TypeScript types for multilingual content management system
  */
 
 export type SupportedLanguage = 'en' | 'de';
@@ -8,7 +8,7 @@ export interface LocalizationLabels {
   [key: string]: any;
 }
 
-export interface BilingualHabit {
+export interface MultilingualHabit {
   id: string;
   goalCategory: 'better_sleep' | 'get_moving' | 'feel_better';
   effectivenessScore: number;
@@ -54,7 +54,7 @@ export interface HabitTranslation {
 
 export interface LocalizedContent {
   language: SupportedLanguage;
-  habits: BilingualHabit[];
+  habits: MultilingualHabit[];
   research: LocalizedResearch[];
   lastUpdated: string;
 }
@@ -157,7 +157,7 @@ export interface ContentMetadata {
   };
 }
 
-export interface BilingualContentConfig {
+export interface MultilingualContentConfig {
   supportedLanguages: SupportedLanguage[];
   defaultLanguage: SupportedLanguage;
   fallbackLanguage: SupportedLanguage;
@@ -190,8 +190,8 @@ export interface LocalizationStats {
 // Goal-specific types
 export interface GoalHabitRecommendation {
   goalId: 'better_sleep' | 'get_moving' | 'feel_better';
-  topHabit: BilingualHabit;
-  alternativeHabits: BilingualHabit[];
+  topHabit: MultilingualHabit;
+  alternativeHabits: MultilingualHabit[];
   confidence: number;
 }
 

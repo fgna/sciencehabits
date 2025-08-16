@@ -1,12 +1,12 @@
 /**
- * Comprehensive System Test for Bilingual Habit System
+ * Comprehensive System Test for Multilingual Habit System
  * Tests all core functionalities including API integration
  */
 
 const { EffectivenessRankingService } = require('./src/services/localization/EffectivenessRankingService.ts');
 
 async function runSystemTests() {
-  console.log('🚀 Starting Bilingual System Test Suite...\n');
+  console.log('🚀 Starting Multilingual System Test Suite...\n');
   
   let testsPassed = 0;
   let testsTotal = 0;

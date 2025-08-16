@@ -1,35 +1,35 @@
 /**
- * Bilingual Habit Recommendations Component
+ * Multilingual Habit Recommendations Component
  * 
- * Displays science-backed habit recommendations with full bilingual support.
+ * Displays science-backed habit recommendations with full multilingual support.
  * Integrates with existing app architecture and mobile-first design.
  */
 
 import React, { useState, useEffect } from 'react';
-import { useBilingualRecommendations } from '../../hooks/useBilingualRecommendations';
+import { useMultilingualRecommendations } from '../../hooks/useMultilingualRecommendations';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useLanguage } from '../../hooks/useLanguage';
-import { BilingualHabit } from '../../types/localization';
+import { MultilingualHabit } from '../../types/localization';
 import { Button, Card } from '../ui';
-import { BilingualHabitDetailModal } from './BilingualHabitDetailModal';
+import { MultilingualHabitDetailModal } from './MultilingualHabitDetailModal';
 
-interface BilingualHabitRecommendationsProps {
+interface MultilingualHabitRecommendationsProps {
   selectedGoals?: ('better_sleep' | 'get_moving' | 'feel_better')[];
   userLevel?: 'beginner' | 'intermediate' | 'advanced';
   timeAvailable?: number;
   currentHabits?: string[];
-  onHabitSelect?: (habit: BilingualHabit) => void;
+  onHabitSelect?: (habit: MultilingualHabit) => void;
   className?: string;
 }
 
-export function BilingualHabitRecommendations({
+export function MultilingualHabitRecommendations({
   selectedGoals = ['better_sleep', 'get_moving', 'feel_better'],
   userLevel = 'beginner',
   timeAvailable,
   currentHabits = [],
   onHabitSelect,
   className = ''
-}: BilingualHabitRecommendationsProps) {
+}: MultilingualHabitRecommendationsProps) {
   const { currentLanguage } = useLanguage();
   const { t } = useTranslation();
 
@@ -63,21 +63,21 @@ export function BilingualHabitRecommendations({
     getRecommendations,
     categoryRankings,
     topHabits
-  } = useBilingualRecommendations();
+  } = useMultilingualRecommendations();
 
-  const [selectedHabit, setSelectedHabit] = useState<BilingualHabit | null>(null);
+  const [selectedHabit, setSelectedHabit] = useState<MultilingualHabit | null>(null);
   const [showResearchModal, setShowResearchModal] = useState(false);
   const [viewMode, setViewMode] = useState<'recommendations' | 'category' | 'top'>('recommendations');
 
   // Load recommendations on mount or when parameters change
   useEffect(() => {
     const loadRecommendations = async () => {
-      // Cast to bilingual language type (only EN/DE supported for bilingual content)
-      const bilingualLanguage = (currentLanguage === 'de' ? 'de' : 'en') as 'en' | 'de';
+      // Cast to multilingual language type (only EN/DE supported for multilingual content)
+      const multilingualLanguage = (currentLanguage === 'de' ? 'de' : 'en') as 'en' | 'de';
       
       await getRecommendations({
         goalCategories: selectedGoals,
-        language: bilingualLanguage,
+        language: multilingualLanguage,
         userLevel,
         timeAvailable,
         currentHabits
@@ -87,14 +87,14 @@ export function BilingualHabitRecommendations({
     loadRecommendations();
   }, [selectedGoals, currentLanguage, userLevel, timeAvailable, currentHabits, getRecommendations]);
 
-  const handleHabitClick = (habit: BilingualHabit) => {
+  const handleHabitClick = (habit: MultilingualHabit) => {
     setSelectedHabit(habit);
     if (onHabitSelect) {
       onHabitSelect(habit);
     }
   };
 
-  const handleResearchClick = (habit: BilingualHabit) => {
+  const handleResearchClick = (habit: MultilingualHabit) => {
     setSelectedHabit(habit);
     setShowResearchModal(true);
   };
@@ -115,7 +115,7 @@ export function BilingualHabitRecommendations({
     return 'text-gray-600 bg-gray-50';
   };
 
-  const renderHabitCard = (habit: BilingualHabit, showCategory: boolean = true) => {
+  const renderHabitCard = (habit: MultilingualHabit, showCategory: boolean = true) => {
     const translation = habit.translations[currentLanguage as 'en' | 'de'] || habit.translations.en;
     const isSelected = selectedHabit?.id === habit.id;
 
@@ -346,7 +346,7 @@ export function BilingualHabitRecommendations({
 
       {/* Research Modal */}
       {showResearchModal && selectedHabit && (
-        <BilingualHabitDetailModal
+        <MultilingualHabitDetailModal
           habit={selectedHabit}
           isOpen={showResearchModal}
           onClose={() => setShowResearchModal(false)}

@@ -1,9 +1,9 @@
 /**
- * Bilingual Content Service for ScienceHabits
+ * Multilingual Content Service for ScienceHabits
  * Manages UI localization and habit content in English and German
  */
 
-import { BilingualHabit, LocalizationLabels, SupportedLanguage } from '../../types/localization';
+import { MultilingualHabit, LocalizationLabels, SupportedLanguage } from '../../types/localization';
 
 // Import localization files
 import enUILabels from '../../data/localization/en/ui-labels.json';
@@ -11,7 +11,7 @@ import enHabitTemplates from '../../data/localization/en/habit-templates.json';
 import deUILabels from '../../data/localization/de/ui-labels.json';
 import deHabitTemplates from '../../data/localization/de/habit-templates.json';
 
-export class BilingualContentService {
+export class MultilingualContentService {
   private static readonly SUPPORTED_LANGUAGES: SupportedLanguage[] = ['en', 'de'];
   private static readonly DEFAULT_LANGUAGE: SupportedLanguage = 'en';
   
@@ -101,7 +101,7 @@ export class BilingualContentService {
   /**
    * Get habit content in specified language
    */
-  static getHabitContent(habit: BilingualHabit, language?: SupportedLanguage): any {
+  static getHabitContent(habit: MultilingualHabit, language?: SupportedLanguage): any {
     const lang = language || this.getCurrentLanguage();
     
     if (habit.translations && habit.translations[lang]) {
@@ -241,4 +241,4 @@ export class BilingualContentService {
   }
 }
 
-export default BilingualContentService;
+export default MultilingualContentService;
