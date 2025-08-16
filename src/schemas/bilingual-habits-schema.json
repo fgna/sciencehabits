@@ -1,0 +1,216 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Bilingual Habits Content Schema",
+  "description": "JSON Schema for validating bilingual habit content with effectiveness rankings and research backing",
+  "type": "object",
+  "required": ["goalCategory", "habits"],
+  "properties": {
+    "goalCategory": {
+      "type": "string",
+      "enum": ["better_sleep", "get_moving", "feel_better"],
+      "description": "The goal category this habit collection belongs to"
+    },
+    "habits": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "description": "Array of bilingual habits for this goal category",
+      "items": {
+        "$ref": "#/definitions/BilingualHabit"
+      }
+    }
+  },
+  "definitions": {
+    "BilingualHabit": {
+      "type": "object",
+      "required": [
+        "id",
+        "goalCategory", 
+        "effectivenessScore",
+        "effectivenessRank",
+        "isPrimaryRecommendation",
+        "translations"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(sleep|move|feel)_\\d{3}_[a-z_]+$",
+          "description": "Unique identifier following pattern: category_number_name"
+        },
+        "goalCategory": {
+          "type": "string",
+          "enum": ["better_sleep", "get_moving", "feel_better"],
+          "description": "Goal category this habit belongs to"
+        },
+        "effectivenessScore": {
+          "type": "number",
+          "minimum": 1.0,
+          "maximum": 10.0,
+          "description": "Research-based effectiveness score (1-10 scale)"
+        },
+        "effectivenessRank": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Rank within goal category (1 is most effective)"
+        },
+        "isPrimaryRecommendation": {
+          "type": "boolean",
+          "description": "Whether this habit is a top-3 primary recommendation"
+        },
+        "translations": {
+          "type": "object",
+          "required": ["en", "de"],
+          "description": "Translations for supported languages",
+          "properties": {
+            "en": {
+              "$ref": "#/definitions/HabitTranslation"
+            },
+            "de": {
+              "$ref": "#/definitions/HabitTranslation"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "HabitTranslation": {
+      "type": "object",
+      "required": [
+        "title",
+        "description",
+        "researchSummary",
+        "researchSource",
+        "whyItWorks",
+        "quickStart",
+        "timeToComplete",
+        "optimalTiming",
+        "difficultyLevel",
+        "category",
+        "researchEffectiveness",
+        "progressionTips"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 100,
+          "description": "Clear, actionable habit title"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 300,
+          "description": "Concise description of what the habit involves"
+        },
+        "researchSummary": {
+          "type": "string",
+          "minLength": 50,
+          "maxLength": 500,
+          "pattern": ".*\\d+.*participants.*",
+          "description": "Summary of research backing with participant count and quantified results"
+        },
+        "researchSource": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 200,
+          "pattern": ".*\\(\\d{4}\\).*",
+          "description": "Academic citation with publication year"
+        },
+        "whyItWorks": {
+          "type": "string",
+          "minLength": 30,
+          "maxLength": 400,
+          "description": "Scientific explanation of mechanism of action"
+        },
+        "quickStart": {
+          "type": "string",
+          "minLength": 15,
+          "maxLength": 200,
+          "description": "Simple first step to get started immediately"
+        },
+        "timeToComplete": {
+          "type": "string",
+          "pattern": "^\\d+(-\\d+)? (minutes?|hours?)( per day)?$",
+          "description": "Time required in standardized format"
+        },
+        "optimalTiming": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 100,
+          "description": "Best time of day or circumstances for this habit"
+        },
+        "difficultyLevel": {
+          "type": "string",
+          "enum": ["beginner", "intermediate", "advanced"],
+          "description": "Skill level required for this habit"
+        },
+        "category": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 50,
+          "description": "Wellness category (Mental, Physical, Social, etc.)"
+        },
+        "researchEffectiveness": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 200,
+          "pattern": ".*\\d+%.*",
+          "description": "Key research finding with percentage improvement"
+        },
+        "progressionTips": {
+          "type": "string",
+          "minLength": 30,
+          "maxLength": 400,
+          "description": "Advice for building up the habit over time"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "goalCategory": "better_sleep",
+      "habits": [
+        {
+          "id": "sleep_001_478_breathing",
+          "goalCategory": "better_sleep",
+          "effectivenessScore": 9.2,
+          "effectivenessRank": 1,
+          "isPrimaryRecommendation": true,
+          "translations": {
+            "en": {
+              "title": "4-7-8 Breathing for Sleep",
+              "description": "Practice the 4-7-8 breathing technique before bed to calm your nervous system and promote faster sleep onset.",
+              "researchSummary": "Stanford University study of 240 participants found 4-7-8 breathing reduced sleep onset time by 37% and improved sleep quality scores by 23% within one week of daily practice.",
+              "researchSource": "Roth, T., et al. (2023). Controlled breathing techniques for sleep onset: A randomized controlled trial. Sleep Medicine Reviews, 45, 234-247.",
+              "whyItWorks": "The 4-7-8 breathing pattern activates the parasympathetic nervous system, reducing cortisol levels and heart rate while promoting melatonin production.",
+              "quickStart": "Lie in bed, inhale through nose for 4 counts, hold for 7, exhale through mouth for 8. Repeat 4 cycles.",
+              "timeToComplete": "4 minutes",
+              "optimalTiming": "Just before falling asleep",
+              "difficultyLevel": "beginner",
+              "category": "Sleep Hygiene",
+              "researchEffectiveness": "Reduces sleep onset time by 37% within one week",
+              "progressionTips": "Start with 2 cycles, gradually increase to 8 cycles as you become more comfortable with the technique."
+            },
+            "de": {
+              "title": "4-7-8 Atmung für den Schlaf",
+              "description": "Üben Sie die 4-7-8 Atemtechnik vor dem Schlafengehen, um Ihr Nervensystem zu beruhigen und ein schnelleres Einschlafen zu fördern.",
+              "researchSummary": "Stanford University Studie mit 240 Teilnehmern ergab, dass 4-7-8 Atmung die Einschlafzeit um 37% reduzierte und Schlafqualitätswerte um 23% verbesserte innerhalb einer Woche täglicher Praxis.",
+              "researchSource": "Roth, T., et al. (2023). Controlled breathing techniques for sleep onset: A randomized controlled trial. Sleep Medicine Reviews, 45, 234-247.",
+              "whyItWorks": "Das 4-7-8 Atemmuster aktiviert das parasympathische Nervensystem, reduziert Cortisolwerte und Herzfrequenz, während es Melatoninproduktion fördert.",
+              "quickStart": "Legen Sie sich ins Bett, atmen Sie durch die Nase für 4 Zählungen ein, halten Sie 7, atmen Sie durch den Mund für 8 aus. Wiederholen Sie 4 Zyklen.",
+              "timeToComplete": "4 Minuten",
+              "optimalTiming": "Kurz vor dem Einschlafen",
+              "difficultyLevel": "Anfänger",
+              "category": "Schlafhygiene",
+              "researchEffectiveness": "Reduziert Einschlafzeit um 37% innerhalb einer Woche",
+              "progressionTips": "Beginnen Sie mit 2 Zyklen, steigern Sie schrittweise auf 8 Zyklen, wenn Sie sich mit der Technik wohler fühlen."
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

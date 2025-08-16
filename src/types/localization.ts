@@ -30,17 +30,24 @@ export interface BilingualHabit {
 export interface HabitTranslation {
   title: string;
   description: string;
-  instructions: string[];
-  whyEffective: string;
   researchSummary: string;
   researchSource: string;
-  timeToResults: {
+  whyItWorks: string;
+  quickStart: string;
+  timeToComplete: string;
+  optimalTiming: string;
+  difficultyLevel: string;
+  category: string;
+  researchEffectiveness: string;
+  progressionTips: string;
+  // Legacy fields for backward compatibility
+  instructions?: string[];
+  whyEffective?: string;
+  timeToResults?: {
     initial: string;
     significant: string;
   };
-  optimalTiming?: string;
   location?: string;
-  progressionTips?: string[];
   commonMistakes?: string[];
   variations?: string[];
 }

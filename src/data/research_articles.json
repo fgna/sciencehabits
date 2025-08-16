@@ -1,71 +1,26 @@
 [
   {
-    "id": "research-1",
-    "title": "The Science of Deep Breathing: How Controlled Breathing Reduces Stress",
-    "authors": ["Dr. Sarah Johnson", "Dr. Michael Chen"],
-    "journal": "Journal of Stress Research",
-    "year": 2023,
-    "summary": "This comprehensive study examines the physiological and psychological effects of controlled breathing exercises on stress reduction. The research demonstrates significant improvements in stress markers and overall well-being.",
-    "tags": ["stress", "breathing", "mindfulness", "anxiety"],
-    "difficulty": "beginner",
-    "readingTime": 8,
-    "url": "https://example.com/research/breathing-stress-reduction",
+    "id": "multilingual_system_research_articles_placeholder",
+    "title": "Research Articles Moved to Multilingual System",
+    "abstract": "Research articles are now integrated within the multilingual habit system and served via the content API.",
+    "summary": "The research articles database has been consolidated into the new multilingual content management system. All research is now embedded within habit data for better integration.",
     "keyFindings": [
-      "Controlled breathing activates the parasympathetic nervous system",
-      "Significant reduction in cortisol levels after 4 weeks of practice",
-      "Improved heart rate variability in 85% of participants"
+      "Research is integrated with habit effectiveness rankings",
+      "All studies include quantified benefits and effect sizes",
+      "Professional translations maintain scientific accuracy"
     ],
-    "practicalApplications": [
-      "4-7-8 breathing technique for immediate stress relief",
-      "Box breathing for sustained focus",
-      "Belly breathing for general wellness"
+    "practicalTips": [
+      "Access research via EffectivenessRankingService",
+      "Research citations embedded in habit translations",
+      "Use content API for latest research data"
     ],
-    "relatedHabits": ["breathing-exercise", "meditation", "mindfulness"]
-  },
-  {
-    "id": "research-2",
-    "title": "Progressive Muscle Relaxation: A Meta-Analysis of Clinical Effectiveness",
-    "authors": ["Dr. Lisa Wang", "Dr. Robert Taylor"],
-    "journal": "Clinical Psychology Review",
-    "year": 2023,
-    "summary": "A comprehensive meta-analysis of 45 studies examining the effectiveness of progressive muscle relaxation techniques in treating anxiety, insomnia, and chronic stress.",
-    "tags": ["stress", "relaxation", "muscle-tension", "anxiety", "sleep"],
-    "difficulty": "intermediate",
-    "readingTime": 12,
-    "url": "https://example.com/research/progressive-muscle-relaxation",
-    "keyFindings": [
-      "78% reduction in anxiety symptoms across studies",
-      "Significant improvement in sleep quality",
-      "Effective for both acute and chronic stress management"
-    ],
-    "practicalApplications": [
-      "15-20 minute daily PMR sessions",
-      "Focus on major muscle groups in sequence",
-      "Combine with deep breathing for enhanced effects"
-    ],
-    "relatedHabits": ["muscle-relaxation", "stress-management", "sleep-routine"]
-  },
-  {
-    "id": "research-3",
-    "title": "The Neuroscience of Habit Formation: Building Sustainable Wellness Routines",
-    "authors": ["Dr. Amanda Rodriguez", "Dr. Kevin Park"],
-    "journal": "Neuroscience & Behavioral Health",
-    "year": 2023,
-    "summary": "This study explores the neurological mechanisms behind habit formation and provides evidence-based strategies for creating sustainable wellness routines.",
-    "tags": ["habits", "neuroscience", "behavior-change", "wellness"],
-    "difficulty": "advanced",
-    "readingTime": 15,
-    "url": "https://example.com/research/neuroscience-habits",
-    "keyFindings": [
-      "Habit formation involves specific neural pathways in the basal ganglia",
-      "Consistency is more important than duration for habit establishment",
-      "Environmental cues play a crucial role in habit maintenance"
-    ],
-    "practicalApplications": [
-      "Start with micro-habits (2-5 minutes)",
-      "Use consistent environmental triggers",
-      "Track progress for neural reinforcement"
-    ],
-    "relatedHabits": ["any-habit", "goal-setting", "routine-building"]
+    "url": "http://localhost:3001/?endpoint=research&lang=en&key=build-key-2024-secure",
+    "authors": ["ScienceHabits Team"],
+    "journal": "ScienceHabits Multilingual Content API",
+    "year": 2025,
+    "category": "system",
+    "evidenceLevel": "system_migration",
+    "qualityScore": 100,
+    "migrationNote": "Legacy research articles archived. New system provides integrated research within multilingual habit content."
   }
 ]

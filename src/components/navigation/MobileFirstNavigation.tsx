@@ -3,9 +3,11 @@
  * 
  * Designed for 360px-430px screens with thumb-friendly navigation.
  * Maximum 4 tabs to fit on smallest screens, 48px touch targets.
+ * Now supports bilingual UI with automatic translations.
  */
 
 import React from 'react';
+import { useNavigationTranslation } from '../../hooks/useTranslation';
 
 interface MobileFirstNavigationProps {
   activeTab: 'today' | 'habits' | 'progress' | 'settings';
@@ -13,30 +15,32 @@ interface MobileFirstNavigationProps {
 }
 
 export function MobileFirstNavigation({ activeTab, onTabChange }: MobileFirstNavigationProps) {
+  const { t } = useNavigationTranslation();
+
   const tabs = [
     {
       id: 'today' as const,
-      name: 'Today',
+      name: t('today') || 'Today',
       icon: '📅',
-      shortName: 'Today'
+      shortName: t('today') || 'Today'
     },
     {
       id: 'habits' as const,
-      name: 'Habits',
+      name: t('habits') || 'Habits',
       icon: '✅',
-      shortName: 'Habits'
+      shortName: t('habits') || 'Habits'
     },
     {
       id: 'progress' as const,
-      name: 'Progress',
+      name: t('progress') || 'Progress',
       icon: '📊',
-      shortName: 'Progress'
+      shortName: t('progress') || 'Progress'
     },
     {
       id: 'settings' as const,
-      name: 'Settings',
+      name: t('settings') || 'Settings',
       icon: '⚙️',
-      shortName: 'Settings'
+      shortName: t('settings') || 'Settings'
     }
   ];
 
