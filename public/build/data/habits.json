@@ -1,0 +1,2181 @@
+[
+  {
+    "id": "sleep_restriction_therapy",
+    "title": "Sleep Restriction Therapy (CBT-I Component)",
+    "description": "Limit time in bed to actual sleep time to improve sleep efficiency",
+    "category": "sleep_quality",
+    "timeMinutes": 15,
+    "effectivenessScore": 95,
+    "evidenceStrength": "very_high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_quality",
+      "sleep_efficiency",
+      "insomnia_management"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "evening",
+      "bedtime"
+    ],
+    "instructions": "1. Calculate average actual sleep time from sleep diary (1 week)\n2. Set bedtime to allow only that amount of time in bed\n3. Get out of bed at same time daily regardless of sleep quality\n4. No napping during restriction period\n5. Increase bed time by 15-30 min weekly if sleep efficiency >85%",
+    "researchIds": [
+      "cbt_i_meta_2019",
+      "sleep_restriction_rct_2020"
+    ],
+    "whyEffective": "Consolidates sleep by reducing time awake in bed. Meta-analysis shows 19-minute reduction in sleep onset and 26-minute reduction in wake time.",
+    "contraindications": "Avoid with bipolar disorder, seizure history, or jobs requiring alertness. May cause temporary daytime fatigue.",
+    "cost": "Free to $200 (sleep diary app or consultation)",
+    "equipment": "sleep diary, alarm clock",
+    "difficulty": "beginner",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "strategic_caffeine_timing",
+    "title": "Strategic Caffeine Timing (8+ hours before bed)",
+    "description": "Time caffeine intake to avoid sleep disruption",
+    "category": "sleep_quality",
+    "timeMinutes": 2,
+    "effectivenessScore": 85,
+    "evidenceStrength": "very_high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_quality",
+      "energy_optimization",
+      "caffeine_management"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "early_afternoon"
+    ],
+    "instructions": "1. Stop all caffeine intake 8+ hours before intended bedtime\n2. For 10 PM bedtime, no caffeine after 2 PM\n3. Track caffeine sources: coffee, tea, chocolate, pre-workout, medications\n4. Use half-life rule: 6-8 hours for complete metabolism\n5. Gradually reduce afternoon caffeine over 1-2 weeks if dependent",
+    "researchIds": [
+      "caffeine_sleep_meta_2023",
+      "caffeine_timing_rct_2024"
+    ],
+    "whyEffective": "Caffeine blocks adenosine (sleep pressure). Even 100mg 6 hours before bed can reduce sleep time by 45 minutes. 400mg affects sleep for 12+ hours.",
+    "contraindications": "May cause withdrawal headaches initially. Reduce gradually if consuming >400mg daily.",
+    "cost": "Free (behavioral change)",
+    "equipment": "caffeine tracking app (optional)",
+    "difficulty": "moderate",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "bedroom_environment_optimization",
+    "title": "Bedroom Environment Optimization",
+    "description": "Control temperature, humidity, CO2, and noise for optimal sleep",
+    "category": "sleep_quality",
+    "timeMinutes": 30,
+    "effectivenessScore": 82,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_efficiency",
+      "environmental_control"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "evening",
+      "setup"
+    ],
+    "instructions": "1. Maintain 65-68°F (18-20°C) bedroom temperature\n2. Keep humidity between 30-50%\n3. Ensure CO2 levels below 900ppm (crack window if needed)\n4. Use blackout curtains or eye mask\n5. Minimize noise to <30 decibels or use consistent white noise",
+    "researchIds": [
+      "bedroom_environment_2023",
+      "sleep_efficiency_study_2022"
+    ],
+    "whyEffective": "Actigraphy studies show 3.4% sleep efficiency drop with high temperature, 4.0% with elevated CO2. Environmental control optimizes natural temperature regulation.",
+    "contraindications": "Initial cost investment. May need gradual adjustment to cooler temperatures.",
+    "cost": "$100-500 (thermostats, humidifier, air quality monitor)",
+    "equipment": "thermostat, humidifier/dehumidifier, optional CO2 monitor",
+    "difficulty": "moderate",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "structured_evening_winddown",
+    "title": "Structured Evening Wind-Down Routine",
+    "description": "90-minute pre-sleep routine combining proven relaxation techniques",
+    "category": "sleep_quality",
+    "timeMinutes": 90,
+    "effectivenessScore": 80,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_onset",
+      "relaxation",
+      "stress_reduction"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "evening",
+      "before_bed"
+    ],
+    "instructions": "1. Start 90 minutes before desired sleep time\n2. Dim lights to <50 lux (warm amber lighting)\n3. Take warm bath 104-109°F for 10-15 minutes\n4. Light stretching or gentle yoga (10-15 minutes)\n5. Read physical book or practice gratitude journaling\n6. End with 5-10 minutes breathing exercises",
+    "researchIds": [
+      "winddown_routine_2021",
+      "warm_bath_sleep_2020"
+    ],
+    "whyEffective": "Warm baths improve sleep onset by mimicking natural core temperature drop. Combined routine addresses multiple sleep-disrupting factors simultaneously.",
+    "contraindications": "Time-intensive. May not suit very early bedtimes or small living spaces.",
+    "cost": "$20-100 (books, bath supplies, amber bulbs)",
+    "equipment": "bath access, reading material, warm lighting",
+    "difficulty": "moderate",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "tart_cherry_juice",
+    "title": "Tart Cherry Juice (8oz evening)",
+    "description": "Natural melatonin and anthocyanin supplementation for sleep",
+    "category": "sleep_quality",
+    "timeMinutes": 2,
+    "effectivenessScore": 78,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_quality",
+      "natural_melatonin",
+      "antioxidants"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "evening",
+      "with_dinner"
+    ],
+    "instructions": "1. Drink 8oz (240ml) tart cherry juice 1-2 hours before bed\n2. Choose 100% tart cherry juice (Montmorency variety preferred)\n3. Can dilute 1:1 with water to reduce sugar content\n4. Take consistently for 2+ weeks for full benefits\n5. Optional: 2x daily (morning and evening) for enhanced effects",
+    "researchIds": [
+      "tart_cherry_meta_2023",
+      "montmorency_cherry_rct_2018"
+    ],
+    "whyEffective": "Contains natural melatonin and anthocyanins. Meta-analysis shows Cohen's d=0.63 for sleep efficiency improvement (p<0.01).",
+    "contraindications": "High in natural sugars. May interact with blood-thinning medications.",
+    "cost": "$25-40/month",
+    "equipment": "tart cherry juice (100% pure)",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "magnesium_sleep_supplement",
+    "title": "Magnesium Supplementation (200-400mg)",
+    "description": "Evening magnesium for improved sleep onset and quality",
+    "category": "sleep_quality",
+    "timeMinutes": 1,
+    "effectivenessScore": 75,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_onset",
+      "muscle_relaxation",
+      "deep_sleep"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "evening",
+      "with_dinner"
+    ],
+    "instructions": "1. Take 200-400mg magnesium glycinate 1-2 hours before bed\n2. Start with 200mg, increase if needed and tolerated\n3. Take with small amount of food to prevent stomach upset\n4. Avoid magnesium oxide (poor absorption)\n5. Allow 2-4 weeks for full effects",
+    "researchIds": [
+      "magnesium_sleep_meta_2021",
+      "magnesium_rct_crossover_2024"
+    ],
+    "whyEffective": "Meta-analysis shows 17.36-minute reduction in sleep onset latency. Recent RCT shows improvements in deep sleep and REM scores.",
+    "contraindications": "May cause loose stools at high doses. Reduce if digestive issues occur.",
+    "cost": "$15-25/month",
+    "equipment": "magnesium glycinate supplement",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "glycine_supplementation",
+    "title": "Glycine Supplementation (3g before bed)",
+    "description": "Amino acid supplementation for improved sleep quality",
+    "category": "sleep_quality",
+    "timeMinutes": 1,
+    "effectivenessScore": 70,
+    "evidenceStrength": "moderate",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_quality",
+      "core_temperature",
+      "subjective_sleep"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "before_bed"
+    ],
+    "instructions": "1. Take 3g glycine powder 30-60 minutes before bed\n2. Mix with water or herbal tea (glycine is sweet-tasting)\n3. Use consistently for 1+ weeks for benefits\n4. Can take empty stomach or with light snack\n5. Combine with other sleep hygiene practices",
+    "researchIds": [
+      "glycine_sleep_study_2007",
+      "glycine_consensus_2024"
+    ],
+    "whyEffective": "Improves subjective sleep quality through NMDA receptor action and peripheral vasodilation. Facilitates core body temperature drop needed for sleep onset.",
+    "contraindications": "Generally well-tolerated. May cause mild drowsiness next day initially.",
+    "cost": "$10-20/month",
+    "equipment": "glycine powder supplement",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "cognitive_sleep_techniques",
+    "title": "Cognitive Techniques for Sleep Anxiety",
+    "description": "CBT-based methods to address racing thoughts and sleep anxiety",
+    "category": "sleep_quality",
+    "timeMinutes": 20,
+    "effectivenessScore": 76,
+    "evidenceStrength": "very_high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_anxiety",
+      "racing_thoughts",
+      "cognitive_control"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student",
+      "anxious"
+    ],
+    "timeTags": [
+      "evening",
+      "in_bed"
+    ],
+    "instructions": "1. Practice 4-7-8 breathing: 4-count inhale, 7-count hold, 8-count exhale\n2. Use progressive muscle relaxation starting from toes\n3. Schedule 'worry time' earlier in day (15 min to write concerns)\n4. Practice cognitive restructuring: challenge catastrophic thoughts about sleep loss\n5. Use imagery: visualize peaceful, detailed scenes",
+    "researchIds": [
+      "digital_cbt_i_meta_2023",
+      "cognitive_sleep_interventions_2022"
+    ],
+    "whyEffective": "Digital CBT-I shows SMD=-0.76 (p<0.001) for sleep and anxiety reduction. Addresses psychological barriers to sleep initiation.",
+    "contraindications": "May initially increase awareness of thoughts. Persist through 2-3 week adjustment period.",
+    "cost": "Free to $15/month (apps)",
+    "equipment": "optional CBT-I app or workbook",
+    "difficulty": "moderate",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "mbsr_stress_reduction",
+    "title": "Mindfulness-Based Stress Reduction (MBSR)",
+    "description": "8-week structured mindfulness program for stress management",
+    "category": "stress_reduction",
+    "timeMinutes": 45,
+    "effectivenessScore": 85,
+    "evidenceStrength": "very_high",
+    "frequency": "daily",
+    "goalTags": [
+      "stress_reduction",
+      "mindfulness",
+      "emotional_regulation"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "evening",
+      "flexible"
+    ],
+    "instructions": "1. Complete 8-week MBSR program (online or in-person)\n2. Practice 45 minutes daily: body scan, sitting meditation, mindful yoga\n3. Attend weekly 2.5-hour group sessions\n4. Use guided audio for consistency\n5. Maintain daily practice after program completion",
+    "researchIds": [
+      "mbsr_meta_2015",
+      "mbsr_healthy_adults_2014"
+    ],
+    "whyEffective": "29 studies (n=2,668) show consistent effect sizes 0.53-0.55 for stress reduction. Addresses stress through attention regulation and acceptance.",
+    "contraindications": "Time-intensive. May initially increase awareness of uncomfortable emotions.",
+    "cost": "$200-600 (program) or $10-20/month (apps)",
+    "equipment": "meditation cushion, audio guides",
+    "difficulty": "beginner",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "cbt_stress_techniques",
+    "title": "Cognitive Behavioral Therapy Techniques",
+    "description": "Evidence-based cognitive and behavioral strategies for stress management",
+    "category": "stress_reduction",
+    "timeMinutes": 30,
+    "effectivenessScore": 82,
+    "evidenceStrength": "very_high",
+    "frequency": "daily",
+    "goalTags": [
+      "cognitive_restructuring",
+      "stress_management",
+      "anxiety"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "flexible",
+      "as_needed"
+    ],
+    "instructions": "1. Learn cognitive restructuring: identify, examine, and challenge negative thoughts\n2. Practice behavioral activation: schedule pleasant activities daily\n3. Use problem-solving therapy: define problem, brainstorm, implement, evaluate\n4. Track daily mood and triggers in journal\n5. Practice thought stopping and reframing techniques",
+    "researchIds": [
+      "cbt_meta_analysis_2012",
+      "transdiagnostic_cbt_2017"
+    ],
+    "whyEffective": "Meta-analysis of 269 studies confirms large effect sizes: g=0.74 for depression, g=0.77 for anxiety. Gold standard for stress management.",
+    "contraindications": "May require professional guidance for complex trauma. Start with self-help resources.",
+    "cost": "$15-50 (self-help books/apps) to $100-200/session (therapist)",
+    "equipment": "CBT workbook or app, journal",
+    "difficulty": "moderate",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "yoga_stress_reduction",
+    "title": "Yoga for Stress Reduction",
+    "description": "Regular yoga practice combining postures, breathing, and meditation",
+    "category": "stress_reduction",
+    "timeMinutes": 60,
+    "effectivenessScore": 78,
+    "evidenceStrength": "high",
+    "frequency": "weekly",
+    "goalTags": [
+      "stress_reduction",
+      "flexibility",
+      "mindfulness",
+      "physical_activity"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "evening",
+      "flexible"
+    ],
+    "instructions": "1. Practice 3x weekly for 45-90 minutes each session\n2. Include: Hatha (postures + breathing), Vinyasa (dynamic flow), or Restorative (gentle)\n3. Focus on breath awareness throughout practice\n4. End each session with 5-10 minutes savasana (relaxation)\n5. Consider in-person classes initially for proper form",
+    "researchIds": [
+      "yoga_stress_meta_2017",
+      "yoga_anxiety_review_2018"
+    ],
+    "whyEffective": "Meta-analysis of 42 RCTs (n=2,944) shows significant cortisol, BP, HR reductions. Anxiety reduction SMD=-0.43 vs no treatment.",
+    "contraindications": "Modify poses for injuries. Avoid hot yoga if cardiovascular issues.",
+    "cost": "$15-25/class or $10-30/month (online)",
+    "equipment": "yoga mat, comfortable clothing",
+    "difficulty": "easy",
+    "frequency_tag": "weekly",
+    "isCustom": false
+  },
+  {
+    "id": "social_connection_interventions",
+    "title": "Social Connection Interventions",
+    "description": "Structured activities to build and maintain supportive relationships",
+    "category": "stress_reduction",
+    "timeMinutes": 120,
+    "effectivenessScore": 76,
+    "evidenceStrength": "high",
+    "frequency": "weekly",
+    "goalTags": [
+      "social_support",
+      "community",
+      "stress_buffering"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "weekend",
+      "evening",
+      "flexible"
+    ],
+    "instructions": "1. Join or create support groups related to interests/challenges\n2. Volunteer 2-3 hours weekly for causes you care about\n3. Schedule regular social activities (dinner, walks, hobbies) with friends\n4. Practice active listening and emotional support with others\n5. Build network of 3-5 close confidants for stress support",
+    "researchIds": [
+      "social_support_meta_2010",
+      "volunteering_wellbeing_2020"
+    ],
+    "whyEffective": "100+ studies confirm social support's protective effects. Affects HPA axis and oxytocin. Meta-analyses show 0.3-0.4 correlations for stress reduction.",
+    "contraindications": "May require initial social anxiety management. Start with structured group activities.",
+    "cost": "Free (volunteering) to $50-100/month (activities)",
+    "equipment": "transportation to activities",
+    "difficulty": "moderate",
+    "frequency_tag": "weekly",
+    "isCustom": false
+  },
+  {
+    "id": "music_therapy_interventions",
+    "title": "Music Therapy Interventions",
+    "description": "Active and passive music engagement for stress reduction",
+    "category": "stress_reduction",
+    "timeMinutes": 45,
+    "effectivenessScore": 74,
+    "evidenceStrength": "high",
+    "frequency": "weekly",
+    "goalTags": [
+      "stress_reduction",
+      "emotional_regulation",
+      "creativity"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "evening",
+      "weekend",
+      "flexible"
+    ],
+    "instructions": "1. Active music-making: instrument playing, singing, group music (45-60 min, 2-3x weekly)\n2. Receptive: guided listening with personalized playlists (20-30 min daily)\n3. Choose 60-80 BPM tempo for relaxation (matches resting heart rate)\n4. Focus on classical, ambient, or nature sounds for stress reduction\n5. Practice mindful listening: full attention to musical elements",
+    "researchIds": [
+      "music_therapy_meta_2016",
+      "music_stress_reduction_2019"
+    ],
+    "whyEffective": "47 studies (n=2,747) show effect size d=0.723. Active music-making shows larger effects than passive listening. Reduces cortisol, HR, BP.",
+    "contraindications": "Loud music may increase stress. Choose volumes <85 decibels.",
+    "cost": "Free (streaming) to $100-500 (instrument/lessons)",
+    "equipment": "music device, optional instrument",
+    "difficulty": "easy",
+    "frequency_tag": "weekly",
+    "isCustom": false
+  },
+  {
+    "id": "gratitude_practices",
+    "title": "Structured Gratitude Practices",
+    "description": "Daily gratitude exercises for improved wellbeing and stress reduction",
+    "category": "stress_reduction",
+    "timeMinutes": 15,
+    "effectivenessScore": 72,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "positive_emotions",
+      "life_satisfaction",
+      "stress_reduction"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "evening",
+      "flexible"
+    ],
+    "instructions": "1. Daily gratitude journaling: write 3-5 specific items with detail\n2. Weekly gratitude letters: 300 words to someone who helped you\n3. Monthly gratitude visits: deliver letter in person when possible\n4. Behavioral gratitude: perform acts of kindness 2-3x weekly\n5. Gratitude meditation: focus on appreciation for 10-15 minutes",
+    "researchIds": [
+      "gratitude_meta_2023",
+      "gratitude_workers_2021"
+    ],
+    "whyEffective": "Meta-analysis of 64 studies: 6.86% higher life satisfaction, 7.76% lower anxiety. Recent RCT analysis (n=6,745) shows Hedge's g=0.22 for wellbeing.",
+    "contraindications": "May feel forced initially. Focus on genuine appreciation rather than obligation.",
+    "cost": "Free",
+    "equipment": "journal or note-taking app",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "digital_wellness_management",
+    "title": "Digital Wellness/Screen Time Management",
+    "description": "Structured approach to reducing technology-related stress",
+    "category": "stress_reduction",
+    "timeMinutes": 60,
+    "effectivenessScore": 68,
+    "evidenceStrength": "moderate",
+    "frequency": "weekly",
+    "goalTags": [
+      "digital_detox",
+      "stress_reduction",
+      "mindful_technology"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "evening",
+      "weekend"
+    ],
+    "instructions": "1. Weekly 24-48 hour digital breaks from recreational screens\n2. Set 2-hour daily limit for recreational screen time\n3. Create tech-free zones: bedroom, dining area\n4. Use intention-setting before device use: 'Why am I picking this up?'\n5. Replace habitual scrolling with intentional activities",
+    "researchIds": [
+      "digital_detox_review_2021",
+      "social_media_detox_2023"
+    ],
+    "whyEffective": "Systematic review of 21 studies (n=3,625) shows medium effect sizes for wellbeing. 2-week social media detoxes improve sleep and life satisfaction.",
+    "contraindications": "May cause initial anxiety or FOMO. Start with shorter detox periods.",
+    "cost": "Free",
+    "equipment": "screen time tracking apps (optional)",
+    "difficulty": "moderate",
+    "frequency_tag": "weekly",
+    "isCustom": false
+  },
+  {
+    "id": "financial_commitment_exercise",
+    "title": "Financial Commitment Devices",
+    "description": "Use financial stakes to increase exercise adherence through loss aversion",
+    "category": "exercise_consistency",
+    "timeMinutes": 10,
+    "effectivenessScore": 82,
+    "evidenceStrength": "high",
+    "frequency": "weekly",
+    "goalTags": [
+      "exercise_adherence",
+      "accountability",
+      "motivation"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "planning_session"
+    ],
+    "instructions": "1. Set voluntary financial stakes forfeited for missed exercise sessions\n2. Use 'anti-charity' donations to organizations you dislike\n3. Try apps like Stickk or Beeminder for automated enforcement\n4. Start with meaningful but affordable amounts ($10-50 per missed session)\n5. Involve friends or family as witnesses for added accountability",
+    "researchIds": [
+      "financial_incentives_meta_2013",
+      "commitment_devices_rct_2019"
+    ],
+    "whyEffective": "Meta-analysis of 11 RCTs (n=1,453) shows SMD=3.81 (p<0.0001) favoring financial incentive groups. Leverages loss aversion psychology.",
+    "contraindications": "Must use affordable amounts. Not suitable for those with financial stress.",
+    "cost": "$10-50 per missed session (self-determined)",
+    "equipment": "commitment app or informal agreement",
+    "difficulty": "easy",
+    "frequency_tag": "weekly",
+    "isCustom": false
+  },
+  {
+    "id": "exercise_snacking",
+    "title": "Exercise Snacking/Micro-Workouts",
+    "description": "Break workouts into 10-15 minute sessions throughout the day",
+    "category": "exercise_consistency",
+    "timeMinutes": 12,
+    "effectivenessScore": 78,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "time_efficiency",
+      "cardiovascular_fitness",
+      "consistency"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "busy"
+    ],
+    "timeTags": [
+      "morning",
+      "lunch",
+      "evening"
+    ],
+    "instructions": "1. Break traditional workouts into 3-4 micro-sessions of 10-15 minutes\n2. Separate sessions by 2+ hours for recovery\n3. Examples: 10 min morning walk, 12 min lunch bodyweight circuit, 15 min evening yoga\n4. Use stairs, desk exercises, or quick outdoor walks\n5. Focus on different movement patterns in each snack",
+    "researchIds": [
+      "exercise_snacks_review_2024",
+      "micro_workouts_fitness_2023"
+    ],
+    "whyEffective": "Scoping review of 33 studies (n=1,118) shows 17-18% cardiovascular improvements. University of Bath research: 30% functional fitness improvement in 28 days.",
+    "contraindications": "May not suit those preferring longer, focused workout sessions.",
+    "cost": "Free to $30 (resistance bands, apps)",
+    "equipment": "minimal - bodyweight, resistance bands",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "structured_periodization",
+    "title": "Structured Periodization and Workout Variety",
+    "description": "Systematic variation in exercise programs to maintain engagement",
+    "category": "exercise_consistency",
+    "timeMinutes": 60,
+    "effectivenessScore": 75,
+    "evidenceStrength": "high",
+    "frequency": "periodic",
+    "goalTags": [
+      "long_term_adherence",
+      "program_variety",
+      "progression"
+    ],
+    "lifestyleTags": [
+      "dedicated_exerciser",
+      "goal_oriented"
+    ],
+    "timeTags": [
+      "structured_schedule"
+    ],
+    "instructions": "1. Design 4-12 week training blocks with specific focuses\n2. Rotate exercises every 2-3 weeks to prevent boredom\n3. Cycle intensity: high intensity weeks followed by deload weeks\n4. Use reverse periodization: start complex, progress to simple\n5. Track progress metrics to show improvement across blocks",
+    "researchIds": [
+      "periodization_adherence_2021",
+      "workout_variety_study_2020"
+    ],
+    "whyEffective": "RCTs show 85% adherence for reverse periodization vs 67% traditional, 52% free training. Reduces dropouts by 25-30%.",
+    "contraindications": "Requires planning and exercise knowledge. May overwhelm beginners.",
+    "cost": "$30-100 (program design or coaching)",
+    "equipment": "depends on chosen exercises",
+    "difficulty": "beginner",
+    "frequency_tag": "periodic",
+    "isCustom": false
+  },
+  {
+    "id": "temporal_consistency_exercise",
+    "title": "Temporal Consistency (Same Time Daily)",
+    "description": "Exercise at the same time daily to build automatic habits",
+    "category": "exercise_consistency",
+    "timeMinutes": 5,
+    "effectivenessScore": 73,
+    "evidenceStrength": "moderate",
+    "frequency": "daily",
+    "goalTags": [
+      "habit_automaticity",
+      "schedule_consistency",
+      "circadian_alignment"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "chosen_consistent_time"
+    ],
+    "instructions": "1. Choose one consistent time window (±30 minutes) for all workouts\n2. Aim for >70% of weekly sessions in the same 2-hour window\n3. Align with your natural energy patterns (chronotype)\n4. Schedule as non-negotiable appointment in calendar\n5. Prepare workout gear at consistent time the night before",
+    "researchIds": [
+      "temporal_consistency_2019",
+      "exercise_timing_habits_2020"
+    ],
+    "whyEffective": "Analysis of 375 exercisers: temporally consistent individuals achieved 4.8 vs 4.4 days/week (p=0.007) and 350 vs 285 min/week (p=0.03).",
+    "contraindications": "May not suit shift workers or highly variable schedules.",
+    "cost": "Free",
+    "equipment": "calendar/scheduling app",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "melatonin_supplementation",
+    "title": "Strategic Melatonin Supplementation",
+    "description": "Low-dose melatonin 30-60 minutes before desired bedtime",
+    "category": "sleep_quality",
+    "timeMinutes": 1,
+    "effectivenessScore": 78,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_onset",
+      "circadian_rhythm",
+      "shift_work"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "shift_worker"
+    ],
+    "timeTags": [
+      "evening",
+      "before_bed"
+    ],
+    "instructions": "1. Take 0.5-3mg melatonin 30-60 minutes before desired sleep time\n2. Use consistently at same time each night\n3. Start with lowest effective dose (0.5mg)\n4. Avoid bright lights after taking\n5. Take with small amount of food if stomach sensitive",
+    "researchIds": [
+      "melatonin_meta_2013",
+      "circadian_rhythm_2019"
+    ],
+    "whyEffective": "Advances circadian rhythm and reduces sleep latency by 7.06 minutes on average. Most effective for circadian misalignment.",
+    "contraindications": "May interact with blood thinners, diabetes medications. Avoid with autoimmune conditions.",
+    "cost": "$5-15/month",
+    "equipment": "melatonin supplement (0.5-3mg)",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "blue_light_management",
+    "title": "Evening Blue Light Blocking",
+    "description": "Wear blue-blocking glasses 2-3 hours before bedtime",
+    "category": "sleep_quality",
+    "timeMinutes": 5,
+    "effectivenessScore": 82,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_onset",
+      "melatonin_production",
+      "screen_time"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student",
+      "screen_heavy"
+    ],
+    "timeTags": [
+      "evening",
+      "screen_time"
+    ],
+    "instructions": "1. Put on amber/orange-tinted glasses 2-3 hours before bedtime\n2. Wear consistently when using any screens in evening\n3. Dim overhead lights or use warm-toned bulbs after sunset\n4. Use f.lux or night mode on devices as backup\n5. Remove glasses only when ready for bed",
+    "researchIds": [
+      "blue_light_meta_2020",
+      "harvard_circadian_2019"
+    ],
+    "whyEffective": "Reduces melatonin suppression by 50%. Blue light shifts circadian rhythm by 3 hours and suppresses melatonin twice as long as other light.",
+    "contraindications": "May affect color perception for tasks requiring accurate color. Gradually adapt to wearing glasses.",
+    "cost": "$20-80 (glasses), free (device settings)",
+    "equipment": "blue light blocking glasses, device settings",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "bedroom_temperature_optimization",
+    "title": "Optimal Sleep Temperature (60-67°F)",
+    "description": "Maintain bedroom temperature in the 60-67°F range for optimal sleep",
+    "category": "sleep_quality",
+    "timeMinutes": 2,
+    "effectivenessScore": 85,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_efficiency",
+      "temperature_regulation"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "evening",
+      "bedtime"
+    ],
+    "instructions": "1. Set bedroom thermostat to 65°F as starting point\n2. Adjust 1-2 degrees based on personal comfort\n3. Use breathable bedding materials (cotton, bamboo)\n4. Wear minimal clothing or moisture-wicking sleepwear\n5. Consider cooling mattress pad if room temperature can't be controlled",
+    "researchIds": [
+      "temperature_sleep_2020",
+      "thermal_environment_2012"
+    ],
+    "whyEffective": "Each 1°F above 67°F decreases sleep efficiency by 0.06%. Analysis of 3.75 million nights shows 5-10% efficiency drops when temps rise to 77-86°F.",
+    "contraindications": "None. Adjust gradually if sensitive to temperature changes.",
+    "cost": "Free (thermostat) to $200 (cooling pad)",
+    "equipment": "thermostat, optional cooling pad",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "morning_light_exposure",
+    "title": "Morning Light Exposure (20-30 minutes)",
+    "description": "Get bright light exposure within 1 hour of waking",
+    "category": "sleep_quality",
+    "timeMinutes": 25,
+    "effectivenessScore": 88,
+    "evidenceStrength": "very_high",
+    "frequency": "daily",
+    "goalTags": [
+      "circadian_rhythm",
+      "sleep_quality",
+      "mood",
+      "energy"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "upon_waking"
+    ],
+    "instructions": "1. Go outside within 1 hour of waking for 20-30 minutes\n2. Face east toward morning sun (don't stare directly)\n3. No sunglasses during light exposure\n4. If cloudy, extend to 45-60 minutes\n5. Use 10,000 lux light box if outdoor light unavailable",
+    "researchIds": [
+      "morning_light_circadian_2019",
+      "seasonal_affective_2018"
+    ],
+    "whyEffective": "Advances circadian phase by 16 minutes and improves sleep quality. Essential for proper melatonin timing and alertness.",
+    "contraindications": "Consult doctor if taking photosensitizing medications. Avoid direct sun staring.",
+    "cost": "Free (sunlight) to $150 (light box)",
+    "equipment": "none or light therapy box",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "controlled_breathing_stress",
+    "title": "Controlled Breathing (5-6 breaths/minute)",
+    "description": "Slow-paced breathing with extended exhales for stress reduction",
+    "category": "stress_reduction",
+    "timeMinutes": 10,
+    "effectivenessScore": 84,
+    "evidenceStrength": "very_high",
+    "frequency": "daily",
+    "goalTags": [
+      "stress_reduction",
+      "anxiety_management",
+      "focus"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student"
+    ],
+    "timeTags": [
+      "morning",
+      "lunch",
+      "evening",
+      "as_needed"
+    ],
+    "instructions": "1. Sit comfortably with straight spine\n2. Inhale for 4 counts through nose\n3. Exhale for 6-8 counts through mouth (key: longer exhale)\n4. Aim for 5-6 complete breaths per minute\n5. Practice for 5-20 minutes, minimum 3x weekly",
+    "researchIds": [
+      "breathwork_meta_2022",
+      "cyclic_sighing_2023"
+    ],
+    "whyEffective": "Meta-analysis shows medium effect size (g=-0.35, p=0.0009) for stress reduction. Activates parasympathetic nervous system.",
+    "contraindications": "Stop if feeling dizzy. Start with shorter sessions if new to breathwork.",
+    "cost": "Free",
+    "equipment": "none",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "regular_exercise_stress",
+    "title": "Regular Exercise (3-4x per week)",
+    "description": "Moderate to vigorous exercise for stress resilience and mood",
+    "category": "stress_reduction",
+    "timeMinutes": 40,
+    "effectivenessScore": 92,
+    "evidenceStrength": "very_high",
+    "frequency": "weekly",
+    "goalTags": [
+      "stress_reduction",
+      "mood",
+      "anxiety",
+      "resilience"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "lunch",
+      "evening"
+    ],
+    "instructions": "1. Choose activities you enjoy (walking, cycling, swimming, weights)\n2. Aim for 150 minutes moderate or 75 minutes vigorous weekly\n3. Break into 3-4 sessions of 20-45 minutes each\n4. Include both cardio and strength training weekly\n5. Start with 10 minutes if sedentary, build gradually",
+    "researchIds": [
+      "exercise_depression_meta_2015",
+      "exercise_stress_2022"
+    ],
+    "whyEffective": "Large effect sizes: depression SMD=-0.50, anxiety SMD=-0.38. Reduces blood pressure reactivity by 3.7 mmHg per session.",
+    "contraindications": "Consult doctor if cardiovascular issues or joint problems. Start gradually if sedentary.",
+    "cost": "Free (walking) to $150/month (gym)",
+    "equipment": "comfortable shoes, optional gym membership",
+    "difficulty": "moderate",
+    "frequency_tag": "weekly",
+    "isCustom": false
+  },
+  {
+    "id": "nature_exposure_weekly",
+    "title": "Weekly Nature Exposure (120+ minutes)",
+    "description": "Spend at least 2 hours in natural settings weekly",
+    "category": "stress_reduction",
+    "timeMinutes": 120,
+    "effectivenessScore": 79,
+    "evidenceStrength": "moderate",
+    "frequency": "weekly",
+    "goalTags": [
+      "stress_reduction",
+      "mood",
+      "immune_function"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "weekend",
+      "flexible"
+    ],
+    "instructions": "1. Spend minimum 120 minutes weekly in parks, forests, or natural areas\n2. Can be broken into multiple sessions (e.g., 2x 60 minutes)\n3. Focus on sensory engagement: sounds, smells, textures\n4. Leave devices silent or at home when possible\n5. Choose walking, sitting, or light activities in nature",
+    "researchIds": [
+      "nature_dose_response_2019",
+      "forest_bathing_cortisol_2020"
+    ],
+    "whyEffective": "Clear dose-response: 120 min/week is minimum effective dose. Shows 12% cortisol reduction and 50% increase in NK cells for 30+ days.",
+    "contraindications": "Check for allergies to plants/insects. Dress appropriately for weather.",
+    "cost": "Free to $20 (park entrance fees)",
+    "equipment": "comfortable walking shoes",
+    "difficulty": "easy",
+    "frequency_tag": "weekly",
+    "isCustom": false
+  },
+  {
+    "id": "progressive_muscle_relaxation",
+    "title": "Progressive Muscle Relaxation (PMR)",
+    "description": "Systematic tensing and releasing of muscle groups",
+    "category": "stress_reduction",
+    "timeMinutes": 15,
+    "effectivenessScore": 76,
+    "evidenceStrength": "high",
+    "frequency": "weekly",
+    "goalTags": [
+      "stress_reduction",
+      "muscle_tension",
+      "sleep_preparation"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student"
+    ],
+    "timeTags": [
+      "evening",
+      "before_bed",
+      "lunch_break"
+    ],
+    "instructions": "1. Lie down or sit comfortably in quiet space\n2. Tense muscle group for 5 seconds, then release for 10-15 seconds\n3. Work through: feet→calves→thighs→abdomen→hands→arms→shoulders→face\n4. Focus on the contrast between tension and relaxation\n5. Practice 3-4 times weekly for 10-20 minutes",
+    "researchIds": [
+      "pmr_meta_2024",
+      "occupational_stress_pmr_2020"
+    ],
+    "whyEffective": "Systematic review shows effect sizes d=0.29 to 4.57 for stress reduction. Significant immediate effects across all symptom domains (p<0.001).",
+    "contraindications": "Avoid tensing injured muscles. May increase awareness of physical tension initially.",
+    "cost": "Free",
+    "equipment": "comfortable space, optional audio guide",
+    "difficulty": "easy",
+    "frequency_tag": "weekly",
+    "isCustom": false
+  },
+  {
+    "id": "expressive_writing",
+    "title": "Expressive Writing (15-20 minutes)",
+    "description": "Write about stressful experiences to process emotions",
+    "category": "stress_reduction",
+    "timeMinutes": 20,
+    "effectivenessScore": 72,
+    "evidenceStrength": "moderate",
+    "frequency": "weekly",
+    "goalTags": [
+      "stress_processing",
+      "emotional_regulation",
+      "mental_clarity"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student",
+      "parent"
+    ],
+    "timeTags": [
+      "evening",
+      "weekend"
+    ],
+    "instructions": "1. Write continuously for 15-20 minutes about a stressful experience\n2. Focus on deepest thoughts and feelings, not facts\n3. Don't worry about grammar, spelling, or structure\n4. Explore how the experience affected you and what you learned\n5. Practice 3-4 times over 2 weeks, then as needed",
+    "researchIds": [
+      "expressive_writing_meta_2018",
+      "emotional_processing_2019"
+    ],
+    "whyEffective": "Meta-analysis shows small to moderate effects on psychological well-being and stress reduction. Helps process and integrate difficult experiences.",
+    "contraindications": "May temporarily increase distress. Avoid if experiencing severe trauma without professional support.",
+    "cost": "Free",
+    "equipment": "pen and paper or computer",
+    "difficulty": "easy",
+    "frequency_tag": "weekly",
+    "isCustom": false
+  },
+  {
+    "id": "implementation_intentions_exercise",
+    "title": "Implementation Intentions for Exercise",
+    "description": "Create specific if-then plans for exercise behavior",
+    "category": "exercise_consistency",
+    "timeMinutes": 20,
+    "effectivenessScore": 94,
+    "evidenceStrength": "very_high",
+    "frequency": "weekly",
+    "goalTags": [
+      "exercise_adherence",
+      "habit_formation",
+      "consistency"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "planning_session"
+    ],
+    "instructions": "1. Write specific if-then plans: 'If it's Monday at 7am, then I will go to the gym'\n2. Include exact time, location, and activity\n3. Plan for obstacles: 'If it's raining, then I will do indoor workout video'\n4. Review and update weekly\n5. Make plans as specific and automatic as possible",
+    "researchIds": [
+      "implementation_intentions_meta_2006",
+      "exercise_adherence_rct_2007"
+    ],
+    "whyEffective": "Dramatic improvement: 91% adherence vs 39% in control groups. Large effect sizes (d=0.65-1.2) by bypassing motivation-dependent decisions.",
+    "contraindications": "None. May need adjustment period to find optimal timing and activities.",
+    "cost": "Free",
+    "equipment": "pen and paper or digital planner",
+    "difficulty": "easy",
+    "frequency_tag": "weekly",
+    "isCustom": false
+  },
+  {
+    "id": "habit_stacking_exercise",
+    "title": "Exercise Habit Stacking",
+    "description": "Link new exercise habits to existing strong habits",
+    "category": "exercise_consistency",
+    "timeMinutes": 10,
+    "effectivenessScore": 87,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "habit_formation",
+      "consistency",
+      "exercise_initiation"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "after_existing_habit"
+    ],
+    "instructions": "1. Identify existing habit with >95% consistency (e.g., morning coffee)\n2. Use formula: 'After [existing habit], I will [new exercise habit]'\n3. Start with 2-10 minute exercise habits\n4. Examples: 'After I pour my coffee, I will do 10 squats'\n5. Build consistency before increasing duration or intensity",
+    "researchIds": [
+      "habit_formation_review_2024",
+      "habit_stacking_research_2020"
+    ],
+    "whyEffective": "65% consistency improvement vs standalone habits. Leverages existing neural pathways and reduces decision fatigue.",
+    "contraindications": "Choose existing habits that occur at appropriate times for exercise.",
+    "cost": "Free",
+    "equipment": "none",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "two_minute_rule_exercise",
+    "title": "2-Minute Exercise Rule",
+    "description": "Start exercise habits with 2-minute versions to build consistency",
+    "category": "exercise_consistency",
+    "timeMinutes": 2,
+    "effectivenessScore": 89,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "habit_initiation",
+      "consistency",
+      "momentum"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "flexible"
+    ],
+    "instructions": "1. Scale down exercise to 2-minute version (e.g., 'run 30 min' → 'put on running shoes')\n2. Focus on showing up consistently, not performance\n3. Allow natural expansion but don't require it\n4. Examples: 2 push-ups, 1-minute walk, put on workout clothes\n5. Build to 2 weeks consistency before expanding",
+    "researchIds": [
+      "two_minute_rule_2019",
+      "habit_formation_identity_2020"
+    ],
+    "whyEffective": "84% of participants naturally expand beyond 2 minutes. Faster 'exerciser' identity development and higher 12-month adherence.",
+    "contraindications": "None. May feel 'too easy' but consistency is the primary goal.",
+    "cost": "Free",
+    "equipment": "minimal (depends on chosen micro-habit)",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "morning_exercise_scheduling",
+    "title": "Morning Exercise Priority (6-10 AM)",
+    "description": "Schedule exercise in the morning for highest adherence",
+    "category": "exercise_consistency",
+    "timeMinutes": 30,
+    "effectivenessScore": 83,
+    "evidenceStrength": "moderate",
+    "frequency": "daily",
+    "goalTags": [
+      "exercise_adherence",
+      "schedule_optimization",
+      "energy"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent"
+    ],
+    "timeTags": [
+      "morning",
+      "early_morning"
+    ],
+    "instructions": "1. Schedule exercise between 6:00-10:00 AM when possible\n2. Lay out clothes and equipment the night before\n3. Start with 3 mornings per week, build gradually\n4. Have backup indoor options for weather\n5. Go to bed 30-60 minutes earlier to maintain sleep",
+    "researchIds": [
+      "morning_exercise_adherence_2023",
+      "circadian_exercise_2022"
+    ],
+    "whyEffective": "94% adherence vs 87-90% for evening exercise. Promotes earlier circadian rhythm and better appetite control throughout day.",
+    "contraindications": "May require 1-2 week adjustment period. Ensure adequate sleep by earlier bedtime.",
+    "cost": "Free",
+    "equipment": "depends on chosen exercise",
+    "difficulty": "moderate",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "exercise_environment_design",
+    "title": "Exercise Environment Design",
+    "description": "Optimize environment to reduce friction for exercise",
+    "category": "exercise_consistency",
+    "timeMinutes": 30,
+    "effectivenessScore": 81,
+    "evidenceStrength": "moderate",
+    "frequency": "weekly",
+    "goalTags": [
+      "habit_formation",
+      "friction_reduction",
+      "consistency"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "setup_time"
+    ],
+    "instructions": "1. Place workout clothes in visible location\n2. Keep exercise equipment easily accessible\n3. Set up home workout space that stays ready\n4. Download workout apps and playlists in advance\n5. Remove barriers: gym bag packed, route planned, backup options ready",
+    "researchIds": [
+      "environmental_design_habits_2019",
+      "friction_behavior_change_2020"
+    ],
+    "whyEffective": "Environmental design reduces decision fatigue and friction. Studies show 40-60% improvement in habit adherence with proper setup.",
+    "contraindications": "Requires initial time investment but saves time long-term.",
+    "cost": "$0-100 (organization tools, equipment)",
+    "equipment": "storage solutions, exercise gear",
+    "difficulty": "easy",
+    "frequency_tag": "weekly",
+    "isCustom": false
+  },
+  {
+    "id": "accountability_partner_system",
+    "title": "Exercise Accountability Partner",
+    "description": "Partner with someone for mutual exercise accountability",
+    "category": "exercise_consistency",
+    "timeMinutes": 15,
+    "effectivenessScore": 86,
+    "evidenceStrength": "moderate",
+    "frequency": "weekly",
+    "goalTags": [
+      "accountability",
+      "social_support",
+      "consistency"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "check_in_time"
+    ],
+    "instructions": "1. Find partner with similar exercise goals and schedule\n2. Schedule weekly check-ins (in-person, phone, or app)\n3. Share specific weekly exercise plans and results\n4. Provide encouragement and problem-solving support\n5. Consider exercising together when possible",
+    "researchIds": [
+      "accountability_adherence_2017",
+      "social_support_exercise_2018"
+    ],
+    "whyEffective": "Couples show 94% exercise maintenance vs individual attempts. Buddy systems achieve 78% vs 56% solo adherence.",
+    "contraindications": "Choose partner with compatible personality and commitment level.",
+    "cost": "Free",
+    "equipment": "communication method (phone, app)",
+    "difficulty": "moderate",
+    "frequency_tag": "weekly",
+    "isCustom": false
+  },
+  {
+    "id": "fitness_tracking_gamification",
+    "title": "Fitness Tracking with Gamification",
+    "description": "Use apps or devices with game-like elements to increase motivation",
+    "category": "exercise_consistency",
+    "timeMinutes": 5,
+    "effectivenessScore": 74,
+    "evidenceStrength": "moderate",
+    "frequency": "daily",
+    "goalTags": [
+      "motivation",
+      "tracking",
+      "engagement"
+    ],
+    "lifestyleTags": [
+      "tech_comfortable",
+      "student",
+      "professional"
+    ],
+    "timeTags": [
+      "post_exercise"
+    ],
+    "instructions": "1. Choose fitness app with badges, levels, or challenges\n2. Set up daily/weekly step or activity goals\n3. Join challenges or compete with friends\n4. Review progress weekly, celebrate milestones\n5. Focus on process goals (consistency) over outcome goals (weight)",
+    "researchIds": [
+      "gamification_fitness_2023",
+      "fitness_app_engagement_2022"
+    ],
+    "whyEffective": "Gamification increases engagement by 150%. Most effective when combined with intrinsic motivation and social features.",
+    "contraindications": "May become demotivating if overly focused on competition. Choose apps that emphasize progress over perfection.",
+    "cost": "Free to $15/month (premium apps)",
+    "equipment": "smartphone or fitness tracker",
+    "difficulty": "easy",
+    "frequency_tag": "daily",
+    "isCustom": false
+  },
+  {
+    "id": "exercise_identity_development",
+    "title": "Exercise Identity Development",
+    "description": "Consciously develop identity as 'someone who exercises'",
+    "category": "exercise_consistency",
+    "timeMinutes": 5,
+    "effectivenessScore": 78,
+    "evidenceStrength": "moderate",
+    "frequency": "weekly",
+    "goalTags": [
+      "identity_change",
+      "motivation",
+      "long_term_adherence"
+    ],
+    "lifestyleTags": [
+      "all"
+    ],
+    "timeTags": [
+      "reflection_time"
+    ],
+    "instructions": "1. Use identity-based language: 'I am someone who exercises' vs 'I want to exercise'\n2. Notice and celebrate small exercise behaviors as evidence\n3. Wear exercise-related clothing or accessories occasionally\n4. Join exercise communities or follow fitness accounts\n5. Weekly reflection: 'What did I do this week that an exerciser would do?'",
+    "researchIds": [
+      "identity_behavior_change_2019",
+      "exercise_identity_2020"
+    ],
+    "whyEffective": "Identity-based habits are more sustainable. People act consistently with their identity, making behavior more automatic and self-reinforcing.",
+    "contraindications": "Takes time to develop (2-6 months). Focus on small, consistent actions that build identity.",
+    "cost": "Free",
+    "equipment": "none",
+    "difficulty": "moderate",
+    "frequency_tag": "weekly",
+    "isCustom": false
+  },
+  {
+    "id": "vitamin_d3_daily",
+    "title": "Daily Vitamin D3 (2000-4000 IU)",
+    "description": "Take vitamin D3 supplement with breakfast for energy and mood",
+    "category": "tier1_foundation",
+    "timeMinutes": 1,
+    "effectivenessScore": 95,
+    "evidenceStrength": "very_high",
+    "frequency": "daily",
+    "goalTags": [
+      "immune_health",
+      "bone_health",
+      "mood",
+      "energy",
+      "cognitive_performance",
+      "improve_health"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "with_meal"
+    ],
+    "instructions": "1. Take 2000-4000 IU vitamin D3 with your first meal of the day\n2. Store supplements in a visible location as reminder\n3. Set phone reminder if needed\n4. Consider blood test after 3 months to check levels",
+    "researchIds": [
+      "vitamin_d_mortality_2019",
+      "vitamin_d_immune_2021",
+      "vitamin_d_bone_2020",
+      "vitamin_d_meta_2019",
+      "vitamin_d_mood_2020"
+    ],
+    "whyEffective": "80%+ of people are vitamin D deficient, especially in Northern Europe. Supplementation improves mood, energy, immune function, and cognitive performance.",
+    "contraindications": "Consult doctor if taking calcium supplements or have kidney issues. Start with lower dose if sensitive.",
+    "cost": "€5-15/month",
+    "equipment": "vitamin D3 supplement (cholecalciferol)",
+    "difficulty": "trivial",
+    "suppliers": "pharmacies, health stores, online retailers",
+    "isCustom": false,
+    "germanSuppliers": "dm-drogerie, Apotheke, Amazon.de"
+  },
+  {
+    "id": "protein_breakfast_30g",
+    "title": "High-Protein Breakfast (25-30g)",
+    "description": "Include 25-30g protein in your first meal for muscle health and satiety",
+    "category": "tier1_foundation",
+    "timeMinutes": 5,
+    "effectivenessScore": 88,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "muscle_health",
+      "weight_management",
+      "energy",
+      "cognitive_performance"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "breakfast"
+    ],
+    "instructions": "1. Include 25-30g protein: 3-4 eggs, Greek yogurt + protein powder, or lean meat\n2. Eat within 1-2 hours of waking\n3. Combine with complex carbs and healthy fats\n4. Examples: omelet with vegetables, protein smoothie, cottage cheese with berries\n5. Prepare ingredients the night before for busy mornings",
+    "researchIds": [
+      "protein_breakfast_muscle_2024",
+      "protein_satiety_meta_2020"
+    ],
+    "whyEffective": "High morning protein intake increases muscle protein synthesis by 25%, improves satiety throughout the day, and stabilizes blood sugar levels for better energy and focus.",
+    "contraindications": "Adjust portions if kidney issues. Spread protein throughout day if digestive sensitivity.",
+    "cost": "$2-5/day",
+    "equipment": "none",
+    "difficulty": "easy",
+    "suppliers": "grocery stores, local markets",
+    "isCustom": false
+  },
+  {
+    "id": "strength_training_minimal",
+    "title": "Minimal Strength Training (2x/week)",
+    "description": "20-30 minute strength sessions twice weekly for muscle and bone health",
+    "category": "tier1_foundation",
+    "timeMinutes": 25,
+    "effectivenessScore": 94,
+    "evidenceStrength": "very_high",
+    "frequency": "twice_weekly",
+    "goalTags": [
+      "muscle_strength",
+      "bone_health",
+      "metabolism",
+      "longevity"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student"
+    ],
+    "timeTags": [
+      "morning",
+      "lunch",
+      "evening",
+      "flexible"
+    ],
+    "instructions": "1. Focus on compound movements: squats, pushups, rows, overhead press\n2. Perform 2-3 sets of 8-12 repetitions\n3. Progress difficulty weekly (more reps, weight, or harder variations)\n4. Rest 48-72 hours between sessions\n5. Start with bodyweight, add resistance bands or weights gradually",
+    "researchIds": [
+      "strength_training_mortality_2022",
+      "resistance_frequency_meta_2016"
+    ],
+    "whyEffective": "Minimum effective dose strength training reduces all-cause mortality by 23%, maintains muscle mass, improves bone density, and enhances metabolic health with just 50 minutes weekly.",
+    "contraindications": "Start with bodyweight if new to exercise. Consult doctor if joint problems or cardiovascular issues.",
+    "cost": "$0-50 one-time (resistance bands) or $30-80/month (gym)",
+    "equipment": "bodyweight, resistance bands, or gym access",
+    "difficulty": "moderate",
+    "suppliers": "sporting goods stores, gyms, online fitness retailers",
+    "isCustom": false
+  },
+  {
+    "id": "daily_steps_7500",
+    "title": "Daily Step Target (7,000-8,500)",
+    "description": "Walk 7,000-8,500 steps daily for cardiovascular health",
+    "category": "tier1_foundation",
+    "timeMinutes": 60,
+    "effectivenessScore": 90,
+    "evidenceStrength": "very_high",
+    "frequency": "daily",
+    "goalTags": [
+      "cardiovascular_health",
+      "weight_management",
+      "mood",
+      "longevity"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "throughout_day",
+      "commute",
+      "lunch"
+    ],
+    "instructions": "1. Aim for 7,000-8,500 steps daily (not 10,000)\n2. Use stairs instead of elevators\n3. Walk during phone calls or meetings when possible\n4. Park farther away or get off transit one stop early\n5. Take 10-15 minute walks after meals\n6. Track with smartphone or fitness tracker",
+    "researchIds": [
+      "daily_steps_mortality_2023",
+      "steps_meta_analysis_2022"
+    ],
+    "whyEffective": "7,000-8,500 daily steps provides optimal mortality reduction (51-60%), improves cardiovascular health, and is more achievable than 10,000 steps for most people.",
+    "contraindications": "Build up gradually if sedentary. Wear proper footwear to prevent injury.",
+    "cost": "Free (smartphone tracking) or $50-300 (fitness tracker)",
+    "equipment": "comfortable walking shoes, optional fitness tracker",
+    "difficulty": "easy",
+    "suppliers": "shoe stores, electronics retailers",
+    "isCustom": false
+  },
+  {
+    "id": "magnesium_evening",
+    "title": "Evening Magnesium (200-400mg)",
+    "description": "Take magnesium glycinate before bed for sleep and recovery",
+    "category": "tier1_foundation",
+    "timeMinutes": 1,
+    "effectivenessScore": 90,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_quality",
+      "muscle_recovery",
+      "stress_reduction",
+      "improve_health"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "evening",
+      "before_bed"
+    ],
+    "instructions": "1. Take 200-400mg magnesium glycinate 1-2 hours before bed\n2. Avoid magnesium oxide (poor absorption)\n3. Start with 200mg, increase gradually if needed\n4. Take with small amount of food if stomach sensitive",
+    "researchIds": [
+      "magnesium_sleep_rct_2021",
+      "magnesium_elderly_insomnia_2012",
+      "magnesium_sleep_2018",
+      "magnesium_stress_2020"
+    ],
+    "whyEffective": "Most people are magnesium deficient due to soil depletion and processed foods. Magnesium improves sleep quality, reduces stress, and aids muscle recovery.",
+    "contraindications": "Reduce dose if experiencing loose stools. Avoid if taking certain medications.",
+    "cost": "€8-20/month",
+    "equipment": "magnesium glycinate supplement",
+    "difficulty": "trivial",
+    "suppliers": "pharmacies, health stores, online retailers",
+    "isCustom": false,
+    "germanSuppliers": "dm-drogerie, Apotheke, Pure Encapsulations"
+  },
+  {
+    "id": "omega3_daily",
+    "title": "Daily Omega-3 (EPA/DHA 1000mg+)",
+    "description": "Take high-quality fish oil or algae omega-3 for brain health",
+    "category": "tier1_foundation",
+    "timeMinutes": 1,
+    "effectivenessScore": 92,
+    "evidenceStrength": "very_high",
+    "frequency": "daily",
+    "goalTags": [
+      "heart_health",
+      "brain_health",
+      "inflammation",
+      "mood",
+      "improve_health"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "evening",
+      "with_meal"
+    ],
+    "instructions": "1. Take 1000-2000mg combined EPA/DHA with a meal containing fat\n2. Choose high-quality, tested brand (check for heavy metals testing)\n3. Store in refrigerator to prevent rancidity\n4. Take consistently - benefits build over time",
+    "researchIds": [
+      "omega3_cardiovascular_2021",
+      "omega3_brain_meta_2019",
+      "omega3_brain_2019",
+      "omega3_depression_2020",
+      "omega3_inflammation_2021"
+    ],
+    "whyEffective": "Modern diets severely lack omega-3 fatty acids. EPA/DHA are essential for brain function, mood regulation, and reducing inflammation.",
+    "contraindications": "Consult doctor if taking blood thinners. May cause mild digestive upset initially.",
+    "cost": "€15-30/month",
+    "equipment": "omega-3 supplement (fish oil or algae-based)",
+    "difficulty": "trivial",
+    "suppliers": "pharmacies, health stores, online retailers",
+    "isCustom": false,
+    "germanSuppliers": "Apotheke, Norsan, Sunday Natural"
+  },
+  {
+    "id": "morning_sunlight_15min",
+    "title": "Morning Sunlight (10-15 minutes)",
+    "description": "Get direct sunlight exposure within 2 hours of waking",
+    "category": "tier2_optimization",
+    "timeMinutes": 12,
+    "effectivenessScore": 87,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_quality",
+      "mood",
+      "energy",
+      "circadian_rhythm"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "early_morning"
+    ],
+    "instructions": "1. Go outside within 2 hours of waking up\n2. Spend 10-15 minutes in direct sunlight (no sunglasses)\n3. If cloudy, increase to 20-30 minutes\n4. Look toward sun, not directly at it\n5. Combine with morning walk, outdoor coffee, or commute\n6. Use light therapy device in winter (10,000 lux)",
+    "researchIds": [
+      "circadian_light_therapy_2019",
+      "morning_light_cortisol_2020"
+    ],
+    "whyEffective": "Early morning light exposure sets circadian rhythm, improves sleep quality by 15-30%, boosts morning cortisol for better energy, and enhances mood regulation.",
+    "contraindications": "None for normal exposure times. Use light therapy device if unable to get outdoors.",
+    "cost": "Free (sunlight) or $80-200 (light therapy device)",
+    "equipment": "none, or light therapy device for winter",
+    "difficulty": "easy",
+    "suppliers": "electronics retailers for light therapy devices",
+    "isCustom": false
+  },
+  {
+    "id": "zone2_cardio",
+    "title": "Zone 2 Cardio (3x/week, 30-45 min)",
+    "description": "Moderate intensity cardio for metabolic health and longevity",
+    "category": "tier2_optimization",
+    "timeMinutes": 40,
+    "effectivenessScore": 89,
+    "evidenceStrength": "high",
+    "frequency": "three_times_weekly",
+    "goalTags": [
+      "cardiovascular_health",
+      "metabolic_health",
+      "longevity",
+      "energy"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student"
+    ],
+    "timeTags": [
+      "morning",
+      "lunch",
+      "evening"
+    ],
+    "instructions": "1. Exercise at 60-70% maximum heart rate (180 minus age)\n2. Should be able to maintain conversation\n3. Activities: brisk walking, cycling, swimming, elliptical\n4. Start with 20 minutes, build to 30-45 minutes\n5. Aim for 3 sessions per week with 1 day rest between",
+    "researchIds": [
+      "zone2_longevity_2022",
+      "aerobic_capacity_mortality_2018"
+    ],
+    "whyEffective": "Zone 2 training improves VO2 max by 15-25%, enhances metabolic flexibility, and provides the strongest longevity benefits with moderate time investment.",
+    "contraindications": "Build intensity gradually if sedentary. Consult doctor if cardiovascular conditions.",
+    "cost": "Free (walking/jogging) or $30-80/month (gym/equipment)",
+    "equipment": "comfortable shoes, optional heart rate monitor",
+    "difficulty": "moderate",
+    "suppliers": "sporting goods stores, gyms",
+    "isCustom": false
+  },
+  {
+    "id": "movement_breaks_hourly",
+    "title": "Hourly Movement Breaks (2-5 minutes)",
+    "description": "Take short movement breaks every hour during sedentary work",
+    "category": "tier3_microhabits",
+    "timeMinutes": 3,
+    "effectivenessScore": 78,
+    "evidenceStrength": "moderate",
+    "frequency": "8x_daily",
+    "goalTags": [
+      "metabolic_health",
+      "energy",
+      "back_health",
+      "circulation"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student"
+    ],
+    "timeTags": [
+      "work_hours",
+      "flexible"
+    ],
+    "instructions": "1. Set hourly reminder during work hours\n2. Stand and move for 2-5 minutes every hour\n3. Activities: walk around office, desk stretches, stair climbing\n4. Alternate between different movements\n5. Focus on areas that feel tight or stiff",
+    "researchIds": [
+      "movement_breaks_glucose_2023",
+      "sedentary_breaks_columbia_2023"
+    ],
+    "whyEffective": "Regular movement breaks reduce blood sugar spikes by 58%, improve circulation, prevent muscle stiffness, and boost energy levels throughout the day.",
+    "contraindications": "None. Adjust activities if physical limitations.",
+    "cost": "Free",
+    "equipment": "none",
+    "difficulty": "easy",
+    "suppliers": "n/a",
+    "isCustom": false
+  },
+  {
+    "id": "hydration_optimization",
+    "title": "Strategic Hydration (2.0-2.5L daily)",
+    "description": "Optimize water intake timing and amount for health and performance",
+    "category": "tier3_microhabits",
+    "timeMinutes": 2,
+    "effectivenessScore": 75,
+    "evidenceStrength": "moderate",
+    "frequency": "throughout_day",
+    "goalTags": [
+      "cognitive_performance",
+      "energy",
+      "kidney_health",
+      "skin_health"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "pre_meals",
+      "throughout_day"
+    ],
+    "instructions": "1. Drink 500ml water upon waking\n2. Aim for 2.0-2.5L total daily (adjust for activity/climate)\n3. Drink 200ml before each meal\n4. Sip regularly rather than large amounts at once\n5. Monitor urine color - pale yellow is optimal",
+    "researchIds": [
+      "hydration_cognitive_2020",
+      "water_intake_guidelines_2022"
+    ],
+    "whyEffective": "Optimal hydration improves cognitive performance by 3-5%, supports kidney function, aids nutrient transport, and prevents dehydration-related fatigue.",
+    "contraindications": "Adjust intake if kidney problems. Don't overhydrate (>4L daily without medical reason).",
+    "cost": "Free (tap water) or $20-50/month (filtered water)",
+    "equipment": "water bottle, optional water filter",
+    "difficulty": "easy",
+    "suppliers": "kitchen stores for bottles/filters",
+    "isCustom": false
+  },
+  {
+    "id": "cold_shower_finish",
+    "title": "2-Minute Cold Shower Finish",
+    "description": "End shower with 2 minutes of cold water for resilience",
+    "category": "tier2_optimization",
+    "timeMinutes": 2,
+    "effectivenessScore": 82,
+    "evidenceStrength": "moderate",
+    "frequency": "daily",
+    "goalTags": [
+      "energy",
+      "mood",
+      "resilience",
+      "immune_system"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student"
+    ],
+    "timeTags": [
+      "morning",
+      "post_workout"
+    ],
+    "instructions": "1. Take normal warm shower first\n2. Turn water to cold (15-20°C) for final 2 minutes\n3. Focus on deep, controlled breathing throughout\n4. Start with 30 seconds, build up gradually over weeks\n5. Exit shower immediately after to maintain body warmth",
+    "researchIds": [
+      "cold_therapy_immune_2016",
+      "cold_exposure_resilience_2018",
+      "cold_therapy_2016",
+      "cold_shower_mood_2018"
+    ],
+    "whyEffective": "Cold exposure increases norepinephrine levels, improves mood and focus, builds stress resilience, and may boost immune function through hormetic stress.",
+    "contraindications": "Avoid with heart conditions, during illness, or if pregnant. Build tolerance gradually.",
+    "cost": "Free",
+    "equipment": "none",
+    "difficulty": "moderate",
+    "suppliers": "n/a",
+    "isCustom": false,
+    "germanSuppliers": "n/a"
+  },
+  {
+    "id": "preventive_health_checkup",
+    "title": "Annual Health Screening",
+    "description": "Schedule yearly preventive health check-up and screenings",
+    "category": "tier1_foundation",
+    "timeMinutes": 120,
+    "effectivenessScore": 95,
+    "evidenceStrength": "very_high",
+    "frequency": "annually",
+    "goalTags": [
+      "disease_prevention",
+      "early_detection",
+      "longevity"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "flexible"
+    ],
+    "instructions": "1. Schedule annual physical exam with primary care physician\n2. Include blood work: lipids, glucose, kidney/liver function\n3. Age-appropriate cancer screenings (mammogram, colonoscopy, etc.)\n4. Blood pressure and weight monitoring\n5. Discuss family history and risk factors\n6. Update vaccinations as needed",
+    "researchIds": [
+      "preventive_screening_benefits_2020",
+      "early_detection_outcomes_2021"
+    ],
+    "whyEffective": "Regular screening detects 80% of diseases early when most treatable, prevents progression of chronic conditions, and significantly improves health outcomes and longevity.",
+    "contraindications": "None. Essential for all adults over 18.",
+    "cost": "Often covered by insurance, otherwise $200-500",
+    "equipment": "none",
+    "difficulty": "easy",
+    "suppliers": "healthcare providers, clinics",
+    "isCustom": false
+  },
+  {
+    "id": "posture_awareness",
+    "title": "Posture Check & Stretch (2 minutes hourly)",
+    "description": "Regular posture awareness and corrective stretching",
+    "category": "tier3_microhabits",
+    "timeMinutes": 2,
+    "effectivenessScore": 73,
+    "evidenceStrength": "moderate",
+    "frequency": "8x_daily",
+    "goalTags": [
+      "back_health",
+      "posture",
+      "energy",
+      "pain_prevention"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student"
+    ],
+    "timeTags": [
+      "work_hours",
+      "flexible"
+    ],
+    "instructions": "1. Set hourly reminder to check posture\n2. Sit/stand with ears over shoulders, shoulders over hips\n3. Perform 30-second neck and shoulder stretches\n4. Do wall push-ups or doorway chest stretch\n5. Adjust workspace ergonomics as needed",
+    "researchIds": [
+      "workplace_ergonomics_2019",
+      "posture_intervention_2020"
+    ],
+    "whyEffective": "Regular posture breaks reduce neck and back pain by 20-30%, improve breathing capacity, boost energy levels, and prevent long-term musculoskeletal problems.",
+    "contraindications": "Modify stretches if injury or pain. Consult physiotherapist if chronic issues.",
+    "cost": "Free",
+    "equipment": "ergonomic workspace setup (optional)",
+    "difficulty": "easy",
+    "suppliers": "office supply stores for ergonomic equipment",
+    "isCustom": false
+  },
+  {
+    "id": "sleep_temperature_optimization",
+    "title": "Sleep Temperature Control (16-19°C/60-67°F)",
+    "description": "Optimize bedroom temperature for better sleep quality",
+    "category": "tier2_optimization",
+    "timeMinutes": 5,
+    "effectivenessScore": 82,
+    "evidenceStrength": "high",
+    "frequency": "nightly",
+    "goalTags": [
+      "sleep_quality",
+      "recovery",
+      "energy"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "evening",
+      "before_bed"
+    ],
+    "instructions": "1. Set bedroom temperature to 16-19°C (60-67°F)\n2. Use breathable bedding materials (cotton, bamboo)\n3. Wear light, breathable sleepwear\n4. Consider cooling mattress pad if room temperature can't be controlled\n5. Take warm shower 1-2 hours before bed to trigger cooling response",
+    "researchIds": [
+      "sleep_temperature_review_2019",
+      "thermal_environment_sleep_2020"
+    ],
+    "whyEffective": "Cool sleeping environment aligns with natural circadian temperature drop, improves sleep onset by 10-15 minutes, and enhances deep sleep quality.",
+    "contraindications": "Adjust for personal comfort. Consider partner preferences for shared beds.",
+    "cost": "Variable ($0-300 for cooling equipment)",
+    "equipment": "thermostat control, fan, cooling mattress pad (optional)",
+    "difficulty": "easy",
+    "suppliers": "home improvement stores, bedding retailers",
+    "isCustom": false
+  },
+  {
+    "id": "breathing_exercises_hrv",
+    "title": "HRV Breathing (5 minutes daily)",
+    "description": "Controlled breathing exercises to improve heart rate variability",
+    "category": "tier3_microhabits",
+    "timeMinutes": 5,
+    "effectivenessScore": 76,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "stress_reduction",
+      "recovery",
+      "autonomic_balance",
+      "focus"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student"
+    ],
+    "timeTags": [
+      "morning",
+      "evening",
+      "stress_breaks"
+    ],
+    "instructions": "1. Sit comfortably with straight spine\n2. Breathe in rhythm: 5-6 breaths per minute (5 seconds in, 5 seconds out)\n3. Breathe through nose, expand belly not chest\n4. Practice for 5-10 minutes daily\n5. Use HRV app for guidance and tracking if desired",
+    "researchIds": [
+      "hrv_breathing_stress_2021",
+      "coherent_breathing_autonomic_2019"
+    ],
+    "whyEffective": "Coherent breathing at 5-6 breaths/minute optimizes heart rate variability, reduces stress by 35%, improves autonomic balance, and enhances recovery.",
+    "contraindications": "Stop if feeling dizzy. Build practice gradually.",
+    "cost": "Free or $5-15/month for HRV apps",
+    "equipment": "none, optional HRV monitoring device",
+    "difficulty": "easy",
+    "suppliers": "app stores for HRV apps",
+    "isCustom": false
+  },
+  {
+    "id": "morning_sunlight",
+    "title": "10-Minute Morning Sunlight",
+    "description": "Get direct sunlight exposure within 1 hour of waking",
+    "category": "tier1_foundation",
+    "timeMinutes": 10,
+    "effectivenessScore": 88,
+    "evidenceStrength": "very_high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_quality",
+      "mood",
+      "energy",
+      "circadian_rhythm"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "flexible"
+    ],
+    "instructions": "1. Go outside within 1 hour of waking up\n2. Look toward (not directly at) the sun for 10-15 minutes\n3. No sunglasses during this exposure time\n4. If cloudy, increase to 20-30 minutes\n5. Combine with morning walk, coffee, or breakfast outside",
+    "researchIds": [
+      "circadian_light_2019",
+      "morning_light_mood_2020"
+    ],
+    "whyEffective": "Light exposure within 1 hour of waking sets your circadian rhythm, improves sleep quality, boosts mood, and increases daytime energy levels.",
+    "contraindications": "None for normal exposure times. Don't stare directly at sun.",
+    "cost": "Free",
+    "equipment": "none",
+    "difficulty": "easy",
+    "germanSuppliers": "n/a",
+    "isCustom": false
+  },
+  {
+    "id": "protein_breakfast",
+    "title": "30g+ Protein at Breakfast",
+    "description": "Include 30+ grams of protein in your first meal",
+    "category": "tier1_foundation",
+    "timeMinutes": 5,
+    "effectivenessScore": 87,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "energy",
+      "muscle_maintenance",
+      "appetite_control",
+      "cognitive_performance"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "breakfast"
+    ],
+    "instructions": "1. Include 30+ grams protein: 4 eggs, Greek yogurt + protein powder, or lean meat\n2. Eat within 1-2 hours of waking\n3. Pair with complex carbs and healthy fats\n4. Track protein content initially to build awareness\n5. Prepare options in advance for busy mornings",
+    "researchIds": [
+      "protein_breakfast_2018",
+      "protein_satiety_2019"
+    ],
+    "whyEffective": "High protein breakfast stabilizes blood sugar, reduces afternoon cravings, maintains muscle mass, and improves cognitive function throughout the day.",
+    "contraindications": "Adjust portions if kidney issues. Spread protein if digestive sensitive.",
+    "cost": "€2-5/day",
+    "equipment": "none",
+    "difficulty": "easy",
+    "germanSuppliers": "Local supermarket, Rewe, Edeka",
+    "isCustom": false
+  },
+  {
+    "id": "evening_phone_cutoff",
+    "title": "No Screens 1 Hour Before Bed",
+    "description": "Create screen-free wind-down period before sleep",
+    "category": "tier1_foundation",
+    "timeMinutes": 60,
+    "effectivenessScore": 89,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "sleep_quality",
+      "stress_reduction",
+      "digital_wellness"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "evening",
+      "before_bed"
+    ],
+    "instructions": "1. Set all devices to 'Do Not Disturb' 1 hour before intended sleep time\n2. Charge phone outside bedroom\n3. Use analog alarm clock instead of phone\n4. Replace screen time with reading, stretching, or meditation\n5. Use blue light blocking glasses if screens absolutely necessary",
+    "researchIds": [
+      "blue_light_sleep_2019",
+      "screen_time_sleep_2020"
+    ],
+    "whyEffective": "Blue light from screens suppresses melatonin production and disrupts circadian rhythm. Removing screens dramatically improves sleep onset and quality.",
+    "contraindications": "None. May require adjustment period for habits.",
+    "cost": "Free",
+    "equipment": "analog alarm clock (€10-30 one-time)",
+    "difficulty": "moderate",
+    "germanSuppliers": "Amazon.de, Media Markt",
+    "isCustom": false
+  },
+  {
+    "id": "creatine_monohydrate",
+    "title": "Daily Creatine (3-5g)",
+    "description": "Take creatine monohydrate for cognitive and physical performance",
+    "category": "tier2_optimization",
+    "timeMinutes": 1,
+    "effectivenessScore": 85,
+    "evidenceStrength": "very_high",
+    "frequency": "daily",
+    "goalTags": [
+      "cognitive_performance",
+      "energy",
+      "muscle_strength"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student",
+      "active"
+    ],
+    "timeTags": [
+      "morning",
+      "post_workout",
+      "flexible"
+    ],
+    "instructions": "1. Take 3-5g creatine monohydrate daily\n2. Mix with water, juice, or protein shake\n3. Timing doesn't matter - consistency is key\n4. No loading phase needed with daily dosing\n5. Increase water intake throughout day",
+    "researchIds": [
+      "creatine_brain_2018",
+      "creatine_performance_2019"
+    ],
+    "whyEffective": "Creatine improves cognitive performance, working memory, reduces mental fatigue, and enhances physical performance. Benefits both brain and muscle energy.",
+    "contraindications": "Increase water intake significantly. May cause initial 1-2kg water weight gain.",
+    "cost": "€10-20/month",
+    "equipment": "creatine monohydrate supplement",
+    "difficulty": "trivial",
+    "germanSuppliers": "MyProtein, Bodybuilding Depot, Amazon.de",
+    "isCustom": false
+  },
+  {
+    "id": "box_breathing",
+    "title": "5-Minute Box Breathing",
+    "description": "Structured breathing exercise for stress reduction and focus",
+    "category": "tier2_optimization",
+    "timeMinutes": 5,
+    "effectivenessScore": 84,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "stress_reduction",
+      "focus",
+      "anxiety_management"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student"
+    ],
+    "timeTags": [
+      "morning",
+      "lunch",
+      "evening",
+      "before_meetings"
+    ],
+    "instructions": "1. Sit comfortably with straight spine\n2. Inhale for 4 counts through nose\n3. Hold breath for 4 counts\n4. Exhale for 4 counts through mouth\n5. Hold empty for 4 counts\n6. Repeat for 10-20 cycles (about 5 minutes)",
+    "researchIds": [
+      "box_breathing_2019",
+      "breathing_stress_2020"
+    ],
+    "whyEffective": "Box breathing activates the parasympathetic nervous system, reduces cortisol levels, improves heart rate variability, and enhances focus and decision-making.",
+    "contraindications": "Reduce hold times if feeling dizzy. Stop if experiencing discomfort.",
+    "cost": "Free",
+    "equipment": "none",
+    "difficulty": "easy",
+    "germanSuppliers": "n/a",
+    "isCustom": false
+  },
+  {
+    "id": "gratitude_three_things",
+    "title": "Write 3 Specific Gratitudes",
+    "description": "Write three specific things you're grateful for each day",
+    "category": "tier3_microhabits",
+    "timeMinutes": 3,
+    "effectivenessScore": 78,
+    "evidenceStrength": "high",
+    "frequency": "daily",
+    "goalTags": [
+      "mood",
+      "life_satisfaction",
+      "stress_reduction"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "evening",
+      "morning",
+      "flexible"
+    ],
+    "instructions": "1. Write (don't just think) 3 specific things you're grateful for\n2. Be specific: 'my partner made coffee' not 'my partner'\n3. Include why you're grateful for each item\n4. Focus on people and experiences over material things\n5. Use same notebook or app consistently for habit building",
+    "researchIds": [
+      "gratitude_wellbeing_2018",
+      "gratitude_practice_2020"
+    ],
+    "whyEffective": "Regular gratitude practice rewires the brain for positivity, improves mood and relationships, increases life satisfaction, and reduces stress and depression.",
+    "contraindications": "None. May feel forced initially but becomes natural with practice.",
+    "cost": "Free",
+    "equipment": "notebook or smartphone app",
+    "difficulty": "easy",
+    "germanSuppliers": "Any stationery store",
+    "isCustom": false
+  },
+  {
+    "id": "water_upon_waking",
+    "title": "16-24oz Water Upon Waking",
+    "description": "Drink large glass of water immediately upon waking",
+    "category": "tier3_microhabits",
+    "timeMinutes": 2,
+    "effectivenessScore": 75,
+    "evidenceStrength": "moderate",
+    "frequency": "daily",
+    "goalTags": [
+      "energy",
+      "hydration",
+      "cognitive_performance"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student",
+      "all"
+    ],
+    "timeTags": [
+      "morning",
+      "upon_waking"
+    ],
+    "instructions": "1. Keep 500-700ml water glass by bedside\n2. Drink immediately upon waking, before coffee or tea\n3. Add pinch of sea salt for electrolytes (optional)\n4. Room temperature or slightly warm is easiest to drink\n5. Wait 15-30 minutes before eating breakfast",
+    "researchIds": [
+      "hydration_cognition_2019",
+      "morning_hydration_2018"
+    ],
+    "whyEffective": "Rehydrates body after 7-8 hours without fluids, jumpstarts metabolism, aids kidney function, and improves cognitive performance for morning tasks.",
+    "contraindications": "None. Adjust amount if it causes urgent bathroom needs.",
+    "cost": "Free",
+    "equipment": "large water glass (500-700ml)",
+    "difficulty": "trivial",
+    "germanSuppliers": "Any household store",
+    "isCustom": false
+  },
+  {
+    "id": "posture_check_hourly",
+    "title": "Hourly Posture Check + Stretch",
+    "description": "Set hourly reminder to check and correct posture",
+    "category": "tier3_microhabits",
+    "timeMinutes": 1,
+    "effectivenessScore": 72,
+    "evidenceStrength": "moderate",
+    "frequency": "8x_daily",
+    "goalTags": [
+      "physical_health",
+      "energy",
+      "back_pain_prevention"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "student"
+    ],
+    "timeTags": [
+      "work_hours",
+      "flexible"
+    ],
+    "instructions": "1. Set hourly phone reminder during work hours (9am-5pm)\n2. Check posture: feet flat, shoulders back, ears over shoulders\n3. Do 30-second neck and shoulder stretch\n4. Take 5 deep breaths while maintaining good posture\n5. Adjust workspace ergonomics as needed",
+    "researchIds": [
+      "posture_health_2018",
+      "workplace_ergonomics_2019"
+    ],
+    "whyEffective": "Regular posture breaks prevent musculoskeletal problems, improve energy levels, reduce chronic pain, and enhance breathing capacity and confidence.",
+    "contraindications": "None. Adjust reminder frequency if disruptive to work flow.",
+    "cost": "Free",
+    "equipment": "smartphone timer",
+    "difficulty": "easy",
+    "germanSuppliers": "n/a",
+    "isCustom": false
+  },
+  {
+    "id": "custom_001_morning_sunlight",
+    "title": "10-Minute Morning Sunlight Exposure",
+    "description": "Get natural sunlight exposure within 30 minutes of waking to regulate circadian rhythm",
+    "timeMinutes": 10,
+    "category": "tier1_foundation",
+    "goalTags": [
+      "improve_sleep",
+      "energy",
+      "mood"
+    ],
+    "lifestyleTags": [
+      "professional",
+      "parent",
+      "student"
+    ],
+    "timeTags": [
+      "morning"
+    ],
+    "instructions": "1. Step outside within 30 minutes of waking\n2. Face east toward the sun (don't look directly at it)\n3. Remove sunglasses for maximum light exposure\n4. Walk around or do light stretching\n5. Even cloudy days provide beneficial light\n6. In winter, consider a light therapy lamp (10,000 lux)",
+    "researchIds": [
+      "circadian_light_2020",
+      "morning_light_therapy_2021"
+    ],
+    "isCustom": false,
+    "difficulty": "easy",
+    "equipment": "none (or light therapy lamp in winter)",
+    "effectivenessScore": 88,
+    "evidenceStrength": "high",
+    "whyEffective": "Morning light exposure sets the circadian clock, improving sleep quality, energy levels, and mood regulation throughout the day.",
+    "cost": "Free",
+    "frequency": "daily"
+  },
+  {
+    "id": "custom_meditation",
+    "title": "Personal Meditation",
+    "description": "My custom meditation practice",
+    "timeMinutes": 15,
+    "category": "mindfulness",
+    "goalTags": [
+      "reduce_stress"
+    ],
+    "instructions": "Sit quietly and breathe",
+    "researchIds": [],
+    "isCustom": true,
+    "difficulty": "easy"
+  }
+]

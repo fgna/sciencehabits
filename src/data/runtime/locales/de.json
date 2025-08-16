@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-08-16T05:20:42.117Z",
+  "language": "de",
+  "type": "locales",
+  "count": 6,
+  "data": {
+    "navigation.dashboard": "Übersicht",
+    "navigation.habits": "Meine Gewohnheiten",
+    "navigation.research": "Forschung",
+    "common.loading": "Laden...",
+    "common.error": "Fehler",
+    "fallback.notice": "Verwende Offline-Inhalte"
+  },
+  "metadata": {
+    "source": "fallback",
+    "version": "2.0.0",
+    "fetchedAt": "2025-08-16T05:20:42.117Z"
+  }
+}

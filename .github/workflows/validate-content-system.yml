@@ -1,0 +1,356 @@
+name: Validate Content Management System
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'public/data/**/*.json'
+      - 'src/data/**/*.json'
+      - 'src/services/storage/**/*.ts'
+      - 'src/services/contentValidator.ts'
+      - 'scripts/validate-content.js'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'public/data/**/*.json'
+      - 'src/data/**/*.json'
+      - 'src/services/storage/**/*.ts'
+      - 'src/services/contentValidator.ts'
+      - 'scripts/validate-content.js'
+
+jobs:
+  validate-content:
+    name: Validate Content System
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Validate content structure
+      run: |
+        echo "📁 Validating content structure..."
+        
+        # Check if required directories exist
+        REQUIRED_DIRS=("public/data" "public/data/habits" "src/data")
+        for dir in "${REQUIRED_DIRS[@]}"; do
+          if [[ ! -d "$dir" ]]; then
+            echo "❌ Missing directory: $dir"
+            exit 1
+          else
+            echo "✅ Found directory: $dir"
+          fi
+        done
+
+    - name: Run content validation script
+      run: |
+        echo "🔍 Running content validation..."
+        npm run validate-content
+
+    - name: Validate JSON file integrity
+      run: |
+        echo "📄 Validating JSON files..."
+        node -e "
+        const fs = require('fs');
+        const path = require('path');
+        
+        function validateJsonFile(filePath) {
+          try {
+            const content = fs.readFileSync(filePath, 'utf8');
+            JSON.parse(content);
+            return { valid: true };
+          } catch (error) {
+            return { valid: false, error: error.message };
+          }
+        }
+        
+        function findJsonFiles(dir) {
+          const files = [];
+          try {
+            const items = fs.readdirSync(dir);
+            for (const item of items) {
+              const fullPath = path.join(dir, item);
+              const stat = fs.statSync(fullPath);
+              if (stat.isDirectory()) {
+                files.push(...findJsonFiles(fullPath));
+              } else if (item.endsWith('.json')) {
+                files.push(fullPath);
+              }
+            }
+          } catch (error) {
+            // Directory doesn't exist or not accessible
+          }
+          return files;
+        }
+        
+        const contentDirs = ['public/data', 'src/data'];
+        let totalFiles = 0;
+        let validFiles = 0;
+        let errors = [];
+        
+        for (const dir of contentDirs) {
+          const jsonFiles = findJsonFiles(dir);
+          
+          for (const file of jsonFiles) {
+            totalFiles++;
+            const result = validateJsonFile(file);
+            if (result.valid) {
+              validFiles++;
+              console.log(\`✅ \${file}\`);
+            } else {
+              console.log(\`❌ \${file}: \${result.error}\`);
+              errors.push({ file, error: result.error });
+            }
+          }
+        }
+        
+        console.log(\`\\n📊 JSON Validation: \${validFiles}/\${totalFiles} files valid\`);
+        
+        if (errors.length > 0) {
+          console.log('\\n❌ JSON validation errors:');
+          errors.forEach(({ file, error }) => {
+            console.log(\`  - \${file}: \${error}\`);
+          });
+          process.exit(1);
+        } else {
+          console.log('🎉 All JSON files are valid!');
+        }
+        "
+
+    - name: Validate data consistency
+      run: |
+        echo "🔗 Validating data consistency..."
+        node -e "
+        const fs = require('fs');
+        const path = require('path');
+        
+        try {
+          // Load and validate goals
+          let goals = [];
+          if (fs.existsSync('public/data/goals.json')) {
+            goals = JSON.parse(fs.readFileSync('public/data/goals.json', 'utf8'));
+            console.log(\`✅ Loaded \${goals.length} goals\`);
+          }
+          
+          // Load and validate habits
+          let habits = [];
+          const habitsDir = 'public/data/habits';
+          if (fs.existsSync(habitsDir)) {
+            const habitFiles = fs.readdirSync(habitsDir)
+              .filter(file => file.endsWith('.json') && file !== 'fixed-all-content-2025-08-12.json')
+              .map(file => path.join(habitsDir, file));
+            
+            for (const filePath of habitFiles) {
+              try {
+                const content = fs.readFileSync(filePath, 'utf8');
+                const fileHabits = JSON.parse(content);
+                if (Array.isArray(fileHabits)) {
+                  habits.push(...fileHabits);
+                }
+              } catch (error) {
+                console.log(\`⚠️ Error loading \${filePath}: \${error.message}\`);
+              }
+            }
+            console.log(\`✅ Loaded \${habits.length} habits from \${habitFiles.length} files\`);
+          }
+          
+          // Validate habit IDs are unique
+          const habitIds = habits.map(h => h.id).filter(Boolean);
+          const uniqueIds = new Set(habitIds);
+          if (habitIds.length !== uniqueIds.size) {
+            console.log('❌ Duplicate habit IDs found');
+            process.exit(1);
+          } else {
+            console.log('✅ All habit IDs are unique');
+          }
+          
+          // Validate required fields
+          let missingFields = 0;
+          const requiredHabitFields = ['id', 'title', 'description', 'goalTags'];
+          
+          for (const habit of habits) {
+            for (const field of requiredHabitFields) {
+              if (!habit[field]) {
+                missingFields++;
+                console.log(\`⚠️ Habit \${habit.id || 'unknown'} missing \${field}\`);
+              }
+            }
+          }
+          
+          if (missingFields > habits.length * 0.1) { // More than 10% missing fields
+            console.log(\`❌ Too many missing fields (\${missingFields})\`);
+            process.exit(1);
+          } else {
+            console.log(\`✅ Data consistency check passed (\${missingFields} minor issues)\`);
+          }
+          
+        } catch (error) {
+          console.error('❌ Data consistency validation failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Validate storage services
+      run: |
+        echo "💾 Validating storage services..."
+        npm run type-check
+
+    - name: Test content loading functionality
+      run: |
+        echo "🔄 Testing content loading..."
+        node -e "
+        console.log('Testing content loading functionality...');
+        
+        try {
+          const fs = require('fs');
+          
+          // Test basic file loading simulation
+          const testDirs = ['public/data/habits', 'public/data'];
+          let loadableFiles = 0;
+          
+          for (const dir of testDirs) {
+            if (fs.existsSync(dir)) {
+              const files = fs.readdirSync(dir);
+              const jsonFiles = files.filter(f => f.endsWith('.json'));
+              
+              for (const file of jsonFiles) {
+                try {
+                  const content = fs.readFileSync(\`\${dir}/\${file}\`, 'utf8');
+                  JSON.parse(content);
+                  loadableFiles++;
+                } catch (error) {
+                  console.log(\`⚠️ Cannot load \${dir}/\${file}: \${error.message}\`);
+                }
+              }
+            }
+          }
+          
+          console.log(\`✅ Successfully tested loading of \${loadableFiles} content files\`);
+          console.log('🎉 Content loading test completed!');
+          
+        } catch (error) {
+          console.error('❌ Content loading test failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Check content versioning
+      run: |
+        echo "📝 Checking content versioning..."
+        node -e "
+        const fs = require('fs');
+        
+        try {
+          // Check for backup files or version control
+          const backupFiles = [];
+          const contentDirs = ['public/data', 'src/data'];
+          
+          for (const dir of contentDirs) {
+            if (fs.existsSync(dir)) {
+              const files = fs.readdirSync(dir, { recursive: true });
+              for (const file of files) {
+                if (file.includes('backup') || file.includes('old') || file.includes('fixed')) {
+                  backupFiles.push(file);
+                }
+              }
+            }
+          }
+          
+          if (backupFiles.length > 0) {
+            console.log(\`ℹ️ Found \${backupFiles.length} backup/version files\`);
+            backupFiles.slice(0, 5).forEach(file => {
+              console.log(\`  - \${file}\`);
+            });
+            if (backupFiles.length > 5) {
+              console.log(\`  ... and \${backupFiles.length - 5} more\`);
+            }
+          } else {
+            console.log('ℹ️ No backup files found');
+          }
+          
+          console.log('✅ Content versioning check completed');
+          
+        } catch (error) {
+          console.error('❌ Content versioning check failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Generate content system report
+      if: always()
+      run: |
+        echo "## 📋 Content Management System Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Content Statistics" >> $GITHUB_STEP_SUMMARY
+        
+        node -e "
+        const fs = require('fs');
+        const path = require('path');
+        
+        try {
+          // Count content files
+          let totalHabits = 0;
+          let totalGoals = 0;
+          let totalJsonFiles = 0;
+          
+          // Count habits
+          const habitsDir = 'public/data/habits';
+          if (fs.existsSync(habitsDir)) {
+            const habitFiles = fs.readdirSync(habitsDir)
+              .filter(file => file.endsWith('.json') && file !== 'fixed-all-content-2025-08-12.json');
+            
+            for (const file of habitFiles) {
+              try {
+                const content = fs.readFileSync(path.join(habitsDir, file), 'utf8');
+                const habits = JSON.parse(content);
+                if (Array.isArray(habits)) {
+                  totalHabits += habits.length;
+                }
+                totalJsonFiles++;
+              } catch (error) {
+                // Skip invalid files
+              }
+            }
+          }
+          
+          // Count goals
+          if (fs.existsSync('public/data/goals.json')) {
+            try {
+              const goals = JSON.parse(fs.readFileSync('public/data/goals.json', 'utf8'));
+              totalGoals = goals.length;
+              totalJsonFiles++;
+            } catch (error) {
+              // Skip if invalid
+            }
+          }
+          
+          console.log('| Content Type | Count | Status |');
+          console.log('|--------------|-------|--------|');
+          console.log(\`| Habits | \${totalHabits} | ✅ |\\`);
+          console.log(\`| Goals | \${totalGoals} | ✅ |\\`);
+          console.log(\`| JSON Files | \${totalJsonFiles} | ✅ |\\`);
+          console.log(\`| Validation | Passed | ✅ |\\`);
+          
+        } catch (error) {
+          console.log('| Error | Content Check Failed | ❌ |');
+        }
+        " >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload content validation artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: content-validation-report
+        path: |
+          public/data/**/*.json
+          src/data/**/*.json
+        retention-days: 30

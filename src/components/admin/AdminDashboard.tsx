@@ -16,7 +16,11 @@ import {
   UploadResult,
   LocalizedContent
 } from '../../services/cms';
+import { ContentAPIClient, ContentAPIHealth, ContentStats } from '../../services/admin';
 import { GoalMappingTab } from './GoalMappingTab';
+import { HabitsManager } from './HabitsManager';
+import { ResearchManager } from './ResearchManager';
+import { TranslationDashboard } from './TranslationDashboard';
 
 interface AdminDashboardProps {
   onClose?: () => void;
@@ -31,9 +35,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [contentManager] = useState(() => new ContentManager(adminAuth));
   const [jsonWorkflow] = useState(() => new JSONWorkflowService(adminAuth, contentManager));
   const [researchValidator] = useState(() => new ResearchValidator(adminAuth));
+  const [contentAPI] = useState(() => new ContentAPIClient());
 
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'content' | 'goal-mapping' | 'json' | 'translations' | 'validation'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'habits' | 'research' | 'goal-mapping' | 'json' | 'translations' | 'validation'>('overview');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,12 +51,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     validationIssues: 0
   });
 
+  // Content API state
+  const [apiHealth, setApiHealth] = useState<ContentAPIHealth | null>(null);
+  const [contentStats, setContentStats] = useState<ContentStats | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
+
   const [localizedContent, setLocalizedContent] = useState<LocalizedContent | null>(null);
   const [uploadResults, setUploadResults] = useState<UploadResult[]>([]);
 
   useEffect(() => {
-    checkAdminAuth();
-    loadDashboardStats();
+    const initializeData = async () => {
+      await checkAdminAuth();
+      await loadContentAPIData();
+      await loadDashboardStats();
+    };
+    
+    initializeData();
   }, []);
 
   const checkAdminAuth = async () => {
@@ -101,14 +116,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     try {
       setIsLoading(true);
       
-      // For demo purposes, use mock data
-      const mockStats = {
-        totalHabits: 47,
-        totalResearch: 23,
-        translationCompleteness: 85,
-        recentUploads: uploadResults.length,
-        validationIssues: 3
-      };
+      // Use Content API data if available, otherwise fallback to mock data
+      if (contentStats) {
+        const updatedStats = {
+          totalHabits: contentStats.summary.totalHabits,
+          totalResearch: contentStats.summary.totalResearch,
+          translationCompleteness: contentStats.byLanguage.de?.completeness || 0,
+          recentUploads: uploadResults.length,
+          validationIssues: connectionStatus === 'connected' ? 1 : 3
+        };
+        setStats(updatedStats);
+      } else {
+        // Fallback to mock data when Content API is not available
+        const mockStats = {
+          totalHabits: 47,
+          totalResearch: 23,
+          translationCompleteness: 85,
+          recentUploads: uploadResults.length,
+          validationIssues: 3
+        };
+        setStats(mockStats);
+      }
       
       const mockLocalizedContent = {
         habits: [],
@@ -133,11 +161,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           language: 'de',
           version: '1.0.0',
           lastUpdated: new Date(),
-          translationCompleteness: 85
+          translationCompleteness: contentStats?.byLanguage.de?.completeness || 85
         }
       };
       
-      setStats(mockStats);
       setLocalizedContent(mockLocalizedContent);
       console.log('✅ Dashboard stats loaded successfully');
     } catch (error) {
@@ -145,6 +172,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setError('Failed to load dashboard data');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadContentAPIData = async () => {
+    try {
+      setConnectionStatus('connecting');
+      
+      // Test connection first
+      const connectionTest = await contentAPI.testConnection();
+      if (connectionTest.connected) {
+        setConnectionStatus('connected');
+        
+        // Load API health data
+        const health = await contentAPI.checkHealth();
+        setApiHealth(health);
+        
+        // Load content statistics
+        const statsResult = await contentAPI.getContentStats();
+        if (statsResult.success && statsResult.data) {
+          setContentStats(statsResult.data);
+        }
+        
+        console.log('✅ Content API data loaded successfully');
+      } else {
+        setConnectionStatus('disconnected');
+        console.warn('⚠️ Content API is not available, using mock data');
+      }
+      
+    } catch (error) {
+      console.error('Failed to load Content API data:', error);
+      setConnectionStatus('disconnected');
     }
   };
 
@@ -189,6 +247,56 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const renderOverviewTab = () => (
     <div className="space-y-6">
+      {/* Content API Status */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Content API Status</h3>
+            <div className={`flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium ${
+              connectionStatus === 'connected' ? 'bg-green-100 text-green-800' :
+              connectionStatus === 'connecting' ? 'bg-yellow-100 text-yellow-800' :
+              'bg-red-100 text-red-800'
+            }`}>
+              <div className={`w-2 h-2 rounded-full ${
+                connectionStatus === 'connected' ? 'bg-green-500' :
+                connectionStatus === 'connecting' ? 'bg-yellow-500' :
+                'bg-red-500'
+              }`} />
+              <span className="capitalize">{connectionStatus}</span>
+            </div>
+          </div>
+          
+          {apiHealth && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div>
+                <p className="text-gray-600">Version</p>
+                <p className="font-medium">{apiHealth.version}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Uptime</p>
+                <p className="font-medium">{Math.round(apiHealth.uptime / 3600)}h</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Endpoints</p>
+                <p className="font-medium">{Object.keys(apiHealth.endpoints).length} active</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Last Update</p>
+                <p className="font-medium">{new Date(apiHealth.lastUpdate).toLocaleDateString()}</p>
+              </div>
+            </div>
+          )}
+          
+          {connectionStatus === 'disconnected' && (
+            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-sm text-yellow-800">
+                📡 Content API is unavailable. Dashboard is running in mock mode with sample data.
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
@@ -271,6 +379,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </Button>
             <Button onClick={() => contentManager.syncContentUpdates()} variant="secondary">
               🔄 Sync Content
+            </Button>
+            <Button onClick={loadContentAPIData} variant="secondary" disabled={isLoading}>
+              📡 Test API Connection
+            </Button>
+            <Button onClick={() => window.open('https://github.com/freya/sciencehabits-content-api', '_blank')} variant="secondary">
+              🔧 Manage Content Repo
             </Button>
           </div>
         </CardContent>
@@ -401,74 +515,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     </div>
   );
 
-  const renderTranslationsTab = () => (
-    <div className="space-y-6">
-      <Card>
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Translation Status</h3>
-          
-          {localizedContent && (
-            <>
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">German Translation Progress</span>
-                  <span className="text-sm text-gray-600">{localizedContent.metadata.translationCompleteness}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${localizedContent.metadata.translationCompleteness}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Content Statistics</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Total Habits:</span>
-                      <span>{localizedContent.habits.length}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Total Research:</span>
-                      <span>{localizedContent.research.length}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Untranslated Items:</span>
-                      <span className="text-red-600">{localizedContent.untranslatedContent.length}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Missing Translations</h4>
-                  {localizedContent.untranslatedContent.length > 0 ? (
-                    <div className="space-y-2 text-sm max-h-32 overflow-y-auto">
-                      {localizedContent.untranslatedContent.slice(0, 10).map((item, index) => (
-                        <div key={index} className="flex items-center justify-between text-xs bg-yellow-50 p-2 rounded">
-                          <span className="truncate">{item.title}</span>
-                          <span className={`px-1 py-0.5 rounded text-xs ${
-                            item.priority === 'high' ? 'bg-red-100 text-red-800' :
-                            item.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {item.priority}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-green-600">✅ All content translated!</p>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-  );
 
   if (!currentUser) {
     return (
@@ -524,7 +570,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <nav className="-mb-px flex space-x-8">
           {[
             { id: 'overview', label: 'Overview', icon: '📊' },
-            { id: 'content', label: 'Content', icon: '📝' },
+            { id: 'habits', label: 'Habits', icon: '🎯' },
+            { id: 'research', label: 'Research', icon: '📚' },
             { id: 'goal-mapping', label: 'Goal Mapping', icon: '🎯' },
             { id: 'json', label: 'JSON Upload', icon: '📤' },
             { id: 'translations', label: 'Translations', icon: '🌍' },
@@ -558,16 +605,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {!isLoading && (
           <>
             {activeTab === 'overview' && renderOverviewTab()}
+            {activeTab === 'habits' && (
+              <HabitsManager contentAPI={contentAPI} />
+            )}
+            {activeTab === 'research' && (
+              <ResearchManager contentAPI={contentAPI} />
+            )}
             {activeTab === 'goal-mapping' && <GoalMappingTab />}
             {activeTab === 'json' && renderJSONTab()}
-            {activeTab === 'translations' && renderTranslationsTab()}
-            {(activeTab === 'content' || activeTab === 'validation') && (
+            {activeTab === 'translations' && (
+              <TranslationDashboard />
+            )}
+            {activeTab === 'validation' && (
               <Card>
                 <CardContent className="p-6 text-center">
                   <div className="text-4xl mb-4">🚧</div>
                   <h3 className="text-lg font-medium text-gray-900 mb-2">Coming Soon</h3>
                   <p className="text-gray-600">
-                    This section is under development and will be available in the next update.
+                    Content validation dashboard is under development.
                   </p>
                 </CardContent>
               </Card>

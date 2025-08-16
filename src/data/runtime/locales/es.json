@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-08-16T05:20:42.117Z",
+  "language": "es",
+  "type": "locales",
+  "count": 6,
+  "data": {
+    "navigation.dashboard": "Panel",
+    "navigation.habits": "Mis hábitos",
+    "navigation.research": "Investigación",
+    "common.loading": "Cargando...",
+    "common.error": "Error",
+    "fallback.notice": "Usando contenido sin conexión"
+  },
+  "metadata": {
+    "source": "fallback",
+    "version": "2.0.0",
+    "fetchedAt": "2025-08-16T05:20:42.117Z"
+  }
+}

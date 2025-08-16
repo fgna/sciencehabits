@@ -6,10 +6,12 @@ import { TranslationDashboard } from './components/admin/TranslationDashboard';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { AdminLogin } from './components/admin/AdminLogin';
 import { ResearchTranslationReview } from './components/admin/ResearchTranslationReview';
+import { UserTestingDashboard } from './components/testing';
 import { initializeDatabase } from './services/storage/database';
 import { useUserStore } from './stores/userStore';
 import { ResearchProvider } from './contexts/ResearchContext';
 import { ReminderProvider } from './contexts/ReminderContext';
+import PerformanceManager from './services/performance';
 
 function App() {
   const [isOnboarded, setIsOnboarded] = useState<boolean | null>(null);
@@ -39,6 +41,16 @@ function App() {
     try {
       // Initialize database first
       await initializeDatabase();
+      
+      // Initialize performance optimization system
+      if (process.env.NODE_ENV === 'production' || process.env.REACT_APP_ENABLE_PERFORMANCE_OPTIMIZATION === 'true') {
+        try {
+          await PerformanceManager.initialize();
+          console.log('✅ Performance optimization system initialized');
+        } catch (error) {
+          console.warn('⚠️ Performance optimization initialization failed:', error);
+        }
+      }
       
       // Check if user has completed onboarding
       const storedUserId = localStorage.getItem('sciencehabits_user_id');
@@ -115,6 +127,12 @@ function App() {
                       className="text-sm text-blue-600 hover:text-blue-700"
                     >
                       Translation Dashboard
+                    </a>
+                    <a
+                      href="#user-testing"
+                      className="text-sm text-purple-600 hover:text-purple-700"
+                    >
+                      User Testing
                     </a>
                     <button
                       onClick={() => {
@@ -200,6 +218,20 @@ function App() {
             </div>
             <ResearchTranslationReview />
           </div>
+        </ReminderProvider>
+      </ResearchProvider>
+    );
+  }
+
+  // User testing dashboard view
+  if (currentView === 'user-testing') {
+    return (
+      <ResearchProvider>
+        <ReminderProvider>
+          <UserTestingDashboard 
+            isActive={true}
+            onClose={() => window.location.hash = 'dashboard'}
+          />
         </ReminderProvider>
       </ResearchProvider>
     );

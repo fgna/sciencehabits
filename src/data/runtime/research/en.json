@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-08-16T05:20:42.117Z",
+  "language": "en",
+  "type": "research",
+  "count": 1,
+  "data": [
+    {
+      "id": "fallback-research-en",
+      "title": "Habit Formation Research Overview",
+      "summary": "General overview of habit formation research and best practices for behavior change.",
+      "authors": "ScienceHabits Team",
+      "year": 2025,
+      "journal": "ScienceHabits Research",
+      "category": "productivity",
+      "evidenceLevel": "systematic_review",
+      "qualityScore": 75,
+      "language": "en",
+      "fallback": true
+    }
+  ],
+  "metadata": {
+    "source": "api",
+    "version": "2.0.0",
+    "fetchedAt": "2025-08-16T05:20:42.117Z"
+  }
+}

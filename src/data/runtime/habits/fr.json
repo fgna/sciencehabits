@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-08-16T05:20:42.117Z",
+  "language": "fr",
+  "type": "habits",
+  "count": 1,
+  "data": [
+    {
+      "id": "fallback-habit-fr",
+      "title": "Habitude quotidienne essentielle",
+      "description": "Une habitude fondamentale pour le bien-être quotidien et la productivité.",
+      "category": "productivity",
+      "difficulty": "beginner",
+      "timeMinutes": 10,
+      "language": "fr",
+      "researchBacked": true,
+      "sources": [],
+      "fallback": true
+    }
+  ],
+  "metadata": {
+    "source": "fallback",
+    "version": "2.0.0",
+    "fetchedAt": "2025-08-16T05:20:42.117Z"
+  }
+}

@@ -1,0 +1,746 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2025-08-15",
+  "description": "Comprehensive goal taxonomy for mapping onboarding goals to habit goalTags",
+  "mappings": [
+    {
+      "officialId": "reduce_stress",
+      "aliases": [
+        "stress_reduction",
+        "stress_management", 
+        "relaxation",
+        "reduce_anxiety",
+        "anxiety_management",
+        "calm",
+        "mindfulness",
+        "stress_relief"
+      ],
+      "semanticTerms": [
+        "meditation",
+        "breathing",
+        "mindfulness",
+        "relaxation_techniques",
+        "stress_coping",
+        "emotional_regulation",
+        "mental_peace",
+        "tranquility"
+      ],
+      "category": "mental_health",
+      "priority": 1,
+      "description": "Reducing stress and anxiety levels"
+    },
+    {
+      "officialId": "increase_focus",
+      "aliases": [
+        "focus",
+        "concentration", 
+        "attention",
+        "mental_clarity",
+        "cognitive_performance",
+        "enhance_focus",
+        "improve_concentration",
+        "deep_work"
+      ],
+      "semanticTerms": [
+        "productivity",
+        "mental_sharpness",
+        "cognitive_enhancement",
+        "brain_performance",
+        "alertness",
+        "mindfulness",
+        "presence",
+        "flow_state"
+      ],
+      "category": "cognitive",
+      "priority": 1,
+      "description": "Improving focus and concentration abilities"
+    },
+    {
+      "officialId": "improve_mood",
+      "aliases": [
+        "mood",
+        "happiness",
+        "emotional_wellbeing",
+        "mood_enhancement",
+        "positive_emotions",
+        "emotional_regulation",
+        "mental_wellness",
+        "mood_stabilization"
+      ],
+      "semanticTerms": [
+        "depression_prevention",
+        "positivity",
+        "joy",
+        "emotional_balance",
+        "mental_health",
+        "wellbeing",
+        "life_satisfaction",
+        "emotional_resilience"
+      ],
+      "category": "mental_health",
+      "priority": 1,
+      "description": "Enhancing mood and emotional well-being"
+    },
+    {
+      "officialId": "increase_energy",
+      "aliases": [
+        "energy",
+        "vitality",
+        "motivation",
+        "energy_boost",
+        "combat_fatigue",
+        "stamina",
+        "vigor",
+        "alertness"
+      ],
+      "semanticTerms": [
+        "fatigue_reduction",
+        "tiredness_prevention",
+        "physical_energy",
+        "mental_energy",
+        "metabolic_health",
+        "circulation",
+        "oxygenation",
+        "adrenal_support"
+      ],
+      "category": "physical_health",
+      "priority": 1,
+      "description": "Increasing energy levels and reducing fatigue"
+    },
+    {
+      "officialId": "improve_health",
+      "aliases": [
+        "health",
+        "wellness",
+        "fitness",
+        "general_health",
+        "physical_health",
+        "health_optimization",
+        "wellbeing",
+        "healthy_living"
+      ],
+      "semanticTerms": [
+        "nutrition",
+        "exercise",
+        "immunity",
+        "longevity",
+        "disease_prevention",
+        "metabolic_health",
+        "cardiovascular_health",
+        "inflammation_reduction"
+      ],
+      "category": "physical_health",
+      "priority": 1,
+      "description": "Overall health and wellness improvement"
+    },
+    {
+      "officialId": "better_sleep",
+      "aliases": [
+        "sleep",
+        "sleep_quality",
+        "sleep_improvement",
+        "better_rest",
+        "sleep_optimization",
+        "restful_sleep",
+        "sleep_duration",
+        "sleep_hygiene"
+      ],
+      "semanticTerms": [
+        "insomnia_prevention",
+        "sleep_cycle",
+        "circadian_rhythm",
+        "deep_sleep",
+        "rem_sleep",
+        "sleep_recovery",
+        "bedtime_routine",
+        "sleep_environment"
+      ],
+      "category": "physical_health",
+      "priority": 2,
+      "description": "Improving sleep quality and duration"
+    },
+    {
+      "officialId": "enhance_memory",
+      "aliases": [
+        "memory",
+        "memory_improvement",
+        "cognitive_enhancement",
+        "brain_health",
+        "memory_retention",
+        "recall",
+        "cognitive_performance",
+        "mental_acuity"
+      ],
+      "semanticTerms": [
+        "neuroplasticity",
+        "brain_training",
+        "cognitive_function",
+        "learning",
+        "information_processing",
+        "working_memory",
+        "long_term_memory",
+        "brain_fog_reduction"
+      ],
+      "category": "cognitive",
+      "priority": 2,
+      "description": "Enhancing memory and cognitive function"
+    },
+    {
+      "officialId": "boost_creativity",
+      "aliases": [
+        "creativity",
+        "creative_thinking",
+        "innovation",
+        "artistic_expression",
+        "imaginative_thinking",
+        "creative_flow",
+        "inspiration",
+        "original_thinking"
+      ],
+      "semanticTerms": [
+        "divergent_thinking",
+        "problem_solving",
+        "artistic_skills",
+        "right_brain_activation",
+        "creative_process",
+        "idea_generation",
+        "lateral_thinking",
+        "creative_confidence"
+      ],
+      "category": "cognitive",
+      "priority": 3,
+      "description": "Boosting creativity and innovative thinking"
+    },
+    {
+      "officialId": "build_resilience",
+      "aliases": [
+        "resilience",
+        "mental_toughness",
+        "adaptability",
+        "stress_tolerance",
+        "emotional_resilience",
+        "psychological_resilience",
+        "coping_skills",
+        "mental_strength"
+      ],
+      "semanticTerms": [
+        "adversity_management",
+        "bounce_back",
+        "emotional_regulation",
+        "stress_adaptation",
+        "mental_flexibility",
+        "perseverance",
+        "grit",
+        "psychological_safety"
+      ],
+      "category": "mental_health",
+      "priority": 3,
+      "description": "Building mental resilience and adaptability"
+    },
+    {
+      "officialId": "optimize_performance",
+      "aliases": [
+        "performance",
+        "peak_performance",
+        "productivity",
+        "optimization",
+        "efficiency",
+        "performance_enhancement",
+        "achievement",
+        "excellence"
+      ],
+      "semanticTerms": [
+        "flow_state",
+        "high_performance",
+        "skill_development",
+        "mastery",
+        "competitive_edge",
+        "performance_metrics",
+        "goal_achievement",
+        "systematic_improvement"
+      ],
+      "category": "performance",
+      "priority": 3,
+      "description": "Optimizing performance and productivity"
+    },
+    {
+      "officialId": "longevity",
+      "aliases": [
+        "longevity",
+        "healthy_aging",
+        "anti_aging",
+        "lifespan_extension",
+        "age_reversal",
+        "longevity_optimization",
+        "cellular_health",
+        "aging_prevention"
+      ],
+      "semanticTerms": [
+        "telomere_health",
+        "cellular_regeneration",
+        "autophagy",
+        "mitochondrial_health",
+        "hormonal_optimization",
+        "oxidative_stress",
+        "inflammation_control",
+        "metabolic_health"
+      ],
+      "category": "longevity",
+      "priority": 4,
+      "description": "Promoting longevity and healthy aging"
+    },
+    {
+      "officialId": "biohacking",
+      "aliases": [
+        "biohacking",
+        "bio_optimization",
+        "quantified_self",
+        "body_optimization",
+        "mind_optimization",
+        "advanced_wellness",
+        "performance_hacking",
+        "systems_optimization"
+      ],
+      "semanticTerms": [
+        "data_tracking",
+        "biomarker_optimization",
+        "nootropics",
+        "wearable_technology",
+        "cold_therapy",
+        "heat_therapy",
+        "light_therapy",
+        "nutritional_optimization"
+      ],
+      "category": "advanced",
+      "priority": 4,
+      "description": "Advanced biohacking and optimization techniques"
+    },
+    {
+      "officialId": "enhance_immunity",
+      "aliases": [
+        "immunity",
+        "immune_system",
+        "boost_immunity",
+        "immune_health",
+        "immune_support",
+        "immune_function",
+        "disease_prevention"
+      ],
+      "semanticTerms": [
+        "immune_response",
+        "white_blood_cells",
+        "antibodies",
+        "vitamin_c",
+        "zinc",
+        "antioxidants",
+        "inflammation_reduction",
+        "infection_prevention"
+      ],
+      "category": "physical_health",
+      "priority": 2,
+      "description": "Enhancing immune system function and disease resistance"
+    },
+    {
+      "officialId": "enhance_recovery",
+      "aliases": [
+        "recovery",
+        "muscle_recovery",
+        "physical_recovery",
+        "post_workout_recovery",
+        "healing",
+        "regeneration",
+        "restoration"
+      ],
+      "semanticTerms": [
+        "muscle_repair",
+        "inflammation_reduction",
+        "protein_synthesis",
+        "sleep_recovery",
+        "hydration",
+        "circulation",
+        "tissue_repair",
+        "metabolic_recovery"
+      ],
+      "category": "physical_health",
+      "priority": 2,
+      "description": "Enhancing physical recovery and healing processes"
+    },
+    {
+      "officialId": "reduce_pain",
+      "aliases": [
+        "pain_relief",
+        "pain_management",
+        "chronic_pain",
+        "inflammation_reduction",
+        "joint_pain",
+        "muscle_pain",
+        "pain_reduction"
+      ],
+      "semanticTerms": [
+        "anti_inflammatory",
+        "natural_pain_relief",
+        "mobility",
+        "flexibility",
+        "joint_health",
+        "muscle_tension",
+        "inflammation_control",
+        "pain_free"
+      ],
+      "category": "physical_health",
+      "priority": 2,
+      "description": "Reducing pain and inflammation naturally"
+    },
+    {
+      "officialId": "improve_sleep",
+      "aliases": [
+        "sleep_improvement",
+        "sleep_quality",
+        "better_rest",
+        "sleep_optimization",
+        "restful_sleep",
+        "deep_sleep",
+        "sleep_hygiene"
+      ],
+      "semanticTerms": [
+        "circadian_rhythm",
+        "melatonin",
+        "sleep_cycle",
+        "rem_sleep",
+        "sleep_duration",
+        "bedtime_routine",
+        "sleep_environment",
+        "insomnia_prevention"
+      ],
+      "category": "physical_health",
+      "priority": 1,
+      "description": "Improving sleep quality and duration"
+    },
+    {
+      "officialId": "lose_weight",
+      "aliases": [
+        "weight_loss",
+        "fat_loss",
+        "body_composition",
+        "metabolic_health",
+        "calorie_deficit",
+        "healthy_weight",
+        "weight_management"
+      ],
+      "semanticTerms": [
+        "metabolism",
+        "fat_burning",
+        "portion_control",
+        "satiety",
+        "hunger_management",
+        "body_fat",
+        "lean_mass",
+        "energy_balance"
+      ],
+      "category": "physical_health",
+      "priority": 2,
+      "description": "Achieving healthy weight loss and body composition"
+    },
+    {
+      "officialId": "improve_digestion",
+      "aliases": [
+        "digestive_health",
+        "gut_health",
+        "digestion",
+        "stomach_health",
+        "intestinal_health",
+        "microbiome",
+        "digestive_system"
+      ],
+      "semanticTerms": [
+        "gut_bacteria",
+        "probiotics",
+        "fiber",
+        "digestive_enzymes",
+        "bloating_reduction",
+        "gut_brain_axis",
+        "intestinal_permeability",
+        "digestive_comfort"
+      ],
+      "category": "physical_health",
+      "priority": 2,
+      "description": "Improving digestive health and gut function"
+    },
+    {
+      "officialId": "build_muscle",
+      "aliases": [
+        "muscle_building",
+        "muscle_growth",
+        "strength_building",
+        "muscle_mass",
+        "hypertrophy",
+        "muscle_development",
+        "lean_mass"
+      ],
+      "semanticTerms": [
+        "protein_synthesis",
+        "resistance_training",
+        "progressive_overload",
+        "muscle_recovery",
+        "amino_acids",
+        "strength_gains",
+        "muscle_fiber",
+        "anabolic"
+      ],
+      "category": "physical_health",
+      "priority": 2,
+      "description": "Building muscle mass and strength"
+    },
+    {
+      "officialId": "improve_relationships",
+      "aliases": [
+        "relationships",
+        "social_connections",
+        "interpersonal_skills",
+        "communication",
+        "social_health",
+        "relationship_quality",
+        "social_bonding"
+      ],
+      "semanticTerms": [
+        "empathy",
+        "listening_skills",
+        "emotional_intelligence",
+        "conflict_resolution",
+        "trust_building",
+        "intimacy",
+        "social_support",
+        "connection"
+      ],
+      "category": "social",
+      "priority": 2,
+      "description": "Improving relationship quality and social connections"
+    },
+    {
+      "officialId": "find_purpose",
+      "aliases": [
+        "life_purpose",
+        "meaning",
+        "fulfillment",
+        "personal_mission",
+        "life_direction",
+        "purpose_driven",
+        "meaningful_life"
+      ],
+      "semanticTerms": [
+        "values_alignment",
+        "life_goals",
+        "personal_growth",
+        "contribution",
+        "legacy",
+        "impact",
+        "calling",
+        "self_actualization"
+      ],
+      "category": "personal_growth",
+      "priority": 3,
+      "description": "Finding life purpose and meaning"
+    },
+    {
+      "officialId": "build_relationships",
+      "aliases": [
+        "relationship_building",
+        "social_networking",
+        "making_friends",
+        "community_building",
+        "social_skills",
+        "interpersonal_connections",
+        "social_circle"
+      ],
+      "semanticTerms": [
+        "networking",
+        "social_activities",
+        "community_involvement",
+        "friendship",
+        "social_engagement",
+        "relationship_development",
+        "social_confidence",
+        "belonging"
+      ],
+      "category": "social",
+      "priority": 2,
+      "description": "Building new relationships and expanding social circles"
+    },
+    {
+      "officialId": "increase_gratitude",
+      "aliases": [
+        "gratitude",
+        "thankfulness",
+        "appreciation",
+        "positive_mindset",
+        "gratitude_practice",
+        "thankful_attitude",
+        "counting_blessings"
+      ],
+      "semanticTerms": [
+        "positive_psychology",
+        "mindfulness",
+        "life_satisfaction",
+        "happiness",
+        "contentment",
+        "perspective",
+        "abundance_mindset",
+        "emotional_wellbeing"
+      ],
+      "category": "mental_health",
+      "priority": 2,
+      "description": "Cultivating gratitude and appreciation"
+    },
+    {
+      "officialId": "increase_empathy",
+      "aliases": [
+        "empathy",
+        "compassion",
+        "emotional_intelligence",
+        "understanding_others",
+        "perspective_taking",
+        "emotional_awareness",
+        "social_awareness"
+      ],
+      "semanticTerms": [
+        "emotional_regulation",
+        "active_listening",
+        "non_judgment",
+        "emotional_support",
+        "interpersonal_skills",
+        "social_cognition",
+        "emotional_literacy",
+        "kindness"
+      ],
+      "category": "social",
+      "priority": 2,
+      "description": "Developing empathy and emotional intelligence"
+    },
+    {
+      "officialId": "increase_wisdom",
+      "aliases": [
+        "wisdom",
+        "life_experience",
+        "practical_wisdom",
+        "decision_making",
+        "judgment",
+        "insight",
+        "discernment"
+      ],
+      "semanticTerms": [
+        "life_lessons",
+        "experience",
+        "knowledge_application",
+        "critical_thinking",
+        "reflection",
+        "perspective",
+        "maturity",
+        "understanding"
+      ],
+      "category": "personal_growth",
+      "priority": 3,
+      "description": "Developing wisdom and life experience"
+    },
+    {
+      "officialId": "anti_aging",
+      "aliases": [
+        "aging_prevention",
+        "age_reversal",
+        "youthful_aging",
+        "healthy_aging",
+        "longevity_optimization",
+        "cellular_health",
+        "age_management"
+      ],
+      "semanticTerms": [
+        "telomeres",
+        "autophagy",
+        "oxidative_stress",
+        "cellular_regeneration",
+        "mitochondrial_health",
+        "hormonal_optimization",
+        "skin_health",
+        "cognitive_preservation"
+      ],
+      "category": "longevity",
+      "priority": 3,
+      "description": "Slowing aging processes and maintaining youthfulness"
+    }
+  ],
+  "categories": [
+    {
+      "id": "mental_health",
+      "name": "Mental Health",
+      "description": "Goals related to psychological well-being and mental health",
+      "priority": 1
+    },
+    {
+      "id": "cognitive",
+      "name": "Cognitive Enhancement",
+      "description": "Goals focused on improving cognitive abilities and brain function",
+      "priority": 2
+    },
+    {
+      "id": "physical_health",
+      "name": "Physical Health",
+      "description": "Goals related to physical wellness and health optimization",
+      "priority": 3
+    },
+    {
+      "id": "performance",
+      "name": "Performance Optimization",
+      "description": "Goals focused on maximizing performance and productivity",
+      "priority": 4
+    },
+    {
+      "id": "longevity",
+      "name": "Longevity & Anti-aging",
+      "description": "Goals related to healthy aging and lifespan extension",
+      "priority": 5
+    },
+    {
+      "id": "advanced",
+      "name": "Advanced Optimization",
+      "description": "Advanced techniques for body and mind optimization",
+      "priority": 6
+    },
+    {
+      "id": "social",
+      "name": "Social & Relationships",
+      "description": "Goals related to social connections and relationship building",
+      "priority": 7
+    },
+    {
+      "id": "personal_growth",
+      "name": "Personal Growth",
+      "description": "Goals focused on personal development and life fulfillment",
+      "priority": 8
+    }
+  ],
+  "deprecatedMappings": [
+    {
+      "deprecatedTag": "stress_reduction",
+      "officialId": "reduce_stress",
+      "migrationNote": "Standardized to official goal ID"
+    },
+    {
+      "deprecatedTag": "focus",
+      "officialId": "increase_focus",
+      "migrationNote": "Standardized to official goal ID"
+    },
+    {
+      "deprecatedTag": "mood",
+      "officialId": "improve_mood",
+      "migrationNote": "Standardized to official goal ID"
+    },
+    {
+      "deprecatedTag": "energy",
+      "officialId": "increase_energy",
+      "migrationNote": "Standardized to official goal ID"
+    },
+    {
+      "deprecatedTag": "health",
+      "officialId": "improve_health",
+      "migrationNote": "Standardized to official goal ID"
+    }
+  ]
+}

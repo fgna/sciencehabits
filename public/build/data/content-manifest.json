@@ -1,0 +1,395 @@
+{
+  "generatedAt": "2025-08-11T19:25:18.320Z",
+  "stats": {
+    "totalFiles": 50,
+    "habitsFiles": 5,
+    "researchFiles": 39,
+    "customFiles": 2,
+    "totalHabits": 111,
+    "totalResearch": 96
+  },
+  "sources": [
+    {
+      "filename": "habits_json.json",
+      "category": "general",
+      "type": "habits",
+      "lastModified": "2025-08-11T17:54:29.193Z",
+      "size": 51851
+    },
+    {
+      "filename": "longevity_habits.json",
+      "category": "general",
+      "type": "habits",
+      "lastModified": "2025-08-11T19:14:46.387Z",
+      "size": 26993
+    },
+    {
+      "filename": "physical_health_habits_json.json",
+      "category": "general",
+      "type": "habits",
+      "lastModified": "2025-08-11T19:18:05.199Z",
+      "size": 22553
+    },
+    {
+      "filename": "updated_habits_json.json",
+      "category": "general",
+      "type": "habits",
+      "lastModified": "2025-08-11T19:13:59.973Z",
+      "size": 16846
+    },
+    {
+      "filename": "bedroom_environment_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:52:16.212Z",
+      "size": 17766
+    },
+    {
+      "filename": "breathing_stress_2023_article_json.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-10T20:19:10.039Z",
+      "size": 12870
+    },
+    {
+      "filename": "breathwork_meta_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:42:05.679Z",
+      "size": 21239
+    },
+    {
+      "filename": "breathwork_stress_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:50:44.218Z",
+      "size": 16721
+    },
+    {
+      "filename": "commitment_devices_rct_2019_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:49:45.679Z",
+      "size": 16108
+    },
+    {
+      "filename": "cyclic_sighing_2023_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:41:05.444Z",
+      "size": 16104
+    },
+    {
+      "filename": "exercise_depression_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:50:56.985Z",
+      "size": 20405
+    },
+    {
+      "filename": "exercise_depression_meta_2015_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:40:52.713Z",
+      "size": 18060
+    },
+    {
+      "filename": "exercise_snacks_review_2024_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:49:40.606Z",
+      "size": 17347
+    },
+    {
+      "filename": "exercise_stress_2022_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:40:43.009Z",
+      "size": 17310
+    },
+    {
+      "filename": "expressive_writing_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:39:32.155Z",
+      "size": 25890
+    },
+    {
+      "filename": "financial_incentives_meta_2013_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:50:28.570Z",
+      "size": 22007
+    },
+    {
+      "filename": "habit_stacking_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:42:42.648Z",
+      "size": 14244
+    },
+    {
+      "filename": "habit_stacking_exercise_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:40:11.665Z",
+      "size": 24083
+    },
+    {
+      "filename": "implementation_intentions_exercise_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:39:48.154Z",
+      "size": 26912
+    },
+    {
+      "filename": "implementation_intentions_meta_2006_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:43:23.203Z",
+      "size": 19272
+    },
+    {
+      "filename": "magnesium_sleep_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:51:16.902Z",
+      "size": 15117
+    },
+    {
+      "filename": "mbsr_stress_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:51:11.792Z",
+      "size": 17061
+    },
+    {
+      "filename": "micro_workouts_fitness_2023_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:49:36.103Z",
+      "size": 18397
+    },
+    {
+      "filename": "morning_exercise_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:42:26.022Z",
+      "size": 17824
+    },
+    {
+      "filename": "morning_exercise_scheduling_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:40:21.773Z",
+      "size": 9928
+    },
+    {
+      "filename": "nature_dose_response_2019_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:43:52.993Z",
+      "size": 20417
+    },
+    {
+      "filename": "nature_exposure_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:39:16.120Z",
+      "size": 16346
+    },
+    {
+      "filename": "omega3_brain_2019_article_json.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-10T20:12:29.029Z",
+      "size": 10512
+    },
+    {
+      "filename": "omega3_depression_2020_article_json.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-10T20:15:01.247Z",
+      "size": 11841
+    },
+    {
+      "filename": "omega3_inflammation_2021_article_json.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-10T20:19:01.000Z",
+      "size": 12473
+    },
+    {
+      "filename": "progressive_muscle_relaxation_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:39:21.714Z",
+      "size": 21924
+    },
+    {
+      "filename": "research_articles_json.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-10T20:04:07.206Z",
+      "size": 9105
+    },
+    {
+      "filename": "tart_cherry_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:51:26.742Z",
+      "size": 12507
+    },
+    {
+      "filename": "temporal_consistency_2019_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:49:09.587Z",
+      "size": 18903
+    },
+    {
+      "filename": "two_minute_rule_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:42:36.428Z",
+      "size": 16332
+    },
+    {
+      "filename": "two_minute_rule_exercise_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:40:16.852Z",
+      "size": 25026
+    },
+    {
+      "filename": "updated_habits_json.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-10T15:12:58.927Z",
+      "size": 16846
+    },
+    {
+      "filename": "updated_research_json.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-10T15:13:08.355Z",
+      "size": 27155
+    },
+    {
+      "filename": "vitamin_d_immune_2021_article_json.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-10T20:14:53.210Z",
+      "size": 11256
+    },
+    {
+      "filename": "vitamin_d_meta_2019_article_json.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-10T20:12:29.029Z",
+      "size": 9105
+    },
+    {
+      "filename": "warm_bath_sleep_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:52:32.962Z",
+      "size": 20519
+    },
+    {
+      "filename": "winddown_routine_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:52:22.236Z",
+      "size": 22144
+    },
+    {
+      "filename": "workout_variety_study_2020_article.json",
+      "category": "general",
+      "type": "research",
+      "lastModified": "2025-08-11T17:49:15.915Z",
+      "size": 19789
+    },
+    {
+      "filename": "custom-habits.json",
+      "category": "custom",
+      "type": "custom",
+      "lastModified": "2025-08-11T17:40:53.143Z",
+      "size": 1172
+    },
+    {
+      "filename": "my-additions.json",
+      "category": "my",
+      "type": "custom",
+      "lastModified": "2025-08-11T19:03:31.186Z",
+      "size": 465
+    },
+    {
+      "filename": "habits.json",
+      "category": "legacy",
+      "type": "habits",
+      "lastModified": "2025-08-11T04:01:32.841Z",
+      "size": 43842
+    },
+    {
+      "filename": "enhanced_habits.json",
+      "category": "legacy",
+      "type": "habits",
+      "lastModified": "2025-08-11T04:01:32.841Z",
+      "size": 16846
+    },
+    {
+      "filename": "research.json",
+      "category": "legacy",
+      "type": "research",
+      "lastModified": "2025-08-11T04:01:32.841Z",
+      "size": 62873
+    },
+    {
+      "filename": "research_articles.json",
+      "category": "legacy",
+      "type": "research",
+      "lastModified": "2025-08-11T18:05:17.619Z",
+      "size": 3389
+    },
+    {
+      "filename": "enhanced_research.json",
+      "category": "legacy",
+      "type": "research",
+      "lastModified": "2025-08-11T18:49:21.718Z",
+      "size": 27147
+    }
+  ],
+  "categories": {
+    "general": {
+      "habits": 4,
+      "research": 39,
+      "custom": 0
+    },
+    "custom": {
+      "habits": 0,
+      "research": 0,
+      "custom": 1
+    },
+    "my": {
+      "habits": 0,
+      "research": 0,
+      "custom": 1
+    },
+    "legacy": {
+      "habits": 2,
+      "research": 3,
+      "custom": 0
+    }
+  },
+  "namingConventions": {
+    "habits": "category-habits.json (e.g., sleep-habits.json)",
+    "research": "category-research.json (e.g., sleep-research.json)",
+    "custom": "anything.json or category-habits/research.json"
+  },
+  "examples": {
+    "habits": "src/data/habits/sleep-habits.json",
+    "research": "src/data/research/exercise-research.json",
+    "custom": "src/data/content-custom/my-personal-habits.json"
+  }
+}

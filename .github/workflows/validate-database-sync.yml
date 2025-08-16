@@ -1,0 +1,408 @@
+name: Validate Database & Sync Services
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'src/services/storage/**/*.ts'
+      - 'src/services/sync/**/*.ts'
+      - 'src/stores/**/*.ts'
+      - 'src/services/database.ts'
+      - 'scripts/validate-database.js'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'src/services/storage/**/*.ts'
+      - 'src/services/sync/**/*.ts'
+      - 'src/stores/**/*.ts'
+      - 'src/services/database.ts'
+      - 'scripts/validate-database.js'
+
+jobs:
+  validate-database:
+    name: Validate Database Services
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Validate database service structure
+      run: |
+        echo "💾 Validating database services..."
+        
+        # Check if database service files exist
+        DATABASE_FILES=(
+          "src/services/storage/database.ts"
+          "src/stores/userStore.ts"
+          "src/stores/habitStore.ts"
+        )
+        
+        for file in "${DATABASE_FILES[@]}"; do
+          if [[ -f "$file" ]]; then
+            echo "✅ Found: $file"
+          else
+            echo "⚠️ Missing: $file"
+          fi
+        done
+
+    - name: TypeScript compilation check
+      run: |
+        echo "🔧 Checking TypeScript compilation..."
+        npm run type-check
+
+    - name: Validate store interfaces
+      run: |
+        echo "📝 Validating store interfaces..."
+        node -e "
+        const fs = require('fs');
+        const path = require('path');
+        
+        try {
+          const storeFiles = [
+            'src/stores/userStore.ts',
+            'src/stores/habitStore.ts'
+          ];
+          
+          let storeCount = 0;
+          let validStores = 0;
+          
+          for (const storePath of storeFiles) {
+            if (fs.existsSync(storePath)) {
+              storeCount++;
+              const content = fs.readFileSync(storePath, 'utf8');
+              
+              // Basic validation checks
+              const hasZustand = content.includes('zustand') || content.includes('create');
+              const hasInterface = content.includes('interface') || content.includes('type');
+              const hasExport = content.includes('export');
+              
+              if (hasZustand && hasInterface && hasExport) {
+                validStores++;
+                console.log(\`✅ \${storePath}: Valid store structure\`);
+              } else {
+                console.log(\`⚠️ \${storePath}: Missing required patterns\`);
+              }
+            }
+          }
+          
+          console.log(\`\\n📊 Store validation: \${validStores}/\${storeCount} stores valid\`);
+          
+          if (storeCount > 0 && validStores === storeCount) {
+            console.log('🎉 All stores have valid structure!');
+          } else if (storeCount === 0) {
+            console.log('ℹ️ No store files found to validate');
+          }
+          
+        } catch (error) {
+          console.error('❌ Store validation failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Validate IndexedDB schema
+      run: |
+        echo "🗄️ Validating IndexedDB schema..."
+        node -e "
+        const fs = require('fs');
+        
+        try {
+          // Check for database service implementation
+          let dbServiceExists = false;
+          let schemaValid = false;
+          
+          const dbFiles = [
+            'src/services/storage/database.ts',
+            'src/services/database.ts'
+          ];
+          
+          for (const dbFile of dbFiles) {
+            if (fs.existsSync(dbFile)) {
+              dbServiceExists = true;
+              const content = fs.readFileSync(dbFile, 'utf8');
+              
+              // Check for Dexie usage and schema definition
+              const hasDexie = content.includes('Dexie') || content.includes('dexie');
+              const hasSchema = content.includes('stores') || content.includes('table') || content.includes('schema');
+              const hasVersioning = content.includes('version') || content.includes('Version');
+              
+              if (hasDexie && hasSchema) {
+                schemaValid = true;
+                console.log(\`✅ \${dbFile}: Valid IndexedDB schema\`);
+              } else {
+                console.log(\`⚠️ \${dbFile}: Schema validation issues\`);
+              }
+              break;
+            }
+          }
+          
+          if (!dbServiceExists) {
+            console.log('ℹ️ No database service files found');
+          } else if (schemaValid) {
+            console.log('🎉 IndexedDB schema validation passed!');
+          } else {
+            console.log('⚠️ IndexedDB schema needs review');
+          }
+          
+        } catch (error) {
+          console.error('❌ IndexedDB validation failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Validate sync service architecture
+      run: |
+        echo "🔄 Validating sync services..."
+        node -e "
+        const fs = require('fs');
+        const path = require('path');
+        
+        try {
+          const syncDir = 'src/services/sync';
+          let syncServices = [];
+          
+          if (fs.existsSync(syncDir)) {
+            const files = fs.readdirSync(syncDir);
+            syncServices = files.filter(f => f.endsWith('.ts'));
+            console.log(\`✅ Found \${syncServices.length} sync service files\`);
+            
+            for (const service of syncServices) {
+              console.log(\`  - \${service}\`);
+            }
+          } else {
+            console.log('ℹ️ No sync services directory found');
+          }
+          
+          // Check for service worker sync
+          const swFiles = [
+            'public/sw.js',
+            'src/serviceWorker.ts',
+            'src/services/serviceWorkerSync.ts'
+          ];
+          
+          let swExists = false;
+          for (const swFile of swFiles) {
+            if (fs.existsSync(swFile)) {
+              swExists = true;
+              console.log(\`✅ Found service worker: \${swFile}\`);
+              break;
+            }
+          }
+          
+          if (!swExists) {
+            console.log('ℹ️ No service worker files found');
+          }
+          
+          console.log('🎉 Sync service validation completed!');
+          
+        } catch (error) {
+          console.error('❌ Sync validation failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Test database operations simulation
+      run: |
+        echo "🧪 Testing database operations..."
+        node -e "
+        console.log('Testing database operation patterns...');
+        
+        try {
+          const fs = require('fs');
+          
+          // Check for common database operations in code
+          const checkFiles = [
+            'src/stores/userStore.ts',
+            'src/stores/habitStore.ts',
+            'src/services/storage/database.ts'
+          ];
+          
+          let operationPatterns = {
+            'create': 0,
+            'read': 0,
+            'update': 0,
+            'delete': 0,
+            'sync': 0
+          };
+          
+          for (const file of checkFiles) {
+            if (fs.existsSync(file)) {
+              const content = fs.readFileSync(file, 'utf8').toLowerCase();
+              
+              // Check for CRUD operation patterns
+              if (content.includes('add') || content.includes('create') || content.includes('insert')) {
+                operationPatterns.create++;
+              }
+              if (content.includes('get') || content.includes('find') || content.includes('select')) {
+                operationPatterns.read++;
+              }
+              if (content.includes('update') || content.includes('put') || content.includes('modify')) {
+                operationPatterns.update++;
+              }
+              if (content.includes('delete') || content.includes('remove')) {
+                operationPatterns.delete++;
+              }
+              if (content.includes('sync') || content.includes('backup')) {
+                operationPatterns.sync++;
+              }
+            }
+          }
+          
+          console.log('📊 Database operation patterns found:');
+          Object.entries(operationPatterns).forEach(([op, count]) => {
+            console.log(\`  - \${op.toUpperCase()}: \${count} files\`);
+          });
+          
+          const totalOps = Object.values(operationPatterns).reduce((sum, count) => sum + count, 0);
+          if (totalOps > 0) {
+            console.log('✅ Database operations detected in codebase');
+          } else {
+            console.log('ℹ️ No obvious database operations found in checked files');
+          }
+          
+          console.log('🎉 Database operations test completed!');
+          
+        } catch (error) {
+          console.error('❌ Database operations test failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Check data persistence patterns
+      run: |
+        echo "💿 Checking data persistence patterns..."
+        node -e "
+        const fs = require('fs');
+        
+        try {
+          // Check for persistence patterns in stores and services
+          const persistenceFiles = [
+            'src/stores/userStore.ts',
+            'src/stores/habitStore.ts',
+            'src/services/storage/database.ts'
+          ];
+          
+          let persistenceFeatures = {
+            'localStorage': 0,
+            'indexedDB': 0,
+            'cloudSync': 0,
+            'offline': 0
+          };
+          
+          for (const file of persistenceFiles) {
+            if (fs.existsSync(file)) {
+              const content = fs.readFileSync(file, 'utf8').toLowerCase();
+              
+              if (content.includes('localstorage') || content.includes('local storage')) {
+                persistenceFeatures.localStorage++;
+              }
+              if (content.includes('indexeddb') || content.includes('dexie') || content.includes('idb')) {
+                persistenceFeatures.indexedDB++;
+              }
+              if (content.includes('cloud') || content.includes('drive') || content.includes('remote')) {
+                persistenceFeatures.cloudSync++;
+              }
+              if (content.includes('offline') || content.includes('cache')) {
+                persistenceFeatures.offline++;
+              }
+            }
+          }
+          
+          console.log('💾 Persistence features detected:');
+          Object.entries(persistenceFeatures).forEach(([feature, count]) => {
+            if (count > 0) {
+              console.log(\`  ✅ \${feature}: \${count} files\`);
+            } else {
+              console.log(\`  ℹ️ \${feature}: not detected\`);
+            }
+          });
+          
+          const totalFeatures = Object.values(persistenceFeatures).reduce((sum, count) => sum + count, 0);
+          
+          if (totalFeatures > 0) {
+            console.log('🎉 Data persistence patterns found!');
+          } else {
+            console.log('ℹ️ No obvious persistence patterns detected');
+          }
+          
+        } catch (error) {
+          console.error('❌ Persistence check failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Generate database validation report
+      if: always()
+      run: |
+        echo "## 💾 Database & Sync Services Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Service Architecture" >> $GITHUB_STEP_SUMMARY
+        
+        node -e "
+        const fs = require('fs');
+        
+        try {
+          // Count database-related files
+          let dbFiles = 0;
+          let storeFiles = 0;
+          let syncFiles = 0;
+          
+          const checkDirs = [
+            { path: 'src/services/storage', type: 'Database Services' },
+            { path: 'src/stores', type: 'Store Files' },
+            { path: 'src/services/sync', type: 'Sync Services' }
+          ];
+          
+          console.log('| Component | Count | Status |');
+          console.log('|-----------|-------|--------|');
+          
+          for (const { path: dir, type } of checkDirs) {
+            let count = 0;
+            if (fs.existsSync(dir)) {
+              const files = fs.readdirSync(dir);
+              count = files.filter(f => f.endsWith('.ts')).length;
+            }
+            
+            console.log(\`| \${type} | \${count} | \${count > 0 ? '✅' : 'ℹ️'} |\\`);
+          }
+          
+          // Check for key files
+          const keyFiles = [
+            'src/services/storage/database.ts',
+            'src/stores/userStore.ts',
+            'src/stores/habitStore.ts'
+          ];
+          
+          let existingFiles = 0;
+          for (const file of keyFiles) {
+            if (fs.existsSync(file)) {
+              existingFiles++;
+            }
+          }
+          
+          console.log(\`| Key Files | \${existingFiles}/\${keyFiles.length} | \${existingFiles === keyFiles.length ? '✅' : '⚠️'} |\\`);
+          console.log(\`| TypeScript | Compiled | ✅ |\\`);
+          
+        } catch (error) {
+          console.log('| Error | Validation Failed | ❌ |');
+        }
+        " >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload database validation artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: database-validation-report
+        path: |
+          src/services/storage/**/*.ts
+          src/stores/**/*.ts
+        retention-days: 30

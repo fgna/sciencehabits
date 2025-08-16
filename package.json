@@ -28,6 +28,8 @@
     "test:watch": "react-scripts test",
     "test:coverage": "react-scripts test --coverage --watchAll=false",
     "test:a11y": "react-scripts test --testMatch='**/*a11y*' --watchAll=false",
+    "test:integration": "react-scripts test --testMatch='**/integration/**/*.test.ts' --watchAll=false --coverage",
+    "test:integration:watch": "react-scripts test --testMatch='**/integration/**/*.test.ts'",
     "verify-env": "node scripts/verify-env.js",
     "test:smoke": "cypress run --spec 'cypress/e2e/smoke-tests/*.cy.ts'",
     "eject": "react-scripts eject",

@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-08-16T05:20:42.117Z",
+  "language": "de",
+  "type": "habits",
+  "count": 1,
+  "data": [
+    {
+      "id": "fallback-habit-de",
+      "title": "Wesentliche tägliche Gewohnheit",
+      "description": "Eine grundlegende Gewohnheit für tägliches Wohlbefinden und Produktivität.",
+      "category": "productivity",
+      "difficulty": "beginner",
+      "timeMinutes": 10,
+      "language": "de",
+      "researchBacked": true,
+      "sources": [],
+      "fallback": true
+    }
+  ],
+  "metadata": {
+    "source": "fallback",
+    "version": "2.0.0",
+    "fetchedAt": "2025-08-16T05:20:42.117Z"
+  }
+}

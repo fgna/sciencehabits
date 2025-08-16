@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# Pre-commit hook for Goal-to-Habit Mapping validation
+# Prevents commits that would break the mapping system
+
+set -e
+
+echo "🔍 Running Goal-to-Habit Mapping validation..."
+
+# Check if goal mapping files are being modified
+GOAL_FILES_CHANGED=$(git diff --cached --name-only | grep -E "(goalTaxonomy\.json|goals\.json|habits/.*\.json|goalTaxonomy\.ts|smartRecommendations\.ts|contentValidator\.ts)" || true)
+
+if [ -z "$GOAL_FILES_CHANGED" ]; then
+    echo "✅ No goal mapping files changed, skipping validation"
+    exit 0
+fi
+
+echo "📁 Goal mapping files changed:"
+echo "$GOAL_FILES_CHANGED"
+echo ""
+
+# Run validation script
+echo "🧪 Running validation script..."
+if ! node scripts/validate-goal-mappings.js; then
+    echo ""
+    echo "❌ Goal mapping validation FAILED!"
+    echo "Please fix the validation errors before committing."
+    echo ""
+    echo "To see detailed validation output:"
+    echo "  node scripts/validate-goal-mappings.js"
+    echo ""
+    echo "Common fixes:"
+    echo "  • Add missing goal mappings to src/data/goalTaxonomy.json"
+    echo "  • Update habit goalTags to use official goal IDs"
+    echo "  • Run content migration: npm run migrate-content"
+    echo ""
+    exit 1
+fi
+
+# Quick TypeScript check for mapping services
+echo "🔧 Checking TypeScript compilation..."
+if ! npx tsc --noEmit --project . 2>/dev/null; then
+    echo "❌ TypeScript compilation failed!"
+    echo "Please fix TypeScript errors in goal mapping services before committing."
+    exit 1
+fi
+
+# Test recommendation engine basic functionality
+echo "🧠 Testing Smart Recommendation Engine..."
+VALIDATION_RESULT=$(node -e "
+const smartRecommendations = require('./src/services/smartRecommendations.ts');
+smartRecommendations.default.getRecommendations({
+  selectedGoals: ['reduce_stress', 'increase_focus'],
+  limit: 5,
+  minConfidence: 0.3
+}).then(result => {
+  if (result.recommendations.length === 0) {
+    console.log('FAIL: No recommendations returned');
+    process.exit(1);
+  }
+  console.log('PASS: Engine returned', result.recommendations.length, 'recommendations');
+}).catch(error => {
+  console.log('FAIL: Engine error -', error.message);
+  process.exit(1);
+});
+" 2>/dev/null || echo "FAIL: Engine test failed")
+
+if [[ "$VALIDATION_RESULT" == *"FAIL"* ]]; then
+    echo "❌ Smart Recommendation Engine test failed!"
+    echo "Please check the implementation before committing."
+    exit 1
+fi
+
+echo "✅ All goal mapping validations passed!"
+echo "Safe to commit changes."
+echo ""

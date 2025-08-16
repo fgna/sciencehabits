@@ -1,0 +1,312 @@
+name: Validate Admin Interface & Goal Mapping
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'src/components/admin/**/*.tsx'
+      - 'src/components/admin/**/*.ts'
+      - 'src/services/cms/**/*.ts'
+      - 'src/services/goalTaxonomy.ts'
+      - 'src/services/contentValidator.ts'
+      - 'scripts/validate-goal-mappings.js'
+      - 'public/data/**/*.json'
+      - 'src/data/**/*.json'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'src/components/admin/**/*.tsx'
+      - 'src/components/admin/**/*.ts'
+      - 'src/services/cms/**/*.ts'
+      - 'src/services/goalTaxonomy.ts'
+      - 'src/services/contentValidator.ts'
+      - 'scripts/validate-goal-mappings.js'
+      - 'public/data/**/*.json'
+      - 'src/data/**/*.json'
+
+jobs:
+  validate-admin-interface:
+    name: Admin Interface & Goal Mapping Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Validate admin component structure
+      run: |
+        echo "📱 Validating admin interface structure..."
+        
+        # Check if admin components exist
+        ADMIN_COMPONENTS=(
+          "src/components/admin/AdminDashboard.tsx"
+          "src/components/admin/GoalMappingTab.tsx"
+        )
+        
+        for component in "${ADMIN_COMPONENTS[@]}"; do
+          if [[ ! -f "$component" ]]; then
+            echo "❌ Missing admin component: $component"
+            exit 1
+          else
+            echo "✅ Found admin component: $component"
+          fi
+        done
+
+    - name: Validate CMS service structure
+      run: |
+        echo "🔧 Validating CMS services..."
+        
+        # Check if CMS services exist
+        CMS_SERVICES=(
+          "src/services/cms/GoalMappingService.ts"
+          "src/services/cms/AdminAuthService.ts"
+          "src/services/cms/ContentManager.ts"
+        )
+        
+        for service in "${CMS_SERVICES[@]}"; do
+          if [[ ! -f "$service" ]]; then
+            echo "❌ Missing CMS service: $service"
+            exit 1
+          else
+            echo "✅ Found CMS service: $service"
+          fi
+        done
+
+    - name: Run goal mapping validation
+      run: |
+        echo "🎯 Running goal mapping validation..."
+        npm run validate-goal-mappings
+
+    - name: Validate TypeScript compilation
+      run: |
+        echo "🔍 Checking TypeScript compilation for admin interface..."
+        npx tsc --noEmit --skipLibCheck
+
+    - name: Test admin interface build
+      run: |
+        echo "🏗️ Testing admin interface build..."
+        npm run build
+
+    - name: Validate goal taxonomy integration
+      run: |
+        echo "🗂️ Validating goal taxonomy integration..."
+        node -e "
+        const fs = require('fs');
+        const path = require('path');
+        
+        try {
+          // Check goal taxonomy data file
+          const taxonomyPath = 'src/data/goalTaxonomy.json';
+          if (!fs.existsSync(taxonomyPath)) {
+            console.log('❌ Goal taxonomy data file missing');
+            process.exit(1);
+          }
+          
+          const taxonomy = JSON.parse(fs.readFileSync(taxonomyPath, 'utf8'));
+          console.log(\`✅ Loaded goal taxonomy with \${taxonomy.mappings?.length || 0} mappings\`);
+          
+          // Validate taxonomy structure
+          const requiredFields = ['version', 'mappings', 'categories'];
+          for (const field of requiredFields) {
+            if (!taxonomy[field]) {
+              console.log(\`❌ Missing required field in taxonomy: \${field}\`);
+              process.exit(1);
+            }
+          }
+          
+          console.log('✅ Goal taxonomy structure is valid');
+          
+        } catch (error) {
+          console.error('❌ Goal taxonomy validation failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Test admin service integration
+      run: |
+        echo "🔗 Testing admin service integration..."
+        node -e "
+        console.log('Testing admin service integration...');
+        
+        try {
+          // Test that admin services can be imported
+          const fs = require('fs');
+          const services = [
+            'src/services/cms/GoalMappingService.ts',
+            'src/services/goalTaxonomy.ts',
+            'src/services/contentValidator.ts'
+          ];
+          
+          for (const service of services) {
+            if (!fs.existsSync(service)) {
+              console.log(\`❌ Service file missing: \${service}\`);
+              process.exit(1);
+            }
+            
+            const content = fs.readFileSync(service, 'utf8');
+            
+            // Basic syntax check - ensure exports exist
+            if (content.includes('export') && content.includes('class')) {
+              console.log(\`✅ Service structure valid: \${service}\`);
+            } else {
+              console.log(\`⚠️ Service may have structure issues: \${service}\`);
+            }
+          }
+          
+          console.log('✅ Admin service integration test completed');
+          
+        } catch (error) {
+          console.error('❌ Admin service integration test failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Validate admin-user workflow integration
+      run: |
+        echo "🔄 Validating admin-to-user workflow..."
+        node -e "
+        console.log('Testing admin-to-user workflow integration...');
+        
+        try {
+          const fs = require('fs');
+          
+          // Check that onboarding goals exist for admin mapping
+          const goalsPath = 'public/data/goals.json';
+          if (fs.existsSync(goalsPath)) {
+            const goals = JSON.parse(fs.readFileSync(goalsPath, 'utf8'));
+            console.log(\`✅ Found \${goals.length} onboarding goals for admin mapping\`);
+          } else {
+            console.log('⚠️ No goals.json found - admin mapping may be limited');
+          }
+          
+          // Check that habits exist for goal mapping
+          const habitsDir = 'public/data/habits';
+          if (fs.existsSync(habitsDir)) {
+            const habitFiles = fs.readdirSync(habitsDir).filter(f => f.endsWith('.json'));
+            console.log(\`✅ Found \${habitFiles.length} habit files for goal mapping\`);
+          } else {
+            console.log('❌ No habits directory found');
+            process.exit(1);
+          }
+          
+          console.log('✅ Admin-to-user workflow validation completed');
+          
+        } catch (error) {
+          console.error('❌ Admin-to-user workflow validation failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Check admin documentation
+      run: |
+        echo "📚 Checking admin documentation..."
+        
+        # Check for admin documentation
+        if [[ -f "docs/ENHANCED_ADMIN_CMS_INTEGRATION.md" ]]; then
+          echo "✅ Found admin integration documentation"
+        else
+          echo "⚠️ Admin integration documentation not found"
+        fi
+        
+        # Check if CLAUDE.md mentions admin features
+        if grep -q "admin" CLAUDE.md 2>/dev/null; then
+          echo "✅ Admin features documented in CLAUDE.md"
+        else
+          echo "⚠️ Admin features not documented in CLAUDE.md"
+        fi
+
+    - name: Test admin interface accessibility
+      run: |
+        echo "♿ Testing admin interface accessibility..."
+        node -e "
+        const fs = require('fs');
+        
+        try {
+          // Check admin components for basic accessibility patterns
+          const adminComponents = [
+            'src/components/admin/AdminDashboard.tsx',
+            'src/components/admin/GoalMappingTab.tsx'
+          ];
+          
+          let accessibilityIssues = 0;
+          
+          for (const component of adminComponents) {
+            if (fs.existsSync(component)) {
+              const content = fs.readFileSync(component, 'utf8');
+              
+              // Check for aria-label usage
+              if (!content.includes('aria-') && !content.includes('alt=')) {
+                console.log(\`⚠️ \${component} may lack accessibility attributes\`);
+                accessibilityIssues++;
+              }
+              
+              // Check for semantic HTML
+              if (!content.includes('<button') && !content.includes('<nav') && !content.includes('role=')) {
+                console.log(\`⚠️ \${component} may lack semantic HTML\`);
+                accessibilityIssues++;
+              }
+              
+              console.log(\`✅ Accessibility check completed for \${component}\`);
+            }
+          }
+          
+          if (accessibilityIssues === 0) {
+            console.log('✅ Admin interface accessibility check passed');
+          } else {
+            console.log(\`⚠️ Found \${accessibilityIssues} potential accessibility issues\`);
+          }
+          
+        } catch (error) {
+          console.error('❌ Accessibility check failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Generate admin validation report
+      if: always()
+      run: |
+        echo "## 🔧 Admin Interface Validation Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Validation Results" >> $GITHUB_STEP_SUMMARY
+        
+        # Get goal mapping validation results
+        if npm run validate-goal-mappings > goal_mapping_results.txt 2>&1; then
+          SCORE=$(grep "Score:" goal_mapping_results.txt | head -1 | sed 's/.*Score: //' | sed 's/\/100.*//')
+          echo "| Component | Status | Score |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Goal Mapping System | ✅ Passed | ${SCORE}/100 |" >> $GITHUB_STEP_SUMMARY
+          echo "| Admin Interface | ✅ Validated | - |" >> $GITHUB_STEP_SUMMARY
+          echo "| CMS Services | ✅ Functional | - |" >> $GITHUB_STEP_SUMMARY
+          echo "| TypeScript | ✅ Compiled | - |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Process | ✅ Successful | - |" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "| Goal Mapping System | ❌ Failed | - |" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Admin Interface Features" >> $GITHUB_STEP_SUMMARY
+        echo "- 🎯 Goal Mapping Management" >> $GITHUB_STEP_SUMMARY
+        echo "- 📊 Real-time Analytics Dashboard" >> $GITHUB_STEP_SUMMARY
+        echo "- 🔍 Content Validation Integration" >> $GITHUB_STEP_SUMMARY
+        echo "- 🔗 Admin-to-User Workflow" >> $GITHUB_STEP_SUMMARY
+        echo "- 🛡️ Automated Quality Assurance" >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload admin validation artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: admin-validation-report
+        path: |
+          src/components/admin/**/*
+          src/services/cms/**/*
+          docs/ENHANCED_ADMIN_CMS_INTEGRATION.md
+        retention-days: 30

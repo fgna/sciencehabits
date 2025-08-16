@@ -3,14 +3,16 @@ import { Button } from '../ui';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { Habit } from '../../types';
 import { dbHelpers } from '../../services/storage/database';
+import smartRecommendations, { HabitRecommendation } from '../../services/smartRecommendations';
 
 interface HabitCardProps {
   habit: Habit;
   isSelected: boolean;
   onToggle: () => void;
+  recommendation?: HabitRecommendation;
 }
 
-function HabitCard({ habit, isSelected, onToggle }: HabitCardProps) {
+function HabitCard({ habit, isSelected, onToggle, recommendation }: HabitCardProps) {
   const getCategoryIcon = (category: string) => {
     const icons = {
       stress: '🧘‍♀️',
@@ -58,6 +60,15 @@ function HabitCard({ habit, isSelected, onToggle }: HabitCardProps) {
               <span className="text-xs text-gray-500">
                 {habit.timeMinutes} min
               </span>
+              {recommendation && (
+                <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                  recommendation.confidence >= 0.8 ? 'text-green-700 bg-green-100' :
+                  recommendation.confidence >= 0.6 ? 'text-blue-700 bg-blue-100' :
+                  'text-yellow-700 bg-yellow-100'
+                }`}>
+                  {(recommendation.confidence * 100).toFixed(0)}% match
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -92,8 +103,15 @@ function HabitCard({ habit, isSelected, onToggle }: HabitCardProps) {
 export function RecommendationsStep() {
   const { selectedGoals, userData, nextStep, previousStep, setError } = useOnboardingStore();
   const [recommendedHabits, setRecommendedHabits] = useState<Habit[]>([]);
+  const [recommendations, setRecommendations] = useState<HabitRecommendation[]>([]);
   const [selectedHabits, setSelectedHabits] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [debugInfo, setDebugInfo] = useState<{
+    goalsMapped: Record<string, string[]>;
+    unmappedGoals: string[];
+    totalMatched: number;
+    warnings: string[];
+  } | null>(null);
 
   useEffect(() => {
     loadRecommendations();
@@ -105,62 +123,95 @@ export function RecommendationsStep() {
       setIsLoading(true);
       setError(null);
       
-      // Ensure database is initialized
-      await dbHelpers.initializeDatabase();
+      console.log('[Onboarding] Loading recommendations for goals:', selectedGoals);
       
-      // Create a mock user object for recommendations
-      const mockUser = {
-        id: 'temp',
-        createdAt: new Date().toISOString(),
-        goals: selectedGoals,
-        dailyMinutes: userData.dailyMinutes || 10,
-        preferredTime: userData.preferredTime || 'flexible',
-        lifestyle: userData.lifestyle || 'professional',
-        language: userData.language || 'en',
-        trial: {
-          hasUsedTrial: false,
-          isActive: false
-        },
-        isPremium: false
+      // Use the Smart Recommendation Engine with user profile data
+      const userProfile = {
+        lifestyleTags: userData.lifestyle ? [userData.lifestyle] : ['professional'],
+        timeTags: userData.preferredTime ? [userData.preferredTime] : ['flexible'],
+        difficulty: 'easy' as const,
+        tier: 'free' as const // Onboarding users start with free tier
       };
 
-      console.log('Mock user for recommendations:', mockUser);
+      const recommendationResult = await smartRecommendations.getRecommendations({
+        selectedGoals,
+        userProfile,
+        limit: 12, // Show more options during onboarding
+        minConfidence: 0.3 // Be more inclusive during onboarding
+      });
 
-      const habits = await dbHelpers.getRecommendedHabits(mockUser);
-      console.log('Recommended habits found:', habits.length, habits);
+      console.log('[Onboarding] Recommendation result:', recommendationResult);
       
-      // If no recommended habits found, try getting all habits for debugging
-      if (habits.length === 0) {
-        console.log('No recommended habits found, checking all habits in database...');
-        const allHabits = await dbHelpers.getAllHabits();
-        console.log('All habits in database:', allHabits.length, allHabits);
+      // Set debug info for development
+      setDebugInfo({
+        goalsMapped: recommendationResult.goalsMapped,
+        unmappedGoals: recommendationResult.unmappedGoals,
+        totalMatched: recommendationResult.totalMatched,
+        warnings: recommendationResult.warnings
+      });
+
+      if (recommendationResult.recommendations.length === 0) {
+        console.warn('[Onboarding] No recommendations found, falling back to database habits');
         
-        // If we have habits but filtering failed, use a more lenient approach
+        // Fallback to database approach if Smart Recommendations fails
+        await dbHelpers.initializeDatabase();
+        const allHabits = await dbHelpers.getAllHabits();
+        
         if (allHabits.length > 0) {
-          const flexibleHabits = allHabits.filter(habit => {
-            const hasMatchingGoal = !selectedGoals.length || habit.goalTags.some(tag => selectedGoals.includes(tag));
+          // Use simple filtering as fallback
+          const fallbackHabits = allHabits.filter(habit => {
             const isDurationOk = habit.timeMinutes <= (userData.dailyMinutes || 20);
-            return !habit.isCustom && hasMatchingGoal && isDurationOk;
-          });
+            return !habit.isCustom && isDurationOk;
+          }).slice(0, 8); // Limit fallback results
           
-          console.log('Flexible filtering found:', flexibleHabits.length, flexibleHabits);
+          console.log('[Onboarding] Fallback habits:', fallbackHabits.length);
+          setRecommendedHabits(fallbackHabits);
+          setRecommendations([]); // No recommendation metadata for fallback
           
-          if (flexibleHabits.length > 0) {
-            setRecommendedHabits(flexibleHabits);
-            const topHabits = flexibleHabits.slice(0, 3).map(h => h.id);
+          if (fallbackHabits.length > 0) {
+            const topHabits = fallbackHabits.slice(0, Math.min(3, fallbackHabits.length)).map(h => h.id);
             setSelectedHabits(topHabits);
-            return;
           }
+        } else {
+          console.error('[Onboarding] No habits found in database');
+          setError('No habits available. Please check your connection and try again.');
         }
       } else {
-        setRecommendedHabits(habits);
-        // Pre-select top 3 habits
-        const topHabits = habits.slice(0, 3).map(h => h.id);
+        // Success! We have recommendations from the Smart Engine
+        console.log('[Onboarding] Found', recommendationResult.recommendations.length, 'recommendations');
+        
+        // Load the actual habit objects for the recommended habit IDs
+        await dbHelpers.initializeDatabase();
+        const allHabits = await dbHelpers.getAllHabits();
+        
+        const recommendedHabitsData: Habit[] = [];
+        const recommendationsWithData: HabitRecommendation[] = [];
+        
+        for (const rec of recommendationResult.recommendations) {
+          const habit = allHabits.find(h => h.id === rec.habitId);
+          if (habit) {
+            recommendedHabitsData.push(habit);
+            recommendationsWithData.push(rec);
+          } else {
+            console.warn('[Onboarding] Habit not found in database:', rec.habitId);
+          }
+        }
+        
+        setRecommendedHabits(recommendedHabitsData);
+        setRecommendations(recommendationsWithData);
+        
+        // Pre-select top 3 highest confidence habits
+        const topHabits = recommendationsWithData
+          .sort((a, b) => b.confidence - a.confidence)
+          .slice(0, 3)
+          .map(r => r.habitId);
         setSelectedHabits(topHabits);
+        
+        console.log('[Onboarding] Pre-selected habits:', topHabits);
       }
       
     } catch (error) {
-      console.error('Failed to load recommendations:', error);
+      console.error('[Onboarding] Failed to load recommendations:', error);
       setError('Failed to load habit recommendations. Please try again.');
     } finally {
       setIsLoading(false);
@@ -216,7 +267,20 @@ export function RecommendationsStep() {
         
         {selectedGoals.length > 0 && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
-            {selectedGoals.join(', ')}
+            <strong>Selected goals:</strong> {selectedGoals.join(', ')}
+          </div>
+        )}
+
+        {/* Debug info for development */}
+        {process.env.NODE_ENV === 'development' && debugInfo && (
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-xs text-gray-700 mb-4">
+            <div><strong>Debug Info:</strong></div>
+            <div>Total matched: {debugInfo.totalMatched}</div>
+            <div>Unmapped goals: {debugInfo.unmappedGoals.join(', ') || 'none'}</div>
+            {debugInfo.warnings.length > 0 && (
+              <div className="text-yellow-700">Warnings: {debugInfo.warnings.join('; ')}</div>
+            )}
+            <div>Goals mapped: {Object.keys(debugInfo.goalsMapped).length}</div>
           </div>
         )}
       </div>
@@ -237,14 +301,18 @@ export function RecommendationsStep() {
       ) : (
         <>
           <div className="space-y-4 mb-8">
-            {recommendedHabits.map((habit) => (
-              <HabitCard
-                key={habit.id}
-                habit={habit}
-                isSelected={selectedHabits.includes(habit.id)}
-                onToggle={() => handleHabitToggle(habit.id)}
-              />
-            ))}
+            {recommendedHabits.map((habit) => {
+              const recommendation = recommendations.find(r => r.habitId === habit.id);
+              return (
+                <HabitCard
+                  key={habit.id}
+                  habit={habit}
+                  isSelected={selectedHabits.includes(habit.id)}
+                  onToggle={() => handleHabitToggle(habit.id)}
+                  recommendation={recommendation}
+                />
+              );
+            })}
           </div>
 
           {selectedHabits.length > 0 && (

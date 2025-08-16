@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-08-16T05:20:42.117Z",
+  "type": "metadata",
+  "data": {
+    "api": {
+      "version": "2.0.0",
+      "source": "fallback",
+      "lastUpdated": "2025-08-16T05:20:42.118Z"
+    },
+    "content": {
+      "languages": [
+        "en",
+        "de",
+        "fr",
+        "es"
+      ],
+      "types": [
+        "habits",
+        "research",
+        "locales"
+      ],
+      "fallbackMode": true
+    }
+  }
+}

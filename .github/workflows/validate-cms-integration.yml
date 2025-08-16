@@ -1,0 +1,464 @@
+name: Validate Content Management System Integration
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'src/components/admin/**/*.tsx'
+      - 'src/components/admin/**/*.ts'
+      - 'src/services/admin/**/*.ts'
+      - 'src/services/cms/**/*.ts'
+      - 'scripts/fetch-content-api-v2.js'
+      - '.github/workflows/validate-cms-integration.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'src/components/admin/**/*.tsx'
+      - 'src/components/admin/**/*.ts'
+      - 'src/services/admin/**/*.ts'
+      - 'src/services/cms/**/*.ts'
+      - 'scripts/fetch-content-api-v2.js'
+
+jobs:
+  validate-cms-integration:
+    name: CMS Integration Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Validate CMS component structure
+      run: |
+        echo "📱 Validating CMS component structure..."
+        
+        # Check if new CMS admin components exist
+        CMS_COMPONENTS=(
+          "src/components/admin/AdminDashboard.tsx"
+          "src/components/admin/HabitsManager.tsx"
+          "src/components/admin/ResearchManager.tsx"
+          "src/components/admin/TranslationDashboard.tsx"
+          "src/components/admin/GoalMappingTab.tsx"
+        )
+        
+        for component in "${CMS_COMPONENTS[@]}"; do
+          if [[ ! -f "$component" ]]; then
+            echo "❌ Missing CMS component: $component"
+            exit 1
+          else
+            echo "✅ Found CMS component: $component"
+          fi
+        done
+
+    - name: Validate CMS service architecture
+      run: |
+        echo "🔧 Validating CMS service architecture..."
+        
+        # Check if CMS services exist
+        CMS_SERVICES=(
+          "src/services/admin/ContentAPIClient.ts"
+          "src/services/admin/index.ts"
+          "src/services/cms/AdminAuthService.ts"
+          "src/services/cms/ContentManager.ts"
+          "src/services/cms/JSONWorkflowService.ts"
+          "src/services/cms/ResearchValidator.ts"
+        )
+        
+        for service in "${CMS_SERVICES[@]}"; do
+          if [[ ! -f "$service" ]]; then
+            echo "❌ Missing CMS service: $service"
+            exit 1
+          else
+            echo "✅ Found CMS service: $service"
+          fi
+        done
+
+    - name: Validate Content API integration
+      run: |
+        echo "🌐 Validating Content API integration..."
+        
+        # Check if Content API client exists and has proper structure
+        if [[ ! -f "src/services/admin/ContentAPIClient.ts" ]]; then
+          echo "❌ ContentAPIClient service is missing"
+          exit 1
+        fi
+        
+        # Validate ContentAPIClient structure
+        node -e "
+        const fs = require('fs');
+        const content = fs.readFileSync('src/services/admin/ContentAPIClient.ts', 'utf8');
+        
+        const requiredMethods = [
+          'getHabits',
+          'getResearch', 
+          'checkHealth',
+          'testConnection',
+          'getContentStats'
+        ];
+        
+        let missingMethods = [];
+        for (const method of requiredMethods) {
+          if (!content.includes(method)) {
+            missingMethods.push(method);
+          }
+        }
+        
+        if (missingMethods.length > 0) {
+          console.log('❌ ContentAPIClient missing methods:', missingMethods.join(', '));
+          process.exit(1);
+        } else {
+          console.log('✅ ContentAPIClient has all required methods');
+        }
+        "
+
+    - name: Test CMS component compilation
+      run: |
+        echo "🔍 Testing CMS component TypeScript compilation..."
+        npx tsc --noEmit --skipLibCheck
+
+    - name: Validate admin dashboard integration
+      run: |
+        echo "📊 Validating admin dashboard integration..."
+        
+        # Check that AdminDashboard properly imports and uses new components
+        node -e "
+        const fs = require('fs');
+        const content = fs.readFileSync('src/components/admin/AdminDashboard.tsx', 'utf8');
+        
+        const requiredImports = [
+          'HabitsManager',
+          'ResearchManager', 
+          'TranslationDashboard',
+          'ContentAPIClient'
+        ];
+        
+        let missingImports = [];
+        for (const importName of requiredImports) {
+          if (!content.includes(importName)) {
+            missingImports.push(importName);
+          }
+        }
+        
+        if (missingImports.length > 0) {
+          console.log('❌ AdminDashboard missing imports:', missingImports.join(', '));
+          process.exit(1);
+        } else {
+          console.log('✅ AdminDashboard has all required imports');
+        }
+        
+        // Check for proper tab structure
+        const expectedTabs = ['overview', 'habits', 'research', 'translations'];
+        let missingTabs = [];
+        
+        for (const tab of expectedTabs) {
+          if (!content.includes(\`'\${tab}'\`) && !content.includes(\`\"\${tab}\"\`)) {
+            missingTabs.push(tab);
+          }
+        }
+        
+        if (missingTabs.length > 0) {
+          console.log('❌ AdminDashboard missing tabs:', missingTabs.join(', '));
+          process.exit(1);
+        } else {
+          console.log('✅ AdminDashboard has all required tabs');
+        }
+        "
+
+    - name: Test CMS build integration
+      run: |
+        echo "🏗️ Testing CMS build integration..."
+        npm run build
+
+    - name: Validate CMS data flow
+      run: |
+        echo "🔄 Validating CMS data flow..."
+        
+        # Test that content fetcher script exists and has proper structure
+        if [[ ! -f "scripts/fetch-content-api-v2.js" ]]; then
+          echo "❌ Content API fetcher script missing"
+          exit 1
+        fi
+        
+        node -e "
+        const fs = require('fs');
+        
+        try {
+          // Check fetch-content-api-v2.js structure
+          const fetcherContent = fs.readFileSync('scripts/fetch-content-api-v2.js', 'utf8');
+          
+          const requiredFeatures = [
+            'fetchHabitsData',
+            'fetchResearchData',
+            'fallback',
+            'retry'
+          ];
+          
+          let missingFeatures = [];
+          for (const feature of requiredFeatures) {
+            if (!fetcherContent.includes(feature)) {
+              missingFeatures.push(feature);
+            }
+          }
+          
+          if (missingFeatures.length > 0) {
+            console.log('❌ Content fetcher missing features:', missingFeatures.join(', '));
+            process.exit(1);
+          } else {
+            console.log('✅ Content fetcher has all required features');
+          }
+          
+          console.log('✅ CMS data flow validation completed');
+          
+        } catch (error) {
+          console.error('❌ CMS data flow validation failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Test admin authentication system
+      run: |
+        echo "🔐 Testing admin authentication system..."
+        
+        node -e "
+        const fs = require('fs');
+        
+        try {
+          // Check AdminAuthService structure
+          const authContent = fs.readFileSync('src/services/cms/AdminAuthService.ts', 'utf8');
+          
+          const requiredAuthMethods = [
+            'authenticate',
+            'validatePermissions',
+            'getCurrentUser',
+            'logout'
+          ];
+          
+          let missingAuthMethods = [];
+          for (const method of requiredAuthMethods) {
+            if (!authContent.includes(method)) {
+              missingAuthMethods.push(method);
+            }
+          }
+          
+          if (missingAuthMethods.length > 0) {
+            console.log('❌ AdminAuthService missing methods:', missingAuthMethods.join(', '));
+            process.exit(1);
+          } else {
+            console.log('✅ AdminAuthService has all required methods');
+          }
+          
+        } catch (error) {
+          console.error('❌ Admin authentication test failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Validate translation system integration
+      run: |
+        echo "🌍 Validating translation system integration..."
+        
+        # Check if translation components are properly integrated
+        node -e "
+        const fs = require('fs');
+        
+        try {
+          // Check if TranslationDashboard exists and is integrated
+          if (!fs.existsSync('src/components/admin/TranslationDashboard.tsx')) {
+            console.log('❌ TranslationDashboard component missing');
+            process.exit(1);
+          }
+          
+          const dashboardContent = fs.readFileSync('src/components/admin/AdminDashboard.tsx', 'utf8');
+          
+          if (!dashboardContent.includes('TranslationDashboard')) {
+            console.log('❌ TranslationDashboard not integrated in AdminDashboard');
+            process.exit(1);
+          }
+          
+          console.log('✅ Translation system properly integrated');
+          
+        } catch (error) {
+          console.error('❌ Translation system validation failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Test content validation integration
+      run: |
+        echo "✅ Testing content validation integration..."
+        npm run validate-content
+
+    - name: Test goal mapping integration
+      run: |
+        echo "🎯 Testing goal mapping integration..."
+        if command -v npm run validate-goal-mappings &> /dev/null; then
+          npm run validate-goal-mappings
+        else
+          echo "⚠️ Goal mapping validation script not found, skipping..."
+        fi
+
+    - name: Validate CMS security measures
+      run: |
+        echo "🛡️ Validating CMS security measures..."
+        
+        node -e "
+        const fs = require('fs');
+        
+        try {
+          // Check for basic security patterns in admin components
+          const adminFiles = [
+            'src/services/cms/AdminAuthService.ts',
+            'src/components/admin/AdminDashboard.tsx'
+          ];
+          
+          let securityIssues = [];
+          
+          for (const file of adminFiles) {
+            if (fs.existsSync(file)) {
+              const content = fs.readFileSync(file, 'utf8');
+              
+              // Check for potential security issues
+              if (content.includes('localStorage.setItem') && !content.includes('sanitize')) {
+                securityIssues.push(\`\${file}: Potential XSS risk with localStorage\`);
+              }
+              
+              if (content.includes('innerHTML') && !content.includes('sanitize')) {
+                securityIssues.push(\`\${file}: Potential XSS risk with innerHTML\`);
+              }
+              
+              // Check for authentication patterns
+              if (file.includes('Admin') && !content.includes('auth') && !content.includes('permission')) {
+                securityIssues.push(\`\${file}: Missing authentication patterns\`);
+              }
+            }
+          }
+          
+          if (securityIssues.length > 0) {
+            console.log('⚠️ Security review needed:');
+            securityIssues.forEach(issue => console.log(\`  - \${issue}\`));
+          } else {
+            console.log('✅ Basic security validation passed');
+          }
+          
+        } catch (error) {
+          console.error('❌ Security validation failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Test CMS performance impact
+      run: |
+        echo "⚡ Testing CMS performance impact..."
+        
+        # Build and analyze bundle size
+        npm run build > /dev/null 2>&1
+        
+        node -e "
+        const fs = require('fs');
+        const path = require('path');
+        
+        try {
+          const buildDir = 'build/static/js';
+          
+          if (fs.existsSync(buildDir)) {
+            const jsFiles = fs.readdirSync(buildDir)
+              .filter(file => file.endsWith('.js') && !file.includes('.map'))
+              .map(file => {
+                const filePath = path.join(buildDir, file);
+                const stats = fs.statSync(filePath);
+                return { file, size: stats.size };
+              });
+            
+            const totalSize = jsFiles.reduce((sum, file) => sum + file.size, 0);
+            const totalSizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+            
+            console.log(\`📦 Total JS bundle size: \${totalSizeMB}MB\`);
+            
+            // Check if bundle size is reasonable (< 2MB for a CMS)
+            if (totalSize > 2 * 1024 * 1024) {
+              console.log('⚠️ Bundle size is quite large, consider code splitting');
+            } else {
+              console.log('✅ Bundle size is acceptable');
+            }
+            
+            // List largest files
+            const largestFiles = jsFiles
+              .sort((a, b) => b.size - a.size)
+              .slice(0, 3);
+            
+            console.log('📊 Largest JS files:');
+            largestFiles.forEach(file => {
+              const fileSizeKB = (file.size / 1024).toFixed(1);
+              console.log(\`  - \${file.file}: \${fileSizeKB}KB\`);
+            });
+            
+          } else {
+            console.log('⚠️ Build directory not found');
+          }
+          
+        } catch (error) {
+          console.error('❌ Performance analysis failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Generate CMS integration report
+      if: always()
+      run: |
+        echo "## 🔧 Content Management System Integration Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### CMS Components Status" >> $GITHUB_STEP_SUMMARY
+        
+        # Check component status
+        COMPONENTS=(
+          "AdminDashboard:src/components/admin/AdminDashboard.tsx"
+          "HabitsManager:src/components/admin/HabitsManager.tsx" 
+          "ResearchManager:src/components/admin/ResearchManager.tsx"
+          "TranslationDashboard:src/components/admin/TranslationDashboard.tsx"
+          "ContentAPIClient:src/services/admin/ContentAPIClient.ts"
+        )
+        
+        echo "| Component | Status | Integration |" >> $GITHUB_STEP_SUMMARY
+        echo "|-----------|--------|-------------|" >> $GITHUB_STEP_SUMMARY
+        
+        for component_info in "${COMPONENTS[@]}"; do
+          IFS=':' read -r name path <<< "$component_info"
+          if [[ -f "$path" ]]; then
+            echo "| $name | ✅ Present | ✅ Integrated |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| $name | ❌ Missing | ❌ Not Integrated |" >> $GITHUB_STEP_SUMMARY
+          fi
+        done
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### CMS Features" >> $GITHUB_STEP_SUMMARY
+        echo "- 📊 **Admin Dashboard**: Comprehensive management interface" >> $GITHUB_STEP_SUMMARY
+        echo "- 🎯 **Habits Manager**: Full CRUD operations with validation" >> $GITHUB_STEP_SUMMARY
+        echo "- 📚 **Research Manager**: Research article management system" >> $GITHUB_STEP_SUMMARY
+        echo "- 🌍 **Translation Dashboard**: Multi-language content oversight" >> $GITHUB_STEP_SUMMARY
+        echo "- 🌐 **Content API Client**: GitHub Pages API integration" >> $GITHUB_STEP_SUMMARY
+        echo "- 🔐 **Authentication System**: Role-based admin access" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ **Content Validation**: Automated quality assurance" >> $GITHUB_STEP_SUMMARY
+        echo "- 🔄 **Real-time Sync**: Live content updates and fallbacks" >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload CMS integration artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: cms-integration-report
+        path: |
+          src/components/admin/**/*
+          src/services/admin/**/*
+          src/services/cms/**/*
+          scripts/fetch-content-api-v2.js
+          build/static/js/main.*.js
+        retention-days: 30

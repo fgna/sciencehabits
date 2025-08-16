@@ -220,3 +220,30 @@ export const flushPromises = () => new Promise(resolve => setImmediate(resolve))
 export const waitForNextUpdate = async () => {
   await new Promise(resolve => setTimeout(resolve, 0));
 };
+
+// Test to satisfy Jest requirement
+describe('Test Utils', () => {
+  test('should export test utilities correctly', () => {
+    expect(createMockUser).toBeDefined();
+    expect(createMockHabit).toBeDefined();
+    expect(createMockProgress).toBeDefined();
+    expect(TestWrapper).toBeDefined();
+    expect(customMatchers).toBeDefined();
+  });
+
+  test('should create valid mock user', () => {
+    const user = createMockUser();
+    expect(user).toHaveProperty('id');
+    expect(user).toHaveProperty('name');
+    expect(user).toHaveProperty('goals');
+    expect(user.language).toBe('en');
+  });
+
+  test('should create valid mock habit', () => {
+    const habit = createMockHabit();
+    expect(habit).toHaveProperty('id');
+    expect(habit).toHaveProperty('title');
+    expect(habit).toHaveProperty('frequency');
+    expect(habit).toHaveProperty('reminders');
+  });
+});

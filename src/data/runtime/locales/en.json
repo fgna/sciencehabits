@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-08-16T05:20:42.117Z",
+  "language": "en",
+  "type": "locales",
+  "count": 6,
+  "data": {
+    "navigation.dashboard": "Dashboard",
+    "navigation.habits": "My Habits",
+    "navigation.research": "Research",
+    "common.loading": "Loading...",
+    "common.error": "Error",
+    "fallback.notice": "Using offline content"
+  },
+  "metadata": {
+    "source": "api",
+    "version": "2.0.0",
+    "fetchedAt": "2025-08-16T05:20:42.117Z"
+  }
+}

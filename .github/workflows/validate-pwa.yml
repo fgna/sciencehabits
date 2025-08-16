@@ -1,0 +1,390 @@
+name: Validate PWA & Service Worker
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'public/sw.js'
+      - 'public/manifest.json'
+      - 'src/serviceWorker.ts'
+      - 'src/services/serviceWorkerSync.ts'
+      - 'src/services/offlineManager.ts'
+      - 'public/icons/**/*'
+      - 'scripts/validate-pwa.js'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'public/sw.js'
+      - 'public/manifest.json'
+      - 'src/serviceWorker.ts'
+      - 'src/services/serviceWorkerSync.ts'
+      - 'src/services/offlineManager.ts'
+      - 'public/icons/**/*'
+      - 'scripts/validate-pwa.js'
+
+jobs:
+  validate-pwa:
+    name: Validate PWA Features
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Validate PWA manifest
+      run: |
+        echo "📱 Validating PWA manifest..."
+        node -e "
+        const fs = require('fs');
+        
+        try {
+          if (!fs.existsSync('public/manifest.json')) {
+            console.log('❌ Missing manifest.json');
+            process.exit(1);
+          }
+          
+          const manifest = JSON.parse(fs.readFileSync('public/manifest.json', 'utf8'));
+          console.log('✅ Manifest.json found and valid JSON');
+          
+          // Check required PWA manifest fields
+          const requiredFields = [
+            'name',
+            'short_name',
+            'start_url',
+            'display',
+            'theme_color',
+            'background_color',
+            'icons'
+          ];
+          
+          let missingFields = [];
+          for (const field of requiredFields) {
+            if (!manifest[field]) {
+              missingFields.push(field);
+            }
+          }
+          
+          if (missingFields.length > 0) {
+            console.log(\`⚠️ Missing required fields: \${missingFields.join(', ')}\`);
+          } else {
+            console.log('✅ All required manifest fields present');
+          }
+          
+          // Validate icons
+          if (manifest.icons && Array.isArray(manifest.icons)) {
+            console.log(\`✅ Found \${manifest.icons.length} icon definitions\`);
+            
+            for (const icon of manifest.icons) {
+              if (icon.src && fs.existsSync(\`public\${icon.src}\`)) {
+                console.log(\`  ✅ Icon exists: \${icon.src} (\${icon.sizes || 'unknown'})\`);
+              } else if (icon.src) {
+                console.log(\`  ❌ Missing icon: \${icon.src}\`);
+              }
+            }
+          } else {
+            console.log('⚠️ No icons defined in manifest');
+          }
+          
+          // Check display mode
+          const validDisplayModes = ['fullscreen', 'standalone', 'minimal-ui', 'browser'];
+          if (validDisplayModes.includes(manifest.display)) {
+            console.log(\`✅ Valid display mode: \${manifest.display}\`);
+          } else {
+            console.log(\`⚠️ Invalid display mode: \${manifest.display}\`);
+          }
+          
+          console.log('🎉 PWA manifest validation completed!');
+          
+        } catch (error) {
+          console.error('❌ Manifest validation failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Validate service worker
+      run: |
+        echo "⚙️ Validating service worker..."
+        node -e "
+        const fs = require('fs');
+        
+        try {
+          const swFiles = [
+            'public/sw.js',
+            'src/serviceWorker.ts',
+            'src/services/serviceWorkerSync.ts'
+          ];
+          
+          let swFound = false;
+          let swFeatures = {
+            caching: false,
+            offline: false,
+            sync: false,
+            notifications: false
+          };
+          
+          for (const swFile of swFiles) {
+            if (fs.existsSync(swFile)) {
+              swFound = true;
+              const content = fs.readFileSync(swFile, 'utf8').toLowerCase();
+              
+              console.log(\`✅ Found service worker: \${swFile}\`);
+              
+              // Check for PWA features
+              if (content.includes('cache') || content.includes('cachestorage')) {
+                swFeatures.caching = true;
+              }
+              if (content.includes('offline') || content.includes('network') && content.includes('fallback')) {
+                swFeatures.offline = true;
+              }
+              if (content.includes('sync') || content.includes('background')) {
+                swFeatures.sync = true;
+              }
+              if (content.includes('notification') || content.includes('push')) {
+                swFeatures.notifications = true;
+              }
+            }
+          }
+          
+          if (!swFound) {
+            console.log('⚠️ No service worker files found');
+          } else {
+            console.log('\\n📊 Service Worker Features:');
+            Object.entries(swFeatures).forEach(([feature, enabled]) => {
+              console.log(\`  \${enabled ? '✅' : 'ℹ️'} \${feature}: \${enabled ? 'enabled' : 'not detected'}\`);
+            });
+          }
+          
+          console.log('🎉 Service worker validation completed!');
+          
+        } catch (error) {
+          console.error('❌ Service worker validation failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Check PWA icons and assets
+      run: |
+        echo "🎨 Checking PWA icons and assets..."
+        node -e "
+        const fs = require('fs');
+        const path = require('path');
+        
+        try {
+          // Check for common PWA icon sizes
+          const iconSizes = [
+            '16x16', '32x32', '48x48', '72x72', '96x96',
+            '128x128', '144x144', '152x152', '192x192',
+            '384x384', '512x512'
+          ];
+          
+          const iconDirs = ['public/icons', 'public/assets/icons', 'public'];
+          let foundIcons = [];
+          
+          for (const dir of iconDirs) {
+            if (fs.existsSync(dir)) {
+              const files = fs.readdirSync(dir);
+              const iconFiles = files.filter(f => 
+                f.includes('icon') || f.includes('logo') || 
+                f.endsWith('.png') || f.endsWith('.svg') || f.endsWith('.ico')
+              );
+              
+              foundIcons.push(...iconFiles.map(f => path.join(dir, f)));
+            }
+          }
+          
+          console.log(\`✅ Found \${foundIcons.length} potential icon files:\`);
+          foundIcons.slice(0, 10).forEach(icon => {
+            console.log(\`  - \${icon}\`);
+          });
+          
+          if (foundIcons.length > 10) {
+            console.log(\`  ... and \${foundIcons.length - 10} more\`);
+          }
+          
+          // Check for favicon
+          const faviconFiles = ['public/favicon.ico', 'public/favicon.png'];
+          let faviconFound = false;
+          
+          for (const favicon of faviconFiles) {
+            if (fs.existsSync(favicon)) {
+              console.log(\`✅ Found favicon: \${favicon}\`);
+              faviconFound = true;
+              break;
+            }
+          }
+          
+          if (!faviconFound) {
+            console.log('⚠️ No favicon found');
+          }
+          
+          // Check for apple-touch-icon
+          const appleTouchIconFiles = [
+            'public/apple-touch-icon.png',
+            'public/apple-touch-icon-precomposed.png'
+          ];
+          
+          let appleTouchIconFound = false;
+          for (const appleIcon of appleTouchIconFiles) {
+            if (fs.existsSync(appleIcon)) {
+              console.log(\`✅ Found Apple touch icon: \${appleIcon}\`);
+              appleTouchIconFound = true;
+              break;
+            }
+          }
+          
+          if (!appleTouchIconFound) {
+            console.log('ℹ️ No Apple touch icon found');
+          }
+          
+          console.log('🎉 PWA assets check completed!');
+          
+        } catch (error) {
+          console.error('❌ PWA assets check failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Validate offline functionality
+      run: |
+        echo "🌐 Validating offline functionality..."
+        node -e "
+        const fs = require('fs');
+        
+        try {
+          // Check for offline-related code patterns
+          const offlineFiles = [
+            'src/services/offlineManager.ts',
+            'src/services/serviceWorkerSync.ts',
+            'public/sw.js',
+            'src/serviceWorker.ts'
+          ];
+          
+          let offlineFeatures = {
+            cacheStrategy: false,
+            fallbackPages: false,
+            dataSync: false,
+            offlineIndicator: false
+          };
+          
+          for (const file of offlineFiles) {
+            if (fs.existsSync(file)) {
+              const content = fs.readFileSync(file, 'utf8').toLowerCase();
+              
+              // Check for cache strategies
+              if (content.includes('cachefirst') || content.includes('stalewhilerevalidate') || 
+                  content.includes('networkfirst') || content.includes('cache')) {
+                offlineFeatures.cacheStrategy = true;
+              }
+              
+              // Check for fallback pages
+              if (content.includes('fallback') || content.includes('offline.html')) {
+                offlineFeatures.fallbackPages = true;
+              }
+              
+              // Check for data synchronization
+              if (content.includes('sync') || content.includes('queue') || content.includes('retry')) {
+                offlineFeatures.dataSync = true;
+              }
+              
+              // Check for offline indicators
+              if (content.includes('navigator.online') || content.includes('offline') || 
+                  content.includes('connection')) {
+                offlineFeatures.offlineIndicator = true;
+              }
+            }
+          }
+          
+          console.log('📱 Offline Features Analysis:');
+          Object.entries(offlineFeatures).forEach(([feature, enabled]) => {
+            console.log(\`  \${enabled ? '✅' : 'ℹ️'} \${feature}: \${enabled ? 'detected' : 'not found'}\`);
+          });
+          
+          const enabledFeatures = Object.values(offlineFeatures).filter(Boolean).length;
+          console.log(\`\\n📊 Offline readiness: \${enabledFeatures}/\${Object.keys(offlineFeatures).length} features\`);
+          
+          console.log('🎉 Offline functionality check completed!');
+          
+        } catch (error) {
+          console.error('❌ Offline functionality check failed:', error.message);
+          process.exit(1);
+        }
+        "
+
+    - name: Build and check PWA compliance
+      run: |
+        echo "🏗️ Building and checking PWA compliance..."
+        npm run build
+        
+        # Check if build includes PWA essentials
+        echo "📦 Checking build output..."
+        
+        if [[ -f "build/manifest.json" ]]; then
+          echo "✅ Manifest included in build"
+        else
+          echo "⚠️ Manifest not found in build"
+        fi
+        
+        if [[ -f "build/static/js/sw.js" ]] || [[ -f "build/sw.js" ]]; then
+          echo "✅ Service worker included in build"
+        else
+          echo "ℹ️ Service worker not found in build"
+        fi
+        
+        # Check build size
+        BUILD_SIZE=$(du -sh build 2>/dev/null | cut -f1 || echo "unknown")
+        echo "📏 Build size: $BUILD_SIZE"
+
+    - name: Generate PWA validation report
+      if: always()
+      run: |
+        echo "## 📱 PWA & Service Worker Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### PWA Compliance" >> $GITHUB_STEP_SUMMARY
+        
+        node -e "
+        const fs = require('fs');
+        
+        try {
+          // Check PWA essentials
+          const hasManifest = fs.existsSync('public/manifest.json');
+          const hasServiceWorker = fs.existsSync('public/sw.js') || fs.existsSync('src/serviceWorker.ts');
+          const hasIcons = fs.existsSync('public/icons') || fs.existsSync('public/favicon.ico');
+          
+          console.log('| Component | Status | Details |');
+          console.log('|-----------|--------|---------|');
+          console.log(\`| Manifest | \${hasManifest ? '✅' : '❌'} | \${hasManifest ? 'Found' : 'Missing'} |\\`);
+          console.log(\`| Service Worker | \${hasServiceWorker ? '✅' : '❌'} | \${hasServiceWorker ? 'Found' : 'Missing'} |\\`);
+          console.log(\`| Icons | \${hasIcons ? '✅' : '❌'} | \${hasIcons ? 'Found' : 'Missing'} |\\`);
+          
+          // Check build
+          const hasBuild = fs.existsSync('build');
+          console.log(\`| Build | \${hasBuild ? '✅' : '❌'} | \${hasBuild ? 'Generated' : 'Failed'} |\\`);
+          
+          const pwaScore = [hasManifest, hasServiceWorker, hasIcons, hasBuild].filter(Boolean).length;
+          console.log(\`| PWA Score | \${pwaScore}/4 | \${pwaScore >= 3 ? '✅' : '⚠️'} Ready |\\`);
+          
+        } catch (error) {
+          console.log('| Error | Validation Failed | ❌ |');
+        }
+        " >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload PWA validation artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: pwa-validation-report
+        path: |
+          public/manifest.json
+          public/sw.js
+          public/icons/**/*
+          build/manifest.json
+        retention-days: 30

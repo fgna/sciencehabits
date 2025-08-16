@@ -1,0 +1,76 @@
+{
+  "timestamp": "2025-08-16T05:20:42.118Z",
+  "version": "2.0.0",
+  "languages": {
+    "en": {
+      "language": "en",
+      "habits": 1,
+      "research": 1,
+      "localeKeys": 6,
+      "files": [
+        "habits/en.json",
+        "research/en.json",
+        "locales/en.json"
+      ]
+    },
+    "de": {
+      "language": "de",
+      "habits": 1,
+      "research": 1,
+      "localeKeys": 6,
+      "files": [
+        "habits/de.json",
+        "research/de.json",
+        "locales/de.json"
+      ]
+    },
+    "fr": {
+      "language": "fr",
+      "habits": 1,
+      "research": 1,
+      "localeKeys": 6,
+      "files": [
+        "habits/fr.json",
+        "research/fr.json",
+        "locales/fr.json"
+      ]
+    },
+    "es": {
+      "language": "es",
+      "habits": 1,
+      "research": 1,
+      "localeKeys": 6,
+      "files": [
+        "habits/es.json",
+        "research/es.json",
+        "locales/es.json"
+      ]
+    }
+  },
+  "summary": {
+    "totalHabits": 4,
+    "totalResearch": 4,
+    "totalLocaleKeys": 24
+  },
+  "metrics": {
+    "startTime": 1755321642113,
+    "apiCalls": 0,
+    "failedCalls": 0,
+    "fallbackUsed": true,
+    "contentSizes": {
+      "habits-en": 269,
+      "research-en": 362,
+      "locales-en": 196,
+      "habits-de": 299,
+      "research-de": 362,
+      "locales-de": 209,
+      "habits-fr": 297,
+      "research-fr": 362,
+      "locales-fr": 223,
+      "habits-es": 280,
+      "research-es": 362,
+      "locales-es": 211
+    },
+    "responseTimeMs": 0
+  }
+}

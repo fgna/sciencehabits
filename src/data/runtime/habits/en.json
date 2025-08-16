@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-08-16T05:20:42.117Z",
+  "language": "en",
+  "type": "habits",
+  "count": 1,
+  "data": [
+    {
+      "id": "fallback-habit-en",
+      "title": "Essential Daily Habit",
+      "description": "A fundamental habit for daily well-being and productivity.",
+      "category": "productivity",
+      "difficulty": "beginner",
+      "timeMinutes": 10,
+      "language": "en",
+      "researchBacked": true,
+      "sources": [],
+      "fallback": true
+    }
+  ],
+  "metadata": {
+    "source": "api",
+    "version": "2.0.0",
+    "fetchedAt": "2025-08-16T05:20:42.117Z"
+  }
+}
