@@ -1,0 +1,70 @@
+{
+  "sections": {
+    "researchInsight": "Research Insight",
+    "whyItWorks": "Why It Works",
+    "quickStart": "Quick Start",
+    "whenSection": "When",
+    "whereSection": "Where", 
+    "stepsSection": "Steps",
+    "howToSection": "How To",
+    "advancedSection": "Advanced",
+    "scalingSection": "Scaling Up",
+    "resultsTimeline": "Results Timeline",
+    "researchSource": "Research Source",
+    "keyBenefits": "Key Benefits",
+    "scienceExplained": "Science Explained",
+    "implementation": "Implementation",
+    "gettingStarted": "Getting Started",
+    "progressionTips": "Progression Tips",
+    "commonMistakes": "Common Mistakes",
+    "troubleshooting": "Troubleshooting",
+    "variations": "Variations"
+  },
+  "content": {
+    "initialResults": "Initial results",
+    "significantResults": "Significant results", 
+    "studyFound": "Study found",
+    "researchShows": "Research shows",
+    "evidenceSuggests": "Evidence suggests",
+    "participantsExperienced": "Participants experienced",
+    "improvementIn": "improvement in",
+    "reductionIn": "reduction in",
+    "increaseIn": "increase in",
+    "withinDays": "within {days} days",
+    "withinWeeks": "within {weeks} weeks",
+    "afterWeeks": "after {weeks} weeks",
+    "dailyPractice": "daily practice",
+    "weeklyPractice": "weekly practice"
+  },
+  "difficulty": {
+    "trivial": "Trivial",
+    "easy": "Easy", 
+    "moderate": "Moderate",
+    "challenging": "Challenging",
+    "advanced": "Advanced"
+  },
+  "timeCommitment": {
+    "under2min": "Under 2 minutes",
+    "2to5min": "2-5 minutes",
+    "5to10min": "5-10 minutes",
+    "10to15min": "10-15 minutes",
+    "15to30min": "15-30 minutes",
+    "over30min": "Over 30 minutes"
+  },
+  "equipment": {
+    "none": "None required",
+    "minimal": "Minimal equipment",
+    "household": "Household items",
+    "specific": "Specific equipment",
+    "gym": "Gym access"
+  },
+  "location": {
+    "anywhere": "Anywhere",
+    "home": "At home",
+    "bedroom": "In bedroom",
+    "outdoors": "Outdoors",
+    "workplace": "At workplace",
+    "quiet": "Quiet space",
+    "private": "Private space"
+  }
+}

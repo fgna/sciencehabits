@@ -1,0 +1,70 @@
+{
+  "sections": {
+    "researchInsight": "Forschungserkenntnis",
+    "whyItWorks": "Warum es funktioniert",
+    "quickStart": "Erste Schritte",
+    "whenSection": "Wann",
+    "whereSection": "Wo",
+    "stepsSection": "Schritte",
+    "howToSection": "Anleitung",
+    "advancedSection": "Für Fortgeschrittene",
+    "scalingSection": "Steigerung",
+    "resultsTimeline": "Ergebnisse",
+    "researchSource": "Quelle",
+    "keyBenefits": "Hauptvorteile",
+    "scienceExplained": "Wissenschaftliche Erklärung",
+    "implementation": "Umsetzung",
+    "gettingStarted": "Erste Schritte",
+    "progressionTips": "Steigerungstipps",
+    "commonMistakes": "Häufige Fehler",
+    "troubleshooting": "Problembehebung",
+    "variations": "Variationen"
+  },
+  "content": {
+    "initialResults": "Erste Ergebnisse",
+    "significantResults": "Deutliche Ergebnisse",
+    "studyFound": "Studie ergab",
+    "researchShows": "Forschung zeigt",
+    "evidenceSuggests": "Belege deuten darauf hin",
+    "participantsExperienced": "Teilnehmer erlebten",
+    "improvementIn": "Verbesserung bei",
+    "reductionIn": "Reduzierung bei",
+    "increaseIn": "Steigerung bei",
+    "withinDays": "innerhalb von {days} Tagen",
+    "withinWeeks": "innerhalb von {weeks} Wochen", 
+    "afterWeeks": "nach {weeks} Wochen",
+    "dailyPractice": "tägliche Praxis",
+    "weeklyPractice": "wöchentliche Praxis"
+  },
+  "difficulty": {
+    "trivial": "Sehr einfach",
+    "easy": "Einfach",
+    "moderate": "Mittel",
+    "challenging": "Anspruchsvoll",
+    "advanced": "Fortgeschritten"
+  },
+  "timeCommitment": {
+    "under2min": "Unter 2 Minuten",
+    "2to5min": "2-5 Minuten",
+    "5to10min": "5-10 Minuten", 
+    "10to15min": "10-15 Minuten",
+    "15to30min": "15-30 Minuten",
+    "over30min": "Über 30 Minuten"
+  },
+  "equipment": {
+    "none": "Keine Ausrüstung",
+    "minimal": "Minimale Ausrüstung",
+    "household": "Haushaltsartikel",
+    "specific": "Spezielle Ausrüstung",
+    "gym": "Fitnessstudio"
+  },
+  "location": {
+    "anywhere": "Überall",
+    "home": "Zu Hause",
+    "bedroom": "Im Schlafzimmer",
+    "outdoors": "Im Freien",
+    "workplace": "Am Arbeitsplatz",
+    "quiet": "Ruhiger Ort",
+    "private": "Privater Raum"
+  }
+}
