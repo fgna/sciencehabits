@@ -9,7 +9,7 @@ import {
 } from '../../__tests__/utils/testUtils';
 
 // Mock IndexedDB operations
-jest.mock('../storage/database', () => ({
+jest.mock('../../services/storage/database', () => ({
   db: {
     users: {
       get: jest.fn(),
