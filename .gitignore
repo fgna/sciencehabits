@@ -33,8 +33,7 @@ playwright-report/
 test-results.xml
 junit.xml
 
-# Environment variables
-.env
+# Environment variables  
 .env.local
 .env.development.local
 .env.test.local

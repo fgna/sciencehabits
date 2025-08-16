@@ -6,7 +6,7 @@ interface AdminLoginProps {
 }
 
 export function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
-  const [email, setEmail] = useState('admin@sciencehabits.app');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -138,30 +138,6 @@ export function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
             </div>
           </form>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Demo Credentials</span>
-              </div>
-            </div>
-
-            <div className="mt-6 bg-gray-50 rounded-md p-4">
-              <div className="text-sm text-gray-600 space-y-2">
-                <div>
-                  <strong>Email:</strong> admin@sciencehabits.app
-                </div>
-                <div>
-                  <strong>Password:</strong> AdminPass123!
-                </div>
-                <div className="mt-2 text-xs text-gray-500">
-                  <p>For demonstration purposes. In production, use your assigned credentials.</p>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-500">

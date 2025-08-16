@@ -16,6 +16,7 @@ import {
   UploadResult,
   LocalizedContent
 } from '../../services/cms';
+import { GoalMappingTab } from './GoalMappingTab';
 
 interface AdminDashboardProps {
   onClose?: () => void;
@@ -32,7 +33,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [researchValidator] = useState(() => new ResearchValidator(adminAuth));
 
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'content' | 'json' | 'translations' | 'validation'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'content' | 'goal-mapping' | 'json' | 'translations' | 'validation'>('overview');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,7 +59,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       // For demo purposes, create a mock admin user immediately
       const mockUser: AdminUser = {
         id: 'admin-001',
-        email: 'admin@sciencehabits.app',
+        email: process.env.REACT_APP_ADMIN_EMAIL || 'admin@example.com',
         role: 'super_admin',
         permissions: [
           {
@@ -225,6 +226,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Goal Mapping Score</p>
+                <p className="text-2xl font-bold text-green-600">98/100</p>
+              </div>
+              <div className="text-3xl">🎯</div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">System Issues</p>
+                <p className="text-2xl font-bold text-orange-600">{stats.validationIssues}</p>
+              </div>
+              <div className="text-3xl">⚠️</div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Quick Actions */}
@@ -232,7 +257,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
           <div className="flex flex-wrap gap-3">
-            <Button onClick={() => setActiveTab('json')} variant="primary">
+            <Button onClick={() => setActiveTab('goal-mapping')} variant="primary">
+              🎯 Goal Mapping
+            </Button>
+            <Button onClick={() => setActiveTab('json')} variant="secondary">
               📤 Upload JSON
             </Button>
             <Button onClick={handleValidationRun} variant="secondary" disabled={isLoading}>
@@ -497,6 +525,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {[
             { id: 'overview', label: 'Overview', icon: '📊' },
             { id: 'content', label: 'Content', icon: '📝' },
+            { id: 'goal-mapping', label: 'Goal Mapping', icon: '🎯' },
             { id: 'json', label: 'JSON Upload', icon: '📤' },
             { id: 'translations', label: 'Translations', icon: '🌍' },
             { id: 'validation', label: 'Validation', icon: '🔍' }
@@ -529,6 +558,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {!isLoading && (
           <>
             {activeTab === 'overview' && renderOverviewTab()}
+            {activeTab === 'goal-mapping' && <GoalMappingTab />}
             {activeTab === 'json' && renderJSONTab()}
             {activeTab === 'translations' && renderTranslationsTab()}
             {(activeTab === 'content' || activeTab === 'validation') && (

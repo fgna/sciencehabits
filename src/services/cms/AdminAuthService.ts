@@ -41,39 +41,69 @@ export class AdminAuthService {
           usersStore.createIndex('email', 'email', { unique: true });
           usersStore.createIndex('role', 'role', { unique: false });
           
-          // Create default super admin user during upgrade transaction
-          const defaultAdmin: AdminUser = {
-            id: 'admin-001',
-            email: 'admin@sciencehabits.app',
-            role: 'super_admin',
-            permissions: [
-              {
-                resource: 'habits',
-                actions: ['create', 'read', 'update', 'delete', 'publish']
-              },
-              {
-                resource: 'research',
-                actions: ['create', 'read', 'update', 'delete', 'publish']
-              },
-              {
-                resource: 'translations',
-                actions: ['create', 'read', 'update', 'delete']
-              },
-              {
-                resource: 'users',
-                actions: ['create', 'read', 'update', 'delete']
-              },
-              {
-                resource: 'system',
-                actions: ['create', 'read', 'update', 'delete']
-              }
-            ],
-            lastLogin: new Date(),
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date()
-          };
-          usersStore.add(defaultAdmin);
+          // Create default admin users from environment variables
+          const defaultAdmins: AdminUser[] = [];
+          
+          const adminPermissions: Permission[] = [
+            {
+              resource: 'habits',
+              actions: ['create', 'read', 'update', 'delete', 'publish']
+            },
+            {
+              resource: 'research',
+              actions: ['create', 'read', 'update', 'delete', 'publish']
+            },
+            {
+              resource: 'translations',
+              actions: ['create', 'read', 'update', 'delete']
+            },
+            {
+              resource: 'users',
+              actions: ['create', 'read', 'update', 'delete']
+            },
+            {
+              resource: 'system',
+              actions: ['create', 'read', 'update', 'delete']
+            }
+          ];
+
+          // Add primary admin from environment
+          if (process.env.REACT_APP_ADMIN_EMAIL) {
+            defaultAdmins.push({
+              id: 'admin-001',
+              email: process.env.REACT_APP_ADMIN_EMAIL,
+              role: 'super_admin',
+              permissions: adminPermissions,
+              lastLogin: new Date(0), // Never logged in initially
+              isActive: true,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            });
+          }
+
+          // Add secondary admin from environment
+          if (process.env.REACT_APP_SECONDARY_ADMIN_EMAIL) {
+            defaultAdmins.push({
+              id: 'admin-002',
+              email: process.env.REACT_APP_SECONDARY_ADMIN_EMAIL,
+              role: 'super_admin',
+              permissions: adminPermissions,
+              lastLogin: new Date(0), // Never logged in initially
+              isActive: true,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            });
+          }
+          
+          // Add all default admin users
+          for (const admin of defaultAdmins) {
+            try {
+              usersStore.add(admin);
+            } catch (error) {
+              // User might already exist, that's OK
+              console.log(`Admin user ${admin.email} already exists or failed to create:`, error);
+            }
+          }
         }
         
         // Admin sessions store
@@ -87,41 +117,70 @@ export class AdminAuthService {
 
 
   private async createDefaultSuperAdmin(db: IDBDatabase): Promise<void> {
-    const defaultAdmin: AdminUser = {
-      id: 'admin-001',
-      email: 'admin@sciencehabits.app',
-      role: 'super_admin',
-      permissions: [
-        {
-          resource: 'habits',
-          actions: ['create', 'read', 'update', 'delete', 'publish']
-        },
-        {
-          resource: 'research',
-          actions: ['create', 'read', 'update', 'delete', 'publish']
-        },
-        {
-          resource: 'translations',
-          actions: ['create', 'read', 'update', 'delete']
-        },
-        {
-          resource: 'users',
-          actions: ['create', 'read', 'update', 'delete']
-        },
-        {
-          resource: 'system',
-          actions: ['create', 'read', 'update', 'delete']
-        }
-      ],
-      lastLogin: new Date(),
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+    const defaultAdmins: AdminUser[] = [];
+    
+    const adminPermissions: Permission[] = [
+      {
+        resource: 'habits',
+        actions: ['create', 'read', 'update', 'delete', 'publish']
+      },
+      {
+        resource: 'research',
+        actions: ['create', 'read', 'update', 'delete', 'publish']
+      },
+      {
+        resource: 'translations',
+        actions: ['create', 'read', 'update', 'delete']
+      },
+      {
+        resource: 'users',
+        actions: ['create', 'read', 'update', 'delete']
+      },
+      {
+        resource: 'system',
+        actions: ['create', 'read', 'update', 'delete']
+      }
+    ];
+
+    // Add primary admin from environment
+    if (process.env.REACT_APP_ADMIN_EMAIL) {
+      defaultAdmins.push({
+        id: 'admin-001',
+        email: process.env.REACT_APP_ADMIN_EMAIL,
+        role: 'super_admin',
+        permissions: adminPermissions,
+        lastLogin: new Date(0), // Never logged in initially
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+    }
+
+    // Add secondary admin from environment
+    if (process.env.REACT_APP_SECONDARY_ADMIN_EMAIL) {
+      defaultAdmins.push({
+        id: 'admin-002',
+        email: process.env.REACT_APP_SECONDARY_ADMIN_EMAIL,
+        role: 'super_admin',
+        permissions: adminPermissions,
+        lastLogin: new Date(0), // Never logged in initially
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+    }
 
     const transaction = db.transaction(['admin_users'], 'readwrite');
     const store = transaction.objectStore('admin_users');
-    store.add(defaultAdmin);
+    
+    for (const admin of defaultAdmins) {
+      try {
+        store.add(admin);
+      } catch (error) {
+        // User might already exist, that's OK
+        console.log(`Admin user ${admin.email} already exists:`, error);
+      }
+    }
   }
 
   /**
@@ -479,15 +538,17 @@ export class AdminAuthService {
    */
   private async verifyPassword(password: string, email: string): Promise<boolean> {
     try {
-      // For the default admin, use a known password
-      if (email === 'admin@sciencehabits.app') {
-        const knownPassword = 'AdminPass123!';
-        return password === knownPassword;
+      // Check credentials from environment variables
+      if (process.env.REACT_APP_ADMIN_EMAIL === email && process.env.REACT_APP_ADMIN_PASSWORD) {
+        return password === process.env.REACT_APP_ADMIN_PASSWORD;
+      }
+      
+      if (process.env.REACT_APP_SECONDARY_ADMIN_EMAIL === email && process.env.REACT_APP_SECONDARY_ADMIN_PASSWORD) {
+        return password === process.env.REACT_APP_SECONDARY_ADMIN_PASSWORD;
       }
 
-      // For other users, you would retrieve their stored salt and hash
-      // and verify against the provided password
-      // This is a simplified version for demo purposes
+      // For other users, validate password strength as fallback
+      // In production, this would verify against stored password hash from database
       return password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[!@#$%^&*]/.test(password);
     } catch (error) {
       console.error('Password verification failed:', error);

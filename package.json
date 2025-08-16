@@ -28,6 +28,7 @@
     "test:watch": "react-scripts test",
     "test:coverage": "react-scripts test --coverage --watchAll=false",
     "test:a11y": "react-scripts test --testMatch='**/*a11y*' --watchAll=false",
+    "verify-env": "node scripts/verify-env.js",
     "test:smoke": "cypress run --spec 'cypress/e2e/smoke-tests/*.cy.ts'",
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .ts,.tsx",
@@ -37,9 +38,14 @@
     "cypress:run": "cypress run",
     "cypress:run:component": "cypress run --component",
     "validate-content": "node scripts/validate-content.js",
+    "validate-goal-mappings": "node scripts/validate-goal-mappings.js",
+    "setup-git-hooks": "bash scripts/setup-git-hooks.sh",
+    "test-recommendations": "node scripts/test-smart-recommendations.js",
+    "migrate-content": "node -e \"require('./src/services/contentMigration.ts').default.migrateAllContent({ dryRun: false }).then(r => console.log('Migration:', r.success))\"",
+    "migrate-content-dry": "node -e \"require('./src/services/contentMigration.ts').default.migrateAllContent({ dryRun: true }).then(r => console.log('Dry run:', r.success))\"",
     "content-report": "node scripts/generate-content-report.js",
     "dev": "npm run validate-content && react-scripts start",
-    "precommit": "npm run lint && npm run type-check && npm run test:coverage"
+    "precommit": "npm run lint && npm run type-check && npm run validate-goal-mappings && npm run test:coverage"
   },
   "eslintConfig": {
     "extends": [
