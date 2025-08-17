@@ -1,5 +1,6 @@
 import React from 'react';
 import { useUserStore, getTodayCompletions, getDashboardStats } from '../../stores/userStore';
+import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useCurrentDate } from '../../hooks/useCurrentDate';
 import { Card, CardContent } from '../ui';
 import { HabitChecklistCard } from './HabitChecklistCard';
@@ -8,6 +9,7 @@ import { WeeklyProgressDashboard } from './WeeklyProgressDashboard';
 
 export function TodayView() {
   const { currentUser, userHabits, userProgress, isLoading, error, updateUserProgress } = useUserStore();
+  const { resetOnboarding } = useOnboardingStore();
   const { todayDisplay } = useCurrentDate();
 
   if (isLoading) {
@@ -61,12 +63,15 @@ export function TodayView() {
               </p>
               <button
                 onClick={() => {
+                  // Reset onboarding to start fresh goal selection
+                  resetOnboarding();
+                  // Clear user data and trigger re-initialization
                   localStorage.removeItem('sciencehabits_user_id');
                   window.location.reload();
                 }}
                 className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
               >
-                Add habits
+                Select a goal
               </button>
             </div>
           </CardContent>
