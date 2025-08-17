@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-08-17T11:41:15.151Z",
+  "source": "build-time-bundle",
+  "count": 1,
+  "data": [
+    {
+      "id": "habit-formation-overview",
+      "title": "The Science of Habit Formation",
+      "summary": "Research shows that habits form through repeated behavior in consistent contexts, with neural pathway changes occurring after approximately 66 days on average.",
+      "authors": "ScienceHabits Research Team",
+      "year": 2025,
+      "journal": "Behavioral Science Review",
+      "category": "psychology",
+      "evidenceLevel": "systematic_review",
+      "qualityScore": 85,
+      "language": "en"
+    }
+  ]
+}

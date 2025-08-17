@@ -1,0 +1,194 @@
+{
+  "timestamp": "2025-08-17T11:41:15.151Z",
+  "bundleVersion": "1.0.0",
+  "buildType": "vercel-build-time",
+  "contentSources": {
+    "contentApiPath": "../sciencehabits-content-api",
+    "bundleStrategy": "direct-file-copy"
+  },
+  "content": {
+    "habits": 16,
+    "locales": 2,
+    "research": 1
+  },
+  "stats": {
+    "startTime": 1755430875137,
+    "filesProcessed": 5,
+    "contentBundled": {
+      "habits": 16,
+      "locales": 2,
+      "research": 1
+    },
+    "errors": [],
+    "duration": 14
+  },
+  "manifest": {
+    "files": [
+      {
+        "path": "habits/all.json",
+        "size": 29307,
+        "modified": "2025-08-17T11:41:15.145Z"
+      },
+      {
+        "path": "habits/by-goal.json",
+        "size": 31985,
+        "modified": "2025-08-17T11:41:15.146Z"
+      },
+      {
+        "path": "habits/all.json",
+        "size": 29307,
+        "modified": "2025-08-17T11:41:15.145Z"
+      },
+      {
+        "path": "habits/by-goal.json",
+        "size": 31985,
+        "modified": "2025-08-17T11:41:15.146Z"
+      },
+      {
+        "path": "locales/all.json",
+        "size": 2909,
+        "modified": "2025-08-17T11:41:15.150Z"
+      },
+      {
+        "path": "locales/de.json",
+        "size": 1133,
+        "modified": "2025-08-17T11:41:15.147Z"
+      },
+      {
+        "path": "locales/en.json",
+        "size": 1733,
+        "modified": "2025-08-17T11:41:15.149Z"
+      },
+      {
+        "path": "habits/all.json",
+        "size": 29307,
+        "modified": "2025-08-17T11:41:15.145Z"
+      },
+      {
+        "path": "habits/by-goal.json",
+        "size": 31985,
+        "modified": "2025-08-17T11:41:15.146Z"
+      },
+      {
+        "path": "habits/all.json",
+        "size": 29307,
+        "modified": "2025-08-17T11:41:15.145Z"
+      },
+      {
+        "path": "habits/by-goal.json",
+        "size": 31985,
+        "modified": "2025-08-17T11:41:15.146Z"
+      },
+      {
+        "path": "locales/all.json",
+        "size": 2909,
+        "modified": "2025-08-17T11:41:15.150Z"
+      },
+      {
+        "path": "locales/de.json",
+        "size": 1133,
+        "modified": "2025-08-17T11:41:15.147Z"
+      },
+      {
+        "path": "locales/en.json",
+        "size": 1733,
+        "modified": "2025-08-17T11:41:15.149Z"
+      },
+      {
+        "path": "manifest.json",
+        "size": 4591,
+        "modified": "2025-08-17T11:39:53.648Z"
+      },
+      {
+        "path": "research/all.json",
+        "size": 629,
+        "modified": "2025-08-17T11:41:15.150Z"
+      },
+      {
+        "path": "habits/all.json",
+        "size": 29307,
+        "modified": "2025-08-17T11:41:15.145Z"
+      },
+      {
+        "path": "habits/by-goal.json",
+        "size": 31985,
+        "modified": "2025-08-17T11:41:15.146Z"
+      },
+      {
+        "path": "habits/all.json",
+        "size": 29307,
+        "modified": "2025-08-17T11:41:15.145Z"
+      },
+      {
+        "path": "habits/by-goal.json",
+        "size": 31985,
+        "modified": "2025-08-17T11:41:15.146Z"
+      },
+      {
+        "path": "locales/all.json",
+        "size": 2909,
+        "modified": "2025-08-17T11:41:15.150Z"
+      },
+      {
+        "path": "locales/de.json",
+        "size": 1133,
+        "modified": "2025-08-17T11:41:15.147Z"
+      },
+      {
+        "path": "locales/en.json",
+        "size": 1733,
+        "modified": "2025-08-17T11:41:15.149Z"
+      },
+      {
+        "path": "habits/all.json",
+        "size": 29307,
+        "modified": "2025-08-17T11:41:15.145Z"
+      },
+      {
+        "path": "habits/by-goal.json",
+        "size": 31985,
+        "modified": "2025-08-17T11:41:15.146Z"
+      },
+      {
+        "path": "habits/all.json",
+        "size": 29307,
+        "modified": "2025-08-17T11:41:15.145Z"
+      },
+      {
+        "path": "habits/by-goal.json",
+        "size": 31985,
+        "modified": "2025-08-17T11:41:15.146Z"
+      },
+      {
+        "path": "locales/all.json",
+        "size": 2909,
+        "modified": "2025-08-17T11:41:15.150Z"
+      },
+      {
+        "path": "locales/de.json",
+        "size": 1133,
+        "modified": "2025-08-17T11:41:15.147Z"
+      },
+      {
+        "path": "locales/en.json",
+        "size": 1733,
+        "modified": "2025-08-17T11:41:15.149Z"
+      },
+      {
+        "path": "manifest.json",
+        "size": 4591,
+        "modified": "2025-08-17T11:39:53.648Z"
+      },
+      {
+        "path": "research/all.json",
+        "size": 629,
+        "modified": "2025-08-17T11:41:15.150Z"
+      }
+    ],
+    "integrity": {
+      "fileCount": 32,
+      "totalSize": 523876,
+      "checksum": "32-523876-1755430875153"
+    }
+  }
+}
