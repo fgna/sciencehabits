@@ -31,6 +31,7 @@ export function HabitsView() {
   });
 
   const [showHabitBrowser, setShowHabitBrowser] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   
   const { 
     customHabits, 
@@ -56,6 +57,14 @@ export function HabitsView() {
       await refreshProgress();
       await loadCustomHabits(currentUser.id);
     }
+    
+    // Show success message
+    setSuccessMessage('New habit has been created and added to your collection!');
+    
+    // Hide success message after 3 seconds
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 3000);
   };
 
   const handleEdit = (habit: Habit) => {
@@ -92,7 +101,22 @@ export function HabitsView() {
     }
     
     if (success) {
+      // Show success message
+      setSuccessMessage(
+        habit.isCustom 
+          ? `"${habit.title}" has been deleted successfully.`
+          : `"${habit.title}" has been removed from your tracking.`
+      );
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+      
       await refreshProgress();
+      if (currentUser) {
+        await loadCustomHabits(currentUser.id);
+      }
     }
     
     setDeleteConfirmation({
@@ -172,6 +196,31 @@ export function HabitsView() {
           Manage your habit collection - both science-backed and custom habits
         </p>
       </div>
+
+      {/* Success message display */}
+      {successMessage && (
+        <Card className="mb-6 border-green-200 bg-green-50">
+          <CardContent>
+            <div className="flex items-center">
+              <svg className="w-5 h-5 text-green-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <div>
+                <h3 className="text-sm font-medium text-green-800">Success</h3>
+                <p className="text-sm text-green-700 mt-1">{successMessage}</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSuccessMessage(null)}
+                className="ml-auto"
+              >
+                ✕
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Error display */}
       {error && (

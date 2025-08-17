@@ -122,7 +122,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       // Create initial progress entry for the user
       await dbHelpers.createProgress(userId, habit.id);
 
-      // Add to local state
+      // Add to local state and reload custom habits to ensure consistency
       set((state) => ({
         customHabits: [...state.customHabits, habit],
         isLoading: false,
@@ -130,6 +130,9 @@ export const useHabitStore = create<HabitState>((set, get) => ({
         formData: defaultFormData,
         formErrors: {}
       }));
+
+      // Reload custom habits to ensure UI consistency
+      await get().loadCustomHabits(userId);
 
       return habit;
       
@@ -177,20 +180,24 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
       
-      // Delete habit and associated progress
-      await dbHelpers.deleteHabit(habitId);
-      await dbHelpers.deleteProgress(userId, habitId);
-      
-      // Remove from local state
+      // Optimistically remove from local state first
       set((state) => ({
         customHabits: state.customHabits.filter(h => h.id !== habitId),
         isLoading: false
       }));
+      
+      // Delete habit and associated progress from database
+      await dbHelpers.deleteHabit(habitId);
+      await dbHelpers.deleteProgress(userId, habitId);
 
       return true;
       
     } catch (error) {
       console.error('Failed to delete habit:', error);
+      
+      // Reload custom habits to restore state on error
+      await get().loadCustomHabits(userId);
+      
       set({
         error: error instanceof Error ? error.message : 'Failed to delete habit',
         isLoading: false
