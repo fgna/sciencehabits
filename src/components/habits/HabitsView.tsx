@@ -199,9 +199,6 @@ export function HabitsView() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">My Habits</h1>
-        <p className="text-gray-600">
-          Manage your habit collection - both science-backed and custom habits
-        </p>
       </div>
 
       {/* Success message display */}
@@ -265,12 +262,6 @@ export function HabitsView() {
                 Research Verified
               </div>
             </div>
-            <Button onClick={() => setShowHabitBrowser(true)} size="sm" variant="outline">
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              Add Science-Backed Habit
-            </Button>
           </div>
           
           {userHabits.filter(h => !h.isCustom).length === 0 ? (

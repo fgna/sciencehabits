@@ -2,9 +2,12 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { User } from '../../types';
 import { Button } from '../ui';
 import { useUserStore } from '../../stores/userStore';
+import { useHabitStore } from '../../stores/habitStore';
 import { AppGoal, loadMainGoals } from '../../config/goals';
 import { getTimeOptions, getSupportedLanguages, TimeOption, Language } from '../../config/ui';
 import { dbHelpers } from '../../services/storage/database';
+import { HabitBrowser } from '../habits/HabitBrowser';
+import { CreateHabitForm } from '../habits/CreateHabitForm';
 
 interface ProfileSettingsProps {
   user: User;
@@ -24,7 +27,12 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
   const [goalsLoading, setGoalsLoading] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const { updateUser, clearUser } = useUserStore();
+  const { updateUser, clearUser, refreshProgress } = useUserStore();
+  
+  // Habit management state
+  const [showHabitBrowser, setShowHabitBrowser] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const { customHabits, loadCustomHabits } = useHabitStore();
   
   // Auto-save functionality
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -88,6 +96,13 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
     loadAvailableGoals();
   }, []);
 
+  // Load custom habits when component mounts
+  useEffect(() => {
+    if (user) {
+      loadCustomHabits(user.id);
+    }
+  }, [user, loadCustomHabits]);
+
   const loadAvailableGoals = async () => {
     try {
       setGoalsLoading(true);
@@ -113,6 +128,18 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
         ? prev.goals.filter(g => g !== goalId)
         : [...prev.goals, goalId]
     }));
+  };
+
+  // Habit management success handler
+  const handleCreateSuccess = async () => {
+    // Refresh user data to show new custom habits  
+    if (user) {
+      await refreshProgress();
+      await loadCustomHabits(user.id);
+      // Also refresh user data to ensure immediate display
+      const { loadUserData } = useUserStore.getState();
+      await loadUserData(user.id);
+    }
   };
 
   const handleDeleteAllData = async () => {
@@ -209,6 +236,36 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
             ))}
           </div>
         )}
+      </div>
+
+      {/* Habit Management */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Manage Habits</h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Add new science-backed habits or create custom habits tailored to your goals.
+        </p>
+        
+        <div className="space-y-3">
+          <button 
+            onClick={() => setShowHabitBrowser(true)}
+            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center transition-colors"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Add Science-Backed Habit
+          </button>
+
+          <button 
+            onClick={() => setShowCreateForm(true)}
+            className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center justify-center transition-colors"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Create Custom Habit
+          </button>
+        </div>
       </div>
 
         {/* MVP: Daily Time Commitment Disabled for MVP - restore for full version
@@ -388,6 +445,19 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
           )}
         </div>
       </div>
+
+      {/* Habit Management Modals */}
+      <HabitBrowser
+        isOpen={showHabitBrowser}
+        onClose={() => setShowHabitBrowser(false)}
+      />
+      
+      {showCreateForm && (
+        <CreateHabitForm
+          onClose={() => setShowCreateForm(false)}
+          onSuccess={handleCreateSuccess}
+        />
+      )}
     </div>
   );
 }

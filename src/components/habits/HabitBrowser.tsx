@@ -29,6 +29,7 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
   const [selectedGoal, setSelectedGoal] = useState('all');
   const [userGoals, setUserGoals] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFiltering, setIsFiltering] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -85,38 +86,72 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
     }
   }, [currentUser]);
 
-  const filterHabits = useCallback(() => {
-    if (!availableHabits.length) return;
+  const filterHabits = useCallback(async () => {
+    if (!availableHabits.length || !currentUser) return;
     
-    let filtered = [...availableHabits];
+    setIsFiltering(true);
     
-    // Filter by selected goal
-    if (selectedGoal && selectedGoal !== 'all') {
-      filtered = filtered.filter(habit => {
-        // Check both category and goalTags for matches
-        const matchesCategory = habit.category === selectedGoal;
-        const matchesGoalTags = habit.goalTags && habit.goalTags.includes(selectedGoal);
-        return matchesCategory || matchesGoalTags;
+    try {
+      let filtered = [...availableHabits];
+      
+      // Filter by selected goal
+      if (selectedGoal && selectedGoal !== 'all') {
+        filtered = filtered.filter(habit => {
+          // Check both category and goalTags for matches
+          const matchesCategory = habit.category === selectedGoal;
+          const matchesGoalTags = habit.goalTags && habit.goalTags.includes(selectedGoal);
+          return matchesCategory || matchesGoalTags;
+        });
+      }
+      
+      // Get habits user is tracking from progress data instead of userHabits
+      const userProgress = await dbHelpers.getUserProgress(currentUser.id);
+      const trackedHabitIds = new Set(userProgress.map((p: any) => p.habitId));
+      
+      console.log(`🔍 DETAILED FILTERING DEBUG:`);
+      console.log(`  Available habits before filtering:`, filtered.map(h => ({ id: h.id, title: h.title })));
+      console.log(`  User habit IDs from userHabits store:`, userHabits.map(h => h.id));
+      console.log(`  User habit IDs from progress data:`, Array.from(trackedHabitIds));
+      console.log(`  Progress data:`, userProgress.map((p: any) => ({ habitId: p.habitId, completions: p.completions?.length || 0 })));
+      
+      // Filter using progress data (more reliable)
+      const finalFiltered = filtered.filter(habit => {
+        const hasHabit = trackedHabitIds.has(habit.id);
+        console.log(`    Habit "${habit.title}" (${habit.id}): user tracking? ${hasHabit} → ${hasHabit ? 'FILTERED OUT' : 'INCLUDED'}`);
+        return !hasHabit;
       });
+      
+      setFilteredHabits(finalFiltered);
+      console.log(`🔍 FINAL RESULT: ${filtered.length} available → ${finalFiltered.length} after removing tracked habits`);
+    } catch (error) {
+      console.error('Failed to load user progress for filtering:', error);
+      // Fallback: don't show any habits if filtering fails
+      setFilteredHabits([]);
+    } finally {
+      setIsFiltering(false);
     }
-    
-    // Filter out habits user already has
-    const userHabitIds = new Set(userHabits.map(h => h.id));
-    const beforeFiltering = filtered.length;
-    filtered = filtered.filter(habit => !userHabitIds.has(habit.id));
-    
-    setFilteredHabits(filtered);
-    console.log(`🔍 Filtering habits: ${beforeFiltering} available → ${filtered.length} after removing user habits`);
-    console.log(`🔍 User has ${userHabits.length} habits:`, userHabitIds);
-    console.log(`🔍 Showing ${filtered.length} habits for goal: ${selectedGoal || 'all'}`);
-  }, [availableHabits, selectedGoal, userHabits]);
+  }, [availableHabits, selectedGoal, userHabits, currentUser]);
 
   useEffect(() => {
-    if (isOpen) {
-      loadAvailableHabits();
-      loadUserGoals();
+    if (isOpen && currentUser) {
+      // Clear old data to prevent flickering
+      setFilteredHabits([]);
+      setError(null);
+      
+      // Load data sequentially to avoid flickering
+      const loadData = async () => {
+        try {
+          console.log('🔄 Modal opened - loading data...');
+          await loadAvailableHabits();
+          await loadUserGoals();
+          // Filter will run automatically via the filterHabits useEffect
+        } catch (error) {
+          console.error('Failed to load data:', error);
+        }
+      };
+      loadData();
     }
-  }, [isOpen, loadAvailableHabits, loadUserGoals]);
+  }, [isOpen, currentUser, loadAvailableHabits, loadUserGoals]);
 
   useEffect(() => {
     filterHabits();
@@ -139,8 +174,14 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
       const existingProgress = await dbHelpers.getProgress(currentUser.id, habit.id);
       
       if (existingProgress) {
-        console.log('Habit already being tracked:', habit.title);
+        console.log('❌ Habit already being tracked:', habit.title);
+        console.log('❌ THIS HABIT SHOULD HAVE BEEN FILTERED OUT!');
+        console.log('❌ Habit ID:', habit.id);
+        console.log('❌ Current userHabits in store:', userHabits.map(h => ({id: h.id, title: h.title})));
         setError('This habit is already being tracked.');
+        // Force refresh the habit list to fix the display
+        await refreshProgress();
+        await loadUserData(currentUser.id);
         return;
       }
       
@@ -246,16 +287,18 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
         </div>
 
         {/* Habit List */}
-        {isLoading ? (
+        {(isLoading || isFiltering) ? (
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-2"></div>
-            <p className="text-sm text-gray-600">Loading habits...</p>
+            <p className="text-sm text-gray-600">
+              {isLoading ? 'Loading habits...' : 'Filtering habits...'}
+            </p>
           </div>
         ) : filteredHabits.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-600 mb-2">No habits found for the selected category.</p>
+            <p className="text-gray-600 mb-2">No new habits available for the selected category.</p>
             <p className="text-sm text-gray-500">
-              Try selecting a different category or check back later for new habits.
+              You may have already added all available habits, or try selecting a different category.
             </p>
           </div>
         ) : (
