@@ -1,0 +1,153 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-08-16",
+  "milestones": {
+    "streaks": [
+      {
+        "days": 3,
+        "title": "Starting Strong",
+        "rarity": "common",
+        "icon": "🌱",
+        "description": "Completed 3 days in a row"
+      },
+      {
+        "days": 7,
+        "title": "Week Warrior", 
+        "rarity": "common",
+        "icon": "🔥",
+        "description": "Maintained habits for a full week"
+      },
+      {
+        "days": 14,
+        "title": "Fortnight Fighter",
+        "rarity": "uncommon", 
+        "icon": "💪",
+        "description": "Two weeks of consistency"
+      },
+      {
+        "days": 30,
+        "title": "Monthly Master",
+        "rarity": "rare",
+        "icon": "🏆", 
+        "description": "One month of dedication"
+      },
+      {
+        "days": 60,
+        "title": "Habit Hero",
+        "rarity": "epic",
+        "icon": "🌟",
+        "description": "Two months of unwavering commitment"
+      },
+      {
+        "days": 100,
+        "title": "Century Champion",
+        "rarity": "legendary", 
+        "icon": "👑",
+        "description": "100 days of excellence"
+      }
+    ],
+    "completions": [
+      {
+        "count": 5,
+        "title": "First Steps",
+        "rarity": "common",
+        "icon": "👶",
+        "description": "Completed 5 habit sessions"
+      },
+      {
+        "count": 10,
+        "title": "Getting Started",
+        "rarity": "common", 
+        "icon": "🌱",
+        "description": "10 completions under your belt"
+      },
+      {
+        "count": 25,
+        "title": "Building Momentum",
+        "rarity": "uncommon",
+        "icon": "🚀",
+        "description": "Quarter-century of completions"
+      },
+      {
+        "count": 50,
+        "title": "Half Century",
+        "rarity": "uncommon",
+        "icon": "🎯",
+        "description": "50 successful habit sessions"
+      },
+      {
+        "count": 100,
+        "title": "Century Club",
+        "rarity": "rare", 
+        "icon": "💎",
+        "description": "Joined the exclusive 100 club"
+      },
+      {
+        "count": 250,
+        "title": "Habit Master",
+        "rarity": "epic",
+        "icon": "🧙‍♂️",
+        "description": "250 completions - true mastery"
+      },
+      {
+        "count": 500,
+        "title": "Legendary Achiever",
+        "rarity": "legendary",
+        "icon": "🏅",
+        "description": "500 completions - absolutely legendary"
+      }
+    ],
+    "perfectWeeks": [
+      {
+        "count": 1,
+        "title": "Perfect Week",
+        "rarity": "uncommon",
+        "icon": "✨", 
+        "description": "One flawless week"
+      },
+      {
+        "count": 4,
+        "title": "Monthly Perfectionist",
+        "rarity": "rare",
+        "icon": "🎨",
+        "description": "Four perfect weeks"
+      },
+      {
+        "count": 12,
+        "title": "Quarterly Champion", 
+        "rarity": "epic",
+        "icon": "🏆",
+        "description": "Perfect for three months"
+      }
+    ]
+  },
+  "rarityColors": {
+    "common": "#10B981",
+    "uncommon": "#3B82F6", 
+    "rare": "#8B5CF6",
+    "epic": "#F59E0B",
+    "legendary": "#EF4444"
+  },
+  "rewards": {
+    "common": {
+      "points": 10,
+      "experience": 5
+    },
+    "uncommon": {
+      "points": 25,
+      "experience": 15
+    },
+    "rare": {
+      "points": 50, 
+      "experience": 30
+    },
+    "epic": {
+      "points": 100,
+      "experience": 60
+    },
+    "legendary": {
+      "points": 250,
+      "experience": 150
+    }
+  }
+}

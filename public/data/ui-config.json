@@ -1,0 +1,245 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-08-16",
+  "userPreferences": {
+    "timeOptions": [
+      {
+        "id": "morning",
+        "label": "Morning Person",
+        "description": "I prefer starting my day with habits",
+        "icon": "🌅"
+      },
+      {
+        "id": "lunch", 
+        "label": "Midday Focus",
+        "description": "I work best during lunch breaks",
+        "icon": "☀️"
+      },
+      {
+        "id": "evening",
+        "label": "Evening Routine", 
+        "description": "I like to wind down with habits",
+        "icon": "🌅"
+      },
+      {
+        "id": "flexible",
+        "label": "Flexible",
+        "description": "I can adapt to any time",
+        "icon": "🔄"
+      }
+    ],
+    "dailyTimeOptions": [
+      {
+        "value": 5,
+        "label": "5 minutes",
+        "description": "Quick micro-habits",
+        "icon": "⚡"
+      },
+      {
+        "value": 10,
+        "label": "10 minutes", 
+        "description": "Short focused sessions",
+        "icon": "🎯"
+      },
+      {
+        "value": 15,
+        "label": "15 minutes",
+        "description": "Moderate commitment", 
+        "icon": "⏱️"
+      },
+      {
+        "value": 20,
+        "label": "20+ minutes",
+        "description": "Deeper practices",
+        "icon": "🧘‍♀️"
+      }
+    ],
+    "lifestyleOptions": [
+      {
+        "id": "professional",
+        "title": "Working Professional",
+        "description": "Office job, busy schedule, limited time",
+        "icon": "💼"
+      },
+      {
+        "id": "parent", 
+        "title": "Parent",
+        "description": "Caring for children, irregular schedule",
+        "icon": "👨‍👩‍👧‍👦"
+      },
+      {
+        "id": "student",
+        "title": "Student", 
+        "description": "Studying, flexible schedule, budget-conscious",
+        "icon": "📚"
+      },
+      {
+        "id": "remote_worker",
+        "title": "Remote Worker",
+        "description": "Work from home, flexible schedule",
+        "icon": "🏠"
+      },
+      {
+        "id": "retiree",
+        "title": "Retiree",
+        "description": "More time available, focusing on wellness",
+        "icon": "🌱"
+      }
+    ]
+  },
+  "habits": {
+    "categories": [
+      {
+        "id": "stress",
+        "name": "Stress Management",
+        "icon": "🧘‍♀️",
+        "description": "Reduce stress and anxiety",
+        "color": "blue"
+      },
+      {
+        "id": "productivity",
+        "name": "Productivity", 
+        "icon": "⚡",
+        "description": "Improve focus and efficiency",
+        "color": "purple"
+      },
+      {
+        "id": "health",
+        "name": "Physical Health",
+        "icon": "💪", 
+        "description": "Build strength and wellness",
+        "color": "green"
+      },
+      {
+        "id": "energy",
+        "name": "Energy & Mood",
+        "icon": "🔋",
+        "description": "Boost energy and positivity",
+        "color": "yellow"
+      },
+      {
+        "id": "sleep",
+        "name": "Sleep & Recovery",
+        "icon": "😴",
+        "description": "Better rest and recovery", 
+        "color": "indigo"
+      },
+      {
+        "id": "social",
+        "name": "Social Connection",
+        "icon": "👥",
+        "description": "Strengthen relationships",
+        "color": "pink"
+      }
+    ],
+    "difficulties": [
+      {
+        "id": "beginner",
+        "name": "Beginner",
+        "description": "Easy to start, low commitment",
+        "color": "green",
+        "icon": "🌱"
+      },
+      {
+        "id": "intermediate", 
+        "name": "Intermediate",
+        "description": "Moderate effort required",
+        "color": "yellow",
+        "icon": "🚀"
+      },
+      {
+        "id": "advanced",
+        "name": "Advanced",
+        "description": "Challenging, high commitment",
+        "color": "red",
+        "icon": "🏆"
+      }
+    ]
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "id": "today",
+        "name": "Today",
+        "icon": "📅",
+        "path": "/today",
+        "description": "View today's habits and progress"
+      },
+      {
+        "id": "habits",
+        "name": "My Habits", 
+        "icon": "✅",
+        "path": "/habits",
+        "description": "Manage your habit collection"
+      },
+      {
+        "id": "analytics",
+        "name": "Analytics",
+        "icon": "📊", 
+        "path": "/analytics",
+        "description": "Track progress and insights"
+      },
+      {
+        "id": "settings",
+        "name": "Settings",
+        "icon": "⚙️",
+        "path": "/settings",
+        "description": "Customize your experience"
+      }
+    ]
+  },
+  "analytics": {
+    "timeRangeOptions": [
+      {
+        "value": "7d",
+        "label": "7 days",
+        "description": "Past week",
+        "icon": "📅"
+      },
+      {
+        "value": "30d",
+        "label": "30 days", 
+        "description": "Past month",
+        "icon": "📆"
+      },
+      {
+        "value": "90d",
+        "label": "3 months",
+        "description": "Past quarter",
+        "icon": "📊"
+      },
+      {
+        "value": "365d",
+        "label": "1 year",
+        "description": "Past year", 
+        "icon": "📈"
+      }
+    ]
+  },
+  "languages": [
+    {
+      "code": "en",
+      "name": "English",
+      "nativeName": "English",
+      "flag": "🇺🇸"
+    },
+    {
+      "code": "de", 
+      "name": "German",
+      "nativeName": "Deutsch",
+      "flag": "🇩🇪"
+    },
+    {
+      "code": "fr",
+      "name": "French", 
+      "nativeName": "Français",
+      "flag": "🇫🇷"
+    },
+    {
+      "code": "es",
+      "name": "Spanish",
+      "nativeName": "Español", 
+      "flag": "🇪🇸"
+    }
+  ]
+}

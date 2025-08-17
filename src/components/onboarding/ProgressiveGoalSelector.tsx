@@ -4,7 +4,7 @@ import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useUIPreferencesStore } from '../../stores/uiPreferencesStore';
 
 interface GoalCategory {
-  id: 'health' | 'productivity' | 'wellbeing';
+  id: 'better_sleep' | 'get_moving' | 'feel_better';
   title: string;
   description: string;
   icon: string;
@@ -14,28 +14,28 @@ interface GoalCategory {
 
 const goalCategories: GoalCategory[] = [
   {
-    id: 'health',
-    title: 'Physical Health',
-    description: 'Build habits for better fitness, sleep, and energy',
-    icon: '💪',
+    id: 'better_sleep',
+    title: 'Better Sleep',
+    description: 'The keystone habit that affects everything else',
+    icon: '🛏️',
     color: 'compassion',
-    goalIds: ['increase_energy', 'improve_health'], // Map to actual health goal IDs
+    goalIds: ['better_sleep'], // Map to actual sleep goal ID
   },
   {
-    id: 'wellbeing',
-    title: 'Mental Wellbeing', 
-    description: 'Develop practices for stress management and emotional balance',
-    icon: '🧘‍♀️',
+    id: 'get_moving',
+    title: 'Get Moving', 
+    description: 'Physical health with broad accessibility',
+    icon: '🚶‍♀️',
     color: 'progress',
-    goalIds: ['reduce_stress', 'improve_mood'], // Map to actual wellbeing goal IDs
+    goalIds: ['get_moving'], // Map to actual movement goal ID
   },
   {
-    id: 'productivity',
-    title: 'Personal Growth',
-    description: 'Improve focus, learning, and personal effectiveness',
-    icon: '🚀',
+    id: 'feel_better',
+    title: 'Feel Better',
+    description: 'Mood and mental wellness for immediate wins',
+    icon: '😊',
     color: 'research',
-    goalIds: ['increase_focus'], // Map to actual productivity goal IDs
+    goalIds: ['feel_better'], // Map to actual mood goal ID
   },
 ];
 
@@ -101,30 +101,8 @@ export function ProgressiveGoalSelector() {
       </div>
 
       <div className="text-center">
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="text-sm text-gray-500">
           Select your main focus area to continue
-        </p>
-        
-        <div className="flex gap-3">
-          <Button 
-            variant="outline" 
-            onClick={previousStep}
-            className="flex-1"
-          >
-            Back
-          </Button>
-          
-          <Button 
-            onClick={nextStep}
-            disabled
-            className="flex-1 opacity-50"
-          >
-            Continue
-          </Button>
-        </div>
-        
-        <p className="text-xs text-gray-400 mt-2">
-          Choosing a category will automatically continue to the next step
         </p>
       </div>
     </div>

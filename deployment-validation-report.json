@@ -1,0 +1,81 @@
+{
+  "timestamp": "2025-08-16T19:27:52.729Z",
+  "summary": {
+    "total": 14,
+    "passed": 10,
+    "failed": 4,
+    "success_rate": "71%"
+  },
+  "tests": [
+    {
+      "name": "Application loads successfully",
+      "status": "PASSED",
+      "details": null
+    },
+    {
+      "name": "Service Worker is available",
+      "status": "PASSED",
+      "details": null
+    },
+    {
+      "name": "Manifest is accessible",
+      "status": "PASSED",
+      "details": null
+    },
+    {
+      "name": "Content API is running",
+      "status": "FAILED",
+      "details": "Content API server is not running"
+    },
+    {
+      "name": "Content API returns habit data",
+      "status": "FAILED",
+      "details": "connect ECONNREFUSED 127.0.0.1:3001"
+    },
+    {
+      "name": "Content API supports all languages",
+      "status": "FAILED",
+      "details": "connect ECONNREFUSED 127.0.0.1:3001"
+    },
+    {
+      "name": "Goal selection data is available",
+      "status": "PASSED",
+      "details": null
+    },
+    {
+      "name": "Goal taxonomy is valid",
+      "status": "FAILED",
+      "details": "Request failed with status code 404"
+    },
+    {
+      "name": "UI translations are available",
+      "status": "PASSED",
+      "details": null
+    },
+    {
+      "name": "Language detection works",
+      "status": "PASSED",
+      "details": null
+    },
+    {
+      "name": "App loads within performance budget",
+      "status": "PASSED",
+      "details": null
+    },
+    {
+      "name": "Static assets are compressed",
+      "status": "PASSED",
+      "details": null
+    },
+    {
+      "name": "Security headers are present",
+      "status": "PASSED",
+      "details": null
+    },
+    {
+      "name": "No sensitive data exposed in client",
+      "status": "PASSED",
+      "details": null
+    }
+  ]
+}

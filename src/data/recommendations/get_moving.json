@@ -1,0 +1,26 @@
+[
+  {
+    "habitId": "move_001_stair_sprints",
+    "priority": 1,
+    "confidence": 0.95,
+    "reason": "Maximum cardiovascular benefits in minimal time"
+  },
+  {
+    "habitId": "move_016_exercise_snacking",
+    "priority": 2,
+    "confidence": 0.90,
+    "reason": "High-intensity protocol for metabolic health improvement"
+  },
+  {
+    "habitId": "move_002_micro_workouts",
+    "priority": 3,
+    "confidence": 0.85,
+    "reason": "Accessible bodyweight exercises for fitness building"
+  },
+  {
+    "habitId": "move_017_desk_movement_breaks",
+    "priority": 4,
+    "confidence": 0.80,
+    "reason": "Perfect for sedentary workers to combat sitting harm"
+  }
+]

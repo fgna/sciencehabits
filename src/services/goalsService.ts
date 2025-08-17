@@ -52,80 +52,64 @@ export async function loadGoals(): Promise<Goal[]> {
     // Fallback goals with enhanced UX data
     goalsCache = [
       {
-        id: 'reduce_stress',
-        title: 'Reduce Stress',
-        description: 'Feel calmer and more relaxed throughout the day',
-        icon: '🧘‍♀️',
+        id: 'better_sleep',
+        title: 'Better Sleep',
+        description: 'The keystone habit that affects everything else',
+        icon: '🛏️',
         tier: 'free',
-        category: 'wellbeing',
+        category: 'sleep',
         priority: 1,
         researchLevel: 'high',
-        researchSummary: 'Multiple meta-analyses show that mindfulness and breathing exercises significantly reduce cortisol levels and perceived stress.',
-        benefits: ['Lower cortisol levels', 'Improved sleep quality', 'Better emotional regulation', 'Reduced anxiety'],
+        researchSummary: 'Quality sleep is foundational for cognitive function, emotional regulation, immune health, and overall well-being. Poor sleep affects every aspect of life.',
+        benefits: ['Improved cognitive function', 'Better emotional regulation', 'Stronger immune system', 'Enhanced physical recovery'],
         commonConcerns: [
           {
-            concern: 'I don\'t have time for meditation',
-            response: 'Start with just 3 minutes. Even brief breathing exercises show measurable stress reduction.'
+            concern: 'I have trouble falling asleep',
+            response: 'Start with a simple wind-down routine 30 minutes before bed. Even basic changes can significantly improve sleep quality.'
           }
         ],
-        timeToResults: { initial: '1-2 weeks', significant: '4-6 weeks' },
-        averageTimeCommitment: { min: 3, max: 15 }
-      },
-      {
-        id: 'increase_focus',
-        title: 'Increase Focus',
-        description: 'Improve concentration and mental clarity',
-        icon: '🎯',
-        tier: 'free',
-        category: 'productivity',
-        priority: 2,
-        researchLevel: 'high',
-        researchSummary: 'Cognitive training and attention exercises improve working memory and sustained attention in healthy adults.',
-        benefits: ['Better concentration', 'Reduced mental fatigue', 'Improved productivity', 'Enhanced learning ability'],
-        timeToResults: { initial: '2-3 weeks', significant: '6-8 weeks' },
+        timeToResults: { initial: '3-7 days', significant: '2-4 weeks' },
         averageTimeCommitment: { min: 5, max: 20 }
       },
       {
-        id: 'improve_mood',
-        title: 'Improve Mood',
-        description: 'Boost happiness and emotional well-being',
+        id: 'get_moving',
+        title: 'Get Moving',
+        description: 'Physical health with broad accessibility',
+        icon: '🚶‍♀️',
+        tier: 'free',
+        category: 'movement',
+        priority: 2,
+        researchLevel: 'high',
+        researchSummary: 'Regular movement and exercise improve cardiovascular health, mental well-being, cognitive function, and longevity. Even light activity provides significant benefits.',
+        benefits: ['Improved cardiovascular health', 'Enhanced mood', 'Better energy levels', 'Stronger bones and muscles'],
+        commonConcerns: [
+          {
+            concern: 'I don\'t have time for long workouts',
+            response: 'Start with just 5-10 minutes of walking or stretching. Small amounts of movement still provide meaningful health benefits.'
+          }
+        ],
+        timeToResults: { initial: '1-2 weeks', significant: '4-8 weeks' },
+        averageTimeCommitment: { min: 5, max: 30 }
+      },
+      {
+        id: 'feel_better',
+        title: 'Feel Better',
+        description: 'Mood and mental wellness for immediate wins',
         icon: '😊',
         tier: 'free',
         category: 'wellbeing',
         priority: 3,
         researchLevel: 'high',
-        researchSummary: 'Gratitude practices, physical activity, and social connection are proven to increase positive emotions and life satisfaction.',
-        benefits: ['Increased happiness', 'Better relationships', 'Greater life satisfaction', 'Improved resilience'],
-        timeToResults: { initial: '1-2 weeks', significant: '3-4 weeks' },
-        averageTimeCommitment: { min: 5, max: 15 }
-      },
-      {
-        id: 'increase_energy',
-        title: 'Increase Energy',
-        description: 'Feel more energized and motivated',
-        icon: '⚡',
-        tier: 'free',
-        category: 'health',
-        priority: 4,
-        researchLevel: 'high',
-        researchSummary: 'Regular exercise, proper hydration, and sleep hygiene significantly improve energy levels and reduce fatigue.',
-        benefits: ['Higher energy levels', 'Better sleep quality', 'Improved motivation', 'Enhanced physical stamina'],
-        timeToResults: { initial: '1 week', significant: '2-4 weeks' },
-        averageTimeCommitment: { min: 5, max: 30 }
-      },
-      {
-        id: 'improve_health',
-        title: 'Improve Health',
-        description: 'Build healthier daily habits',
-        icon: '💪',
-        tier: 'free',
-        category: 'health',
-        priority: 5,
-        researchLevel: 'high',
-        researchSummary: 'Small, consistent healthy habits compound over time to create significant improvements in overall health outcomes.',
-        benefits: ['Better physical health', 'Increased longevity', 'Improved immune function', 'Enhanced quality of life'],
-        timeToResults: { initial: '2-3 weeks', significant: '8-12 weeks' },
-        averageTimeCommitment: { min: 10, max: 30 }
+        researchSummary: 'Simple practices like gratitude, breathing exercises, and positive social connections provide immediate mood benefits and build long-term emotional resilience.',
+        benefits: ['Improved mood', 'Reduced stress', 'Better relationships', 'Increased life satisfaction'],
+        commonConcerns: [
+          {
+            concern: 'I feel overwhelmed and don\'t know where to start',
+            response: 'Start with one small practice like writing down 3 things you\'re grateful for. Small wins build momentum.'
+          }
+        ],
+        timeToResults: { initial: '1-3 days', significant: '2-4 weeks' },
+        averageTimeCommitment: { min: 3, max: 15 }
       }
     ];
     return goalsCache;

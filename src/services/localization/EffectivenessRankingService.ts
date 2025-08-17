@@ -53,21 +53,32 @@ export class EffectivenessRankingService {
   private static async loadAllHabits(): Promise<MultilingualHabit[]> {
     try {
       // Fetch from content API - update this URL to match your deployment
-      const contentApiBase = process.env.REACT_APP_CONTENT_API_URL || 'http://localhost:3001';
+      const contentApiBase = process.env.REACT_APP_CONTENT_API_URL || 'http://localhost:3002';
+      const apiKey = 'build-key-2024-secure'; // Production API key for the main app
       
+      // Add cache busting timestamp to ensure fresh data
+      const cacheBuster = `?t=${Date.now()}`;
       const [enResponse, deResponse] = await Promise.all([
-        fetch(`${contentApiBase}/api/habits/multilingual-science-habits-en.json`),
-        fetch(`${contentApiBase}/api/habits/multilingual-science-habits-de.json`)
+        fetch(`${contentApiBase}/habits/multilingual-science-habits-en.json${cacheBuster}`),
+        fetch(`${contentApiBase}/habits/multilingual-science-habits-de.json${cacheBuster}`)
       ]);
 
       if (!enResponse.ok || !deResponse.ok) {
-        throw new Error('Failed to fetch habit data from content API');
+        const errorMsg = `Content API error: EN ${enResponse.status}, DE ${deResponse.status}`;
+        console.error(errorMsg);
+        throw new Error(errorMsg);
       }
 
       const [enHabits, deHabits] = await Promise.all([
         enResponse.json(),
         deResponse.json()
       ]);
+
+      // Check if we got proper habit arrays
+      if (!Array.isArray(enHabits) || !Array.isArray(deHabits)) {
+        console.error('Content API returned unexpected format:', { enHabits, deHabits });
+        throw new Error('Content API returned invalid data format');
+      }
 
       // Convert to multilingual format
       const multilingualHabits: MultilingualHabit[] = enHabits.map((enHabit: any) => {
@@ -79,6 +90,14 @@ export class EffectivenessRankingService {
           effectivenessScore: enHabit.effectivenessScore,
           effectivenessRank: enHabit.effectivenessRank,
           isPrimaryRecommendation: enHabit.isPrimaryRecommendation,
+          difficulty: enHabit.difficulty,
+          timeMinutes: enHabit.timeMinutes,
+          equipment: enHabit.equipment || 'none',
+          goalTags: enHabit.goalTags || [],
+          uiLabels: {
+            templateVersion: '1.0',
+            requiredLabels: ['title', 'description']
+          },
           translations: {
             en: {
               title: enHabit.title,
@@ -116,7 +135,21 @@ export class EffectivenessRankingService {
     } catch (error) {
       console.error('Failed to load habit data from content API:', error);
       
-      // Fallback to mock data if API is unavailable
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      // Check if it's a network error (API server not running)
+      if (error instanceof TypeError && errorMessage.includes('fetch')) {
+        console.error('Content API server appears to be offline. Please ensure the sciencehabits-content-api server is running on port 3002.');
+        throw new Error('Content API server is unavailable. Please check that the content server is running and try again.');
+      }
+      
+      // Check if it's a data format error
+      if (errorMessage.includes('invalid data format')) {
+        throw new Error('Content API returned invalid data. Please check the API server configuration.');
+      }
+      
+      // For other errors, provide generic message but still fallback
+      console.warn('Using fallback mock data due to content API error:', errorMessage);
       return this.getMockHabits();
     }
   }

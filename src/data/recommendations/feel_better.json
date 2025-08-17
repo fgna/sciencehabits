@@ -1,0 +1,50 @@
+[
+  {
+    "habitId": "feel_001_gratitude_journaling",
+    "priority": 1,
+    "confidence": 0.95,
+    "reason": "Proven positive psychology intervention for mood enhancement"
+  },
+  {
+    "habitId": "feel_021_micro_kindness",
+    "priority": 2,
+    "confidence": 0.90,
+    "reason": "Creates helper's high and improves social connections"
+  },
+  {
+    "habitId": "feel_016_box_breathing",
+    "priority": 3,
+    "confidence": 0.85,
+    "reason": "Immediate stress relief and emotional regulation"
+  },
+  {
+    "habitId": "feel_017_power_posing",
+    "priority": 4,
+    "confidence": 0.80,
+    "reason": "Boosts confidence hormones and reduces stress"
+  },
+  {
+    "habitId": "feel_018_cold_exposure",
+    "priority": 5,
+    "confidence": 0.75,
+    "reason": "Activates mood-boosting pathways and builds resilience"
+  },
+  {
+    "habitId": "feel_020_future_self_visualization",
+    "priority": 6,
+    "confidence": 0.70,
+    "reason": "Increases optimism and motivation for goal pursuit"
+  },
+  {
+    "habitId": "feel_022_savoring_practice",
+    "priority": 7,
+    "confidence": 0.65,
+    "reason": "Enhances present-moment awareness and appreciation"
+  },
+  {
+    "habitId": "feel_019_grounding_5_4_3_2_1",
+    "priority": 8,
+    "confidence": 0.60,
+    "reason": "Effective anxiety management and present-moment anchoring"
+  }
+]

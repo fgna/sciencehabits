@@ -125,28 +125,12 @@ export function GoalsStep() {
         </div>
       )}
 
-      <div className="flex gap-3">
-        <Button 
-          variant="outline" 
-          onClick={previousStep}
-          className="flex-1"
-        >
-          Back
-        </Button>
-        
-        <Button 
-          onClick={nextStep} 
-          disabled={!canContinue}
-          className="flex-1"
-        >
-          Continue
-        </Button>
-      </div>
-      
-      {!canContinue && (
-        <p className="text-center text-sm text-gray-500 mt-2">
-          Please select at least one goal to continue
-        </p>
+      {selectedGoals.length > 0 && (
+        <div className="text-center">
+          <Button onClick={nextStep} className="px-8 py-3">
+            Let's Build These Habits
+          </Button>
+        </div>
       )}
     </div>
   );

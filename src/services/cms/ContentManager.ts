@@ -18,11 +18,25 @@ import {
 import { Habit, ResearchStudy } from '../../types';
 import { AdminAuthService } from './AdminAuthService';
 
-// Static imports for fallback/development
-// @ts-ignore - JSON imports handled by build system
-import habitsData from '../../data/habits.json';
-// @ts-ignore - JSON imports handled by build system
-import researchData from '../../data/research_articles.json';
+// Legacy imports removed - now using content API via EffectivenessRankingService
+import { EffectivenessRankingService } from '../localization/EffectivenessRankingService';
+
+/**
+ * Map content API difficulty values to legacy Habit difficulty enum
+ */
+function mapDifficultyToLegacy(difficulty: string): 'trivial' | 'easy' | 'moderate' | 'beginner' | 'intermediate' | 'advanced' {
+  const difficultyMap: Record<string, 'trivial' | 'easy' | 'moderate' | 'beginner' | 'intermediate' | 'advanced'> = {
+    'trivial': 'trivial',
+    'easy': 'easy',
+    'moderate': 'moderate',
+    'challenging': 'intermediate', // Map challenging to intermediate
+    'advanced': 'advanced',
+    'beginner': 'beginner',
+    'intermediate': 'intermediate'
+  };
+  
+  return difficultyMap[difficulty] || 'beginner'; // Default fallback to beginner
+}
 
 export class ContentManager {
   private dbName = 'sciencehabits-cms-cache';
@@ -84,14 +98,50 @@ export class ContentManager {
         return this.convertCMSHabitsToLegacyFormat(cmsHabits);
       }
 
-      // Fallback to static JSON for development
-      console.log('📁 Falling back to static habits.json');
-      await this.cacheStaticContent();
-      return habitsData as Habit[];
+      // Fallback to content API via EffectivenessRankingService
+      console.log('📁 Falling back to content API');
+      const habits = await this.loadHabitsFromAPI();
+      return habits;
     } catch (error) {
       console.error('Failed to load habits from CMS:', error);
-      // Ultimate fallback to static data
-      return habitsData as Habit[];
+      // Ultimate fallback to empty array
+      return [];
+    }
+  }
+
+  /**
+   * Load habits from content API
+   */
+  private async loadHabitsFromAPI(): Promise<Habit[]> {
+    try {
+      const multilingualHabits = await EffectivenessRankingService.getPrimaryRecommendations('en');
+      
+      // Convert to legacy Habit format
+      const habits: Habit[] = multilingualHabits.map(habit => ({
+        id: habit.id,
+        title: habit.translations.en.title,
+        description: habit.translations.en.description,
+        timeMinutes: habit.timeMinutes,
+        category: habit.goalCategory,
+        goalTags: habit.goalTags || [habit.goalCategory],
+        lifestyleTags: ['general'],
+        timeTags: ['flexible'],
+        instructions: habit.translations.en.quickStart,
+        researchIds: [],
+        whyEffective: habit.translations.en.whyItWorks,
+        cost: '€0/day',
+        equipment: habit.equipment || 'none',
+        difficulty: mapDifficultyToLegacy(habit.difficulty),
+        isCustom: false,
+        frequency: { type: 'daily' },
+        reminders: { enabled: false, periodicReminderDays: 7 }
+      }));
+
+      console.log(`✅ Loaded ${habits.length} habits from content API`);
+      return habits;
+    } catch (error) {
+      console.error('Failed to load habits from content API:', error);
+      return [];
     }
   }
 
@@ -108,14 +158,13 @@ export class ContentManager {
         return this.convertCMSResearchToLegacyFormat(cmsResearch);
       }
 
-      // Fallback to static JSON for development
-      console.log('📁 Falling back to static research_articles.json');
-      await this.cacheStaticContent();
-      return researchData as unknown as ResearchStudy[];
+      // Fallback - return empty array for now
+      console.log('📁 No research data available from API yet');
+      return [];
     } catch (error) {
       console.error('Failed to load research from CMS:', error);
-      // Ultimate fallback to static data
-      return researchData as unknown as ResearchStudy[];
+      // Ultimate fallback - empty array
+      return [];
     }
   }
 
@@ -261,9 +310,10 @@ export class ContentManager {
    */
   private async cacheStaticContent(): Promise<void> {
     try {
-      // Convert legacy format to CMS format and cache
-      const cmsHabits = this.convertLegacyHabitsToCMSFormat(habitsData as Habit[]);
-      const cmsResearch = this.convertLegacyResearchToCMSFormat(researchData as any);
+      // Load from API and convert to CMS format for caching
+      const apiHabits = await this.loadHabitsFromAPI();
+      const cmsHabits = this.convertLegacyHabitsToCMSFormat(apiHabits);
+      const cmsResearch: CMSResearchStudy[] = []; // No research API yet
 
       await Promise.all([
         this.setCachedContent('cms_habits', cmsHabits),
@@ -477,8 +527,9 @@ export class ContentManager {
   }
 
   private createFallbackLocalizedContent(): LocalizedContent {
-    const cmsHabits = this.convertLegacyHabitsToCMSFormat(habitsData as Habit[]);
-    const cmsResearch = this.convertLegacyResearchToCMSFormat(researchData as any);
+    // For synchronous fallback, return empty content - async loading should be used instead
+    const cmsHabits: CMSHabit[] = [];
+    const cmsResearch: CMSResearchStudy[] = [];
     
     return {
       habits: cmsHabits,
@@ -555,4 +606,5 @@ export class ContentManager {
       authors: Array.from(authors.entries()).map(([name, count]) => ({ name, count }))
     };
   }
+
 }

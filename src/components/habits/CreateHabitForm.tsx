@@ -6,6 +6,7 @@ import { lifestyleOptions, timePreferenceOptions } from '../../stores/onboarding
 import { Goal, loadGoals, getAvailableGoals } from '../../services/goalsService';
 import { Habit, HabitFrequency } from '../../types';
 import { createDefaultFrequency, createWeeklyFrequency, getFrequencyDescription, createDefaultReminders } from '../../utils/frequencyHelpers';
+import { getHabitCategories, getHabitDifficulties, HabitCategory, HabitDifficulty } from '../../config/ui';
 
 interface CreateHabitFormProps {
   onClose: () => void;
@@ -18,6 +19,9 @@ export function CreateHabitForm({ onClose, onSuccess }: CreateHabitFormProps) {
   const [selectedFrequency, setSelectedFrequency] = useState<HabitFrequency>(createDefaultFrequency());
   const [availableGoals, setAvailableGoals] = useState<Goal[]>([]);
   const [goalsLoading, setGoalsLoading] = useState(true);
+  const [categories, setCategories] = useState<HabitCategory[]>([]);
+  const [difficulties, setDifficulties] = useState<HabitDifficulty[]>([]);
+  const [configLoading, setConfigLoading] = useState(true);
   
   const { 
     formData, 
@@ -47,7 +51,24 @@ export function CreateHabitForm({ onClose, onSuccess }: CreateHabitFormProps) {
       }
     };
 
+    const loadUIConfiguration = async () => {
+      try {
+        setConfigLoading(true);
+        const [cats, diffs] = await Promise.all([
+          getHabitCategories(),
+          getHabitDifficulties()
+        ]);
+        setCategories(cats);
+        setDifficulties(diffs);
+      } catch (error) {
+        console.error('Failed to load UI configuration:', error);
+      } finally {
+        setConfigLoading(false);
+      }
+    };
+
     loadAvailableGoals();
+    loadUIConfiguration();
   }, [currentUser?.isPremium]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -104,19 +125,6 @@ export function CreateHabitForm({ onClose, onSuccess }: CreateHabitFormProps) {
     setShowTemplates(false);
   };
 
-  const categories = [
-    { id: 'stress', name: 'Stress Management', icon: '🧘‍♀️', description: 'Reduce stress and anxiety' },
-    { id: 'productivity', name: 'Productivity', icon: '⚡', description: 'Improve focus and efficiency' },
-    { id: 'health', name: 'Physical Health', icon: '💪', description: 'Build strength and wellness' },
-    { id: 'energy', name: 'Energy & Mood', icon: '🔋', description: 'Boost energy and positivity' },
-    { id: 'sleep', name: 'Sleep & Recovery', icon: '😴', description: 'Better rest and recovery' }
-  ];
-
-  const difficulties = [
-    { id: 'beginner', name: 'Beginner', description: 'Easy to start, low commitment', color: 'green' },
-    { id: 'intermediate', name: 'Intermediate', description: 'Moderate effort required', color: 'yellow' },
-    { id: 'advanced', name: 'Advanced', description: 'Challenging, high commitment', color: 'red' }
-  ];
 
   const equipment = [
     { id: 'none', name: 'No Equipment', description: 'Can be done anywhere' },

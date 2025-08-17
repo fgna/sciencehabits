@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { User } from '../../types';
 import { Button } from '../ui';
 import { useUserStore } from '../../stores/userStore';
-import { Goal, getAvailableGoalsForProfile } from '../../services/goalsService';
+import { AppGoal, loadMainGoals } from '../../config/goals';
+import { getTimeOptions, getSupportedLanguages, TimeOption, Language } from '../../config/ui';
+import { dbHelpers } from '../../services/storage/database';
 
 interface ProfileSettingsProps {
   user: User;
@@ -19,17 +21,16 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
   
   const [isLoading, setIsLoading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
-  const [availableGoals, setAvailableGoals] = useState<Goal[]>([]);
+  const [availableGoals, setAvailableGoals] = useState<AppGoal[]>([]);
   const [goalsLoading, setGoalsLoading] = useState(true);
-  const { updateUser } = useUserStore();
+  const [timeOptions, setTimeOptions] = useState<TimeOption[]>([]);
+  const [languages, setLanguages] = useState<Language[]>([]);
+  const [configLoading, setConfigLoading] = useState(true);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { updateUser, clearUser } = useUserStore();
 
 
-  const timeOptions = [
-    { id: 'morning', label: 'Morning Person', description: 'I prefer starting my day with habits' },
-    { id: 'lunch', label: 'Midday Focus', description: 'I work best during lunch breaks' },
-    { id: 'evening', label: 'Evening Routine', description: 'I like to wind down with habits' },
-    { id: 'flexible', label: 'Flexible', description: 'I can adapt to any time' }
-  ];
 
   useEffect(() => {
     const originalData = {
@@ -46,17 +47,34 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
 
   useEffect(() => {
     loadAvailableGoals();
-  }, [user.isPremium]);
+    loadUIConfiguration();
+  }, []);
 
   const loadAvailableGoals = async () => {
     try {
       setGoalsLoading(true);
-      const goals = await getAvailableGoalsForProfile(user.isPremium);
+      const goals = await loadMainGoals();
       setAvailableGoals(goals);
     } catch (error) {
       console.error('Failed to load goals:', error);
     } finally {
       setGoalsLoading(false);
+    }
+  };
+
+  const loadUIConfiguration = async () => {
+    try {
+      setConfigLoading(true);
+      const [timeOpts, langs] = await Promise.all([
+        getTimeOptions(),
+        getSupportedLanguages()
+      ]);
+      setTimeOptions(timeOpts);
+      setLanguages(langs);
+    } catch (error) {
+      console.error('Failed to load UI configuration:', error);
+    } finally {
+      setConfigLoading(false);
     }
   };
 
@@ -81,20 +99,49 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
   };
 
   const handleGoalToggle = (goalId: string) => {
-    const goal = availableGoals.find(g => g.id === goalId);
-    
-    // Prevent selecting premium goals for non-premium users
-    if (goal?.tier === 'premium' && !user.isPremium) {
-      // Could show a modal here to upgrade to premium
-      return;
-    }
-    
     setFormData(prev => ({
       ...prev,
       goals: prev.goals.includes(goalId)
         ? prev.goals.filter(g => g !== goalId)
         : [...prev.goals, goalId]
     }));
+  };
+
+  const handleDeleteAllData = async () => {
+    try {
+      setIsDeleting(true);
+      
+      // Clear all data from IndexedDB
+      await dbHelpers.clearAllData();
+      
+      // Clear user state
+      clearUser();
+      
+      // Clear any localStorage items related to the app
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('sciencehabits') || 
+            key.startsWith('habit') || 
+            key.startsWith('user') ||
+            key.startsWith('analytics') ||
+            key.startsWith('onboarding')) {
+          localStorage.removeItem(key);
+        }
+      });
+      
+      // Clear sessionStorage
+      sessionStorage.clear();
+      
+      // Reload the page to ensure fresh start
+      window.location.reload();
+      
+    } catch (error) {
+      console.error('Failed to delete all data:', error);
+      alert('Failed to delete all data. Please try again.');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
   };
 
   return (
@@ -139,15 +186,11 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
                   formData.goals.includes(goal.id)
                     ? 'border-primary-500 bg-primary-50 text-primary-700'
                     : 'border-gray-300 hover:border-gray-400'
-                } ${goal.tier === 'premium' && !user.isPremium ? 'opacity-60' : ''}`}
-                disabled={goal.tier === 'premium' && !user.isPremium}
+                }`}
               >
                 <span className="text-xl">{goal.icon}</span>
                 <div className="flex-1">
                   <span className="font-medium text-sm">{goal.title}</span>
-                  {goal.tier === 'premium' && !user.isPremium && (
-                    <span className="text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded-full ml-2">PRO</span>
-                  )}
                 </div>
                 {formData.goals.includes(goal.id) && (
                   <svg className="w-4 h-4 ml-auto text-primary-600" fill="currentColor" viewBox="0 0 20 20">
@@ -187,23 +230,35 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Preferred Time
           </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {timeOptions.map((option) => (
-              <button
-                key={option.id}
-                type="button"
-                onClick={() => setFormData(prev => ({ ...prev, preferredTime: option.id as any }))}
-                className={`p-3 rounded-lg border text-left transition-colors ${
-                  formData.preferredTime === option.id
-                    ? 'border-primary-500 bg-primary-50 text-primary-700'
-                    : 'border-gray-300 hover:border-gray-400'
-                }`}
-              >
-                <div className="font-medium text-sm">{option.label}</div>
-                <div className="text-xs text-gray-500 mt-1">{option.description}</div>
-              </button>
-            ))}
-          </div>
+          {configLoading ? (
+            <div className="text-center py-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600 mx-auto mb-2"></div>
+              <p className="text-sm text-gray-600">Loading options...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {timeOptions.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, preferredTime: option.id as any }))}
+                  className={`p-3 rounded-lg border text-left transition-colors ${
+                    formData.preferredTime === option.id
+                      ? 'border-primary-500 bg-primary-50 text-primary-700'
+                      : 'border-gray-300 hover:border-gray-400'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    <span className="text-lg">{option.icon}</span>
+                    <div>
+                      <div className="font-medium text-sm">{option.label}</div>
+                      <div className="text-xs text-gray-500 mt-1">{option.description}</div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -214,14 +269,78 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Language
           </label>
-          <select
-            value={formData.language}
-            onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value as 'en' | 'de' }))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-          >
-            <option value="en">English</option>
-            <option value="de">Deutsch</option>
-          </select>
+          {configLoading ? (
+            <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50">
+              Loading languages...
+            </div>
+          ) : (
+            <select
+              value={formData.language}
+              onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value as 'en' | 'de' }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              {languages.map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.flag} {lang.nativeName}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+      </div>
+
+      {/* Data Management */}
+      <div className="space-y-4 border-t border-gray-200 pt-6">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Data Management</h3>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-start space-x-3">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h4 className="text-sm font-medium text-red-800">Delete All Personal Data</h4>
+              <p className="text-sm text-red-700 mt-1">
+                This will permanently delete all your habits, progress, analytics, and personal settings. 
+                This action cannot be undone and will restart the app as if you're a new user.
+              </p>
+              <div className="mt-3">
+                {!showDeleteConfirm ? (
+                  <Button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    variant="outline"
+                    className="text-red-700 border-red-300 hover:bg-red-100"
+                  >
+                    Delete All Data
+                  </Button>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-sm font-medium text-red-800">
+                      Are you absolutely sure? This action is irreversible.
+                    </p>
+                    <div className="flex space-x-3">
+                      <Button
+                        onClick={handleDeleteAllData}
+                        disabled={isDeleting}
+                        className="bg-red-600 hover:bg-red-700 text-white"
+                      >
+                        {isDeleting ? 'Deleting...' : 'Yes, Delete Everything'}
+                      </Button>
+                      <Button
+                        onClick={() => setShowDeleteConfirm(false)}
+                        variant="outline"
+                        disabled={isDeleting}
+                        className="text-gray-700 border-gray-300"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

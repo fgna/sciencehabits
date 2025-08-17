@@ -1,0 +1,26 @@
+[
+  {
+    "habitId": "sleep_001_478_breathing",
+    "priority": 1,
+    "confidence": 0.95,
+    "reason": "Proven technique for faster sleep onset and relaxation"
+  },
+  {
+    "habitId": "sleep_002_room_cooling",
+    "priority": 2,
+    "confidence": 0.90,
+    "reason": "Optimal temperature for enhanced sleep quality and duration"
+  },
+  {
+    "habitId": "sleep_017_sleep_restriction_check",
+    "priority": 3,
+    "confidence": 0.85,
+    "reason": "CBT-I technique for improving sleep efficiency"
+  },
+  {
+    "habitId": "sleep_016_cognitive_shuffling",
+    "priority": 4,
+    "confidence": 0.80,
+    "reason": "Effective for racing thoughts and pre-sleep anxiety"
+  }
+]

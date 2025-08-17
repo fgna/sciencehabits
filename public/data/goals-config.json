@@ -1,0 +1,99 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-08-16",
+  "goals": [
+    {
+      "id": "better_sleep",
+      "title": "Better Sleep",
+      "description": "The keystone habit that affects everything else",
+      "icon": "🛏️",
+      "category": "sleep",
+      "priority": 1,
+      "tier": "free",
+      "researchLevel": "high",
+      "researchSummary": "Quality sleep is foundational for cognitive function, emotional regulation, immune health, and overall well-being. Poor sleep affects every aspect of life.",
+      "benefits": [
+        "Improved cognitive function",
+        "Better emotional regulation", 
+        "Stronger immune system",
+        "Enhanced physical recovery"
+      ],
+      "commonConcerns": [
+        {
+          "concern": "I have trouble falling asleep",
+          "response": "Start with a simple wind-down routine 30 minutes before bed. Even basic changes can significantly improve sleep quality."
+        }
+      ],
+      "timeToResults": {
+        "initial": "3-7 days",
+        "significant": "2-4 weeks"
+      },
+      "averageTimeCommitment": {
+        "min": 5,
+        "max": 20
+      }
+    },
+    {
+      "id": "get_moving",
+      "title": "Get Moving",
+      "description": "Physical health with broad accessibility",
+      "icon": "🚶‍♀️",
+      "category": "movement",
+      "priority": 2,
+      "tier": "free",
+      "researchLevel": "high",
+      "researchSummary": "Regular movement and exercise improve cardiovascular health, mental well-being, cognitive function, and longevity. Even light activity provides significant benefits.",
+      "benefits": [
+        "Improved cardiovascular health",
+        "Enhanced mood",
+        "Better energy levels",
+        "Stronger bones and muscles"
+      ],
+      "commonConcerns": [
+        {
+          "concern": "I don't have time for long workouts",
+          "response": "Start with just 5-10 minutes of walking or stretching. Small amounts of movement still provide meaningful health benefits."
+        }
+      ],
+      "timeToResults": {
+        "initial": "1-2 weeks",
+        "significant": "4-8 weeks"
+      },
+      "averageTimeCommitment": {
+        "min": 5,
+        "max": 30
+      }
+    },
+    {
+      "id": "feel_better",
+      "title": "Feel Better", 
+      "description": "Mood and mental wellness for immediate wins",
+      "icon": "😊",
+      "category": "wellbeing",
+      "priority": 3,
+      "tier": "free",
+      "researchLevel": "high",
+      "researchSummary": "Simple practices like gratitude, breathing exercises, and positive social connections provide immediate mood benefits and build long-term emotional resilience.",
+      "benefits": [
+        "Improved mood",
+        "Reduced stress",
+        "Better relationships",
+        "Increased life satisfaction"
+      ],
+      "commonConcerns": [
+        {
+          "concern": "I feel overwhelmed and don't know where to start",
+          "response": "Start with one small practice like writing down 3 things you're grateful for. Small wins build momentum."
+        }
+      ],
+      "timeToResults": {
+        "initial": "1-3 days",
+        "significant": "2-4 weeks"
+      },
+      "averageTimeCommitment": {
+        "min": 3,
+        "max": 15
+      }
+    }
+  ]
+}

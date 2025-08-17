@@ -195,28 +195,15 @@ export function PreferencesStep() {
         </div>
       </div>
 
-      <div className="flex gap-3 mt-8">
-        <Button 
-          variant="outline" 
-          onClick={previousStep}
-          className="flex-1"
-        >
-          Back
-        </Button>
-        
-        <Button 
-          onClick={handleContinue}
-          disabled={!canContinue}
-          className="flex-1"
-        >
-          See My Habits
-        </Button>
-      </div>
-      
-      {!canContinue && (
-        <p className="text-center text-sm text-gray-500 mt-2">
-          Please complete all sections to continue
-        </p>
+      {canContinue && (
+        <div className="text-center mt-8">
+          <Button 
+            onClick={handleContinue}
+            className="px-8 py-3"
+          >
+            See My Habits
+          </Button>
+        </div>
       )}
     </div>
   );
