@@ -104,11 +104,23 @@ export function HabitsView() {
   const handleViewResearch = (habitId: string) => {
     const habit = userHabits.find(h => h.id === habitId);
     if (habit) {
+      // Generate research IDs based on habit content if researchIds don't exist
+      let researchIds = habit.researchIds || [];
+      
+      // If no explicit research IDs, create fallback based on habit's research content
+      if (researchIds.length === 0) {
+        // For science-backed habits, show the general habit formation research
+        // In the future, this can be enhanced with proper research linking
+        if (habit.researchBacked) {
+          researchIds = ['habit-formation-overview'];
+        }
+      }
+      
       setResearchModal({
         isOpen: true,
         habitId: habit.id,
         habitTitle: habit.title,
-        researchIds: habit.researchIds || []
+        researchIds: researchIds
       });
     }
   };

@@ -115,6 +115,15 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
     if (!currentUser) return;
     
     try {
+      // Check if progress already exists for this habit
+      const existingProgress = await dbHelpers.getProgress(currentUser.id, habit.id);
+      
+      if (existingProgress) {
+        console.log('Habit already being tracked:', habit.title);
+        setError('This habit is already being tracked.');
+        return;
+      }
+      
       // Create progress tracking for this habit for the current user
       await dbHelpers.createProgress(currentUser.id, habit.id);
       
