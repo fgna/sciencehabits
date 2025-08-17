@@ -122,7 +122,8 @@ export interface BehaviorEvent {
   userId: string;
   action: string;
   data: any;
-  timestamp: string;
+  timestamp: number;
+  page?: string;
 }
 
 export interface UserTestingContext {

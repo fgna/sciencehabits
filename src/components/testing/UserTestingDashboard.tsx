@@ -11,6 +11,7 @@ import { mockUserDataService } from '../../services/testing/MockUserDataService'
 import { UserScenarioSelector } from './UserScenarioSelector';
 import { UserJourneyVisualization } from './UserJourneyVisualization';
 import { AppPreviewWithContext } from './AppPreviewWithContext';
+import { ActualAppPreview } from './ActualAppPreview';
 
 interface UserTestingDashboardProps {
   isActive?: boolean;
@@ -22,7 +23,7 @@ export const UserTestingDashboard: React.FC<UserTestingDashboardProps> = ({
   onClose
 }) => {
   const [testingContext, setTestingContext] = useState<UserTestingContext>(mockUserDataService.getTestingContext());
-  const [currentView, setCurrentView] = useState<'selector' | 'preview' | 'analytics'>('selector');
+  const [currentView, setCurrentView] = useState<'selector' | 'preview' | 'actual-app' | 'analytics'>('selector');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [behaviorAnalytics, setBehaviorAnalytics] = useState(mockUserDataService.getBehaviorAnalytics());
 
@@ -132,7 +133,8 @@ export const UserTestingDashboard: React.FC<UserTestingDashboardProps> = ({
             <nav className="flex space-x-1">
               {[
                 { key: 'selector', label: '👥 User Scenarios', disabled: false },
-                { key: 'preview', label: '📱 App Preview', disabled: !testingContext.currentUser },
+                { key: 'preview', label: '📱 Mock Preview', disabled: !testingContext.currentUser },
+                { key: 'actual-app', label: '🎯 Actual App View', disabled: false },
                 { key: 'analytics', label: '📊 Analytics', disabled: !testingContext.isTestingMode }
               ].map(({ key, label, disabled }) => (
                 <button
@@ -286,6 +288,15 @@ export const UserTestingDashboard: React.FC<UserTestingDashboardProps> = ({
                 user={testingContext.currentUser}
                 onBehaviorEvent={handleBehaviorEvent}
                 isRecording={testingContext.isTestingMode}
+              />
+            </div>
+          )}
+
+          {currentView === 'actual-app' && (
+            <div className="h-full overflow-hidden">
+              <ActualAppPreview
+                testingContext={testingContext}
+                onBehaviorEvent={handleBehaviorEvent}
               />
             </div>
           )}

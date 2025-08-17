@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../ui';
 import { HabitsView } from '../habits';
+import { HabitsCarousel } from '../habits/HabitsCarousel';
 import { AnalyticsView } from '../analytics/AnalyticsView';
 import { ResponsiveAnalyticsView } from '../analytics/ResponsiveAnalyticsView';
 import { ProfileModal } from '../profile';
@@ -272,7 +273,25 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
         
         <main className="flex-1">
           {simplifiedTab === 'today' && <SimplifiedDashboard />}
-          {simplifiedTab === 'habits' && <HabitsView />}
+          {simplifiedTab === 'habits' && (
+            <div className="p-6">
+              <HabitsCarousel 
+                habits={userHabits.length > 0 ? userHabits : []}
+                onHabitToggle={(habitId) => {
+                  console.log('Habit toggle:', habitId);
+                  // TODO: Implement habit completion logic
+                }}
+                onHideHabit={(habitId) => {
+                  console.log('Hide habit:', habitId);
+                  // TODO: Implement hide habit logic
+                }}
+                onAddHabit={() => {
+                  console.log('Add habit clicked');
+                  // TODO: Implement add habit modal
+                }}
+              />
+            </div>
+          )}
           {simplifiedTab === 'analytics' && <ResponsiveAnalyticsView />}
           {simplifiedTab === 'settings' && (
             <div className="max-w-4xl mx-auto p-6">
@@ -318,7 +337,6 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
               {/* Profile Tab */}
               {settingsTab === 'profile' && (
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-6">👤 Profile</h2>
                   {currentUser ? (
                     <ProfileSettings user={currentUser} />
                   ) : (
@@ -635,7 +653,6 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
             {/* Profile Tab */}
             {settingsTab === 'profile' && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">👤 Profile</h2>
                 {currentUser ? (
                   <ProfileSettings user={currentUser} />
                 ) : (

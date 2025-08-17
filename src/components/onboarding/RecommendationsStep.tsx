@@ -4,6 +4,7 @@ import { useOnboardingStore } from '../../stores/onboardingStore';
 import { Habit } from '../../types';
 import { dbHelpers } from '../../services/storage/database';
 import goalBasedRecommendations, { GoalBasedHabit } from '../../services/goalBasedRecommendations';
+import { joinGoalTags } from '../../utils/goalTagHelpers';
 
 interface HabitCardProps {
   habit: Habit & { researchSummary?: string };
@@ -128,7 +129,7 @@ function HabitCard({ habit, isSelected, onToggle, recommendation, isTop3Recommen
       {/* Bottom action area */}
       <div className="flex items-center justify-between pt-2 border-t border-gray-100">
         <div className="text-xs text-gray-500">
-          {habit.goalTags.slice(0, 2).join(', ')}
+          {joinGoalTags(habit.goalTags.slice(0, 2))}
         </div>
         <button
           className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
