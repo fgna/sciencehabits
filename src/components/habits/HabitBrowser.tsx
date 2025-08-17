@@ -84,9 +84,12 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
     
     // Filter by selected goal
     if (selectedGoal && selectedGoal !== 'all') {
-      filtered = filtered.filter(habit => 
-        habit.goalTags && habit.goalTags.includes(selectedGoal)
-      );
+      filtered = filtered.filter(habit => {
+        // Check both category and goalTags for matches
+        const matchesCategory = habit.category === selectedGoal;
+        const matchesGoalTags = habit.goalTags && habit.goalTags.includes(selectedGoal);
+        return matchesCategory || matchesGoalTags;
+      });
     }
     
     // Filter out habits user already has
