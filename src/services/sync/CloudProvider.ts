@@ -81,7 +81,7 @@ export abstract class BaseCloudProvider implements CloudProvider {
     maxRetries: number = 3,
     baseDelay: number = 1000
   ): Promise<T> {
-    let lastError: Error;
+    let lastError: Error = new Error('Operation failed');
     
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
@@ -106,6 +106,6 @@ export abstract class BaseCloudProvider implements CloudProvider {
       }
     }
     
-    throw lastError!;
+    throw new Error(lastError?.message || 'Operation failed after all retries');
   }
 }
