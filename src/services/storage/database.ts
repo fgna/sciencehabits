@@ -66,19 +66,33 @@ export async function initializeDatabase() {
     const currentVersion = localStorage.getItem('sciencehabits_data_version');
     const expectedVersion = '4.3'; // Fixed obsolete categories and updated bundled content
     
+    console.log('🔧 Database initialization:', { currentVersion, expectedVersion });
+    
     if (currentVersion !== expectedVersion) {
-      console.log('Data version mismatch, clearing and reloading data...');
+      console.log('🔄 Data version mismatch, clearing and reloading data...');
+      console.log('📊 Before clear - habit count:', await db.habits.count());
       await db.habits.clear();
       await db.research.clear();
       localStorage.setItem('sciencehabits_data_version', expectedVersion);
+      console.log('✅ Database cleared and version updated');
     }
     
     // Check if habits already exist
     const habitCount = await db.habits.count();
+    console.log('📊 Current habit count in database:', habitCount);
+    
     if (habitCount === 0) {
+      console.log('📥 Loading initial habits and research data...');
       // Load initial habits and research data
       const { loadInitialData } = await import('../../data/loader');
       await loadInitialData();
+      
+      const newHabitCount = await db.habits.count();
+      console.log('✅ Data loaded, new habit count:', newHabitCount);
+    } else {
+      // Log some sample habits to see what's in the database
+      const sampleHabits = await db.habits.limit(3).toArray();
+      console.log('🔍 Sample habits in database:', sampleHabits.map(h => ({ id: h.id, title: h.title, category: h.category })));
     }
   } catch (error) {
     console.error('Failed to initialize database:', error);
