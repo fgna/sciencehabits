@@ -32,10 +32,11 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const { currentUser, userHabits, refreshProgress } = useUserStore();
+  const { currentUser, userHabits, refreshProgress, loadUserData } = useUserStore();
 
   // Clear messages on user actions (matches existing failure message behavior)
   const clearMessages = useCallback(() => {
+    console.log('🔍 clearMessages called - clearing both error and success messages');
     setError(null);
     setSuccessMessage(null);
   }, []);
@@ -44,17 +45,17 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
     if (!currentUser) return;
     
     setIsLoading(true);
-    clearMessages();
     
     try {
       // Initialize database first to ensure bundled content is loaded
       await dbHelpers.initializeDatabase();
       
-      // Get all science-backed habits from the system
+      // Get all science-backed habits from the system (exclude custom habits)
       const allHabits = await dbHelpers.getAllHabits();
+      const scienceBackedHabits = allHabits.filter(habit => !habit.isCustom);
       
       // Sort by category and name for consistent display
-      const sortedHabits = allHabits.sort((a, b) => {
+      const sortedHabits = scienceBackedHabits.sort((a, b) => {
         if (a.category !== b.category) {
           return a.category.localeCompare(b.category);
         }
@@ -62,14 +63,14 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
       });
       
       setAvailableHabits(sortedHabits);
-      console.log(`📚 Loaded ${sortedHabits.length} available habits`);
+      console.log(`📚 Loaded ${allHabits.length} total habits, ${sortedHabits.length} science-backed habits available for browsing`);
     } catch (error) {
       console.error('Failed to load available habits:', error);
       setError('Failed to load habits. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  }, [currentUser, clearMessages]);
+  }, [currentUser]);
 
   const loadUserGoals = useCallback(async () => {
     if (!currentUser) return;
@@ -101,10 +102,13 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
     
     // Filter out habits user already has
     const userHabitIds = new Set(userHabits.map(h => h.id));
+    const beforeFiltering = filtered.length;
     filtered = filtered.filter(habit => !userHabitIds.has(habit.id));
     
     setFilteredHabits(filtered);
-    console.log(`🔍 Filtered to ${filtered.length} habits (goal: ${selectedGoal || 'all'})`);
+    console.log(`🔍 Filtering habits: ${beforeFiltering} available → ${filtered.length} after removing user habits`);
+    console.log(`🔍 User has ${userHabits.length} habits:`, userHabitIds);
+    console.log(`🔍 Showing ${filtered.length} habits for goal: ${selectedGoal || 'all'}`);
   }, [availableHabits, selectedGoal, userHabits]);
 
   useEffect(() => {
@@ -118,21 +122,17 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
     filterHabits();
   }, [filterHabits]);
 
-  // Fallback auto-dismiss success message after 10 seconds
+  // Debug: Monitor success message changes
   useEffect(() => {
-    if (successMessage) {
-      const timer = setTimeout(() => {
-        setSuccessMessage(null);
-      }, 10000);
-      return () => clearTimeout(timer);
-    }
+    console.log('🔍 Success message changed:', successMessage ? `"${successMessage}"` : 'null');
   }, [successMessage]);
+
 
   const handleAddHabit = async (habit: Habit) => {
     if (!currentUser) return;
     
-    // Clear any existing messages
-    clearMessages();
+    // Clear only error messages, keep success messages
+    setError(null);
     
     try {
       // Check if progress already exists for this habit
@@ -147,14 +147,22 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
       // Create progress tracking for this habit for the current user
       await dbHelpers.createProgress(currentUser.id, habit.id);
       
-      // Show success message
+      // Show success message FIRST, before any data refreshing
+      console.log('✅ Setting success message: Habit added successfully!');
       setSuccessMessage('Habit added successfully!');
       
-      // Refresh available habits to remove the newly added one from the list
-      await loadAvailableHabits();
-      await refreshProgress();
-      
       console.log('✅ Habit added successfully:', habit.title);
+      
+      // Manually remove the habit from filteredHabits to provide immediate feedback
+      setFilteredHabits(prev => prev.filter(h => h.id !== habit.id));
+      
+      // Delay user data refresh to prevent interference with success message
+      setTimeout(() => {
+        loadUserData(currentUser.id).catch(error => {
+          console.error('Failed to refresh user data:', error);
+        });
+      }, 500); // Small delay to let success message render
+      
     } catch (error) {
       console.error('Failed to add habit:', error);
       setError('Failed to add habit. Please try again.');
@@ -189,11 +197,22 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
             role="alert"
             aria-live="polite"
           >
-            <div className="flex items-center">
-              <svg className="w-4 h-4 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <p className="text-green-700 text-sm">{successMessage}</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <svg className="w-4 h-4 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <p className="text-green-700 text-sm">{successMessage}</p>
+              </div>
+              <button
+                onClick={() => setSuccessMessage(null)}
+                className="ml-2 text-green-400 hover:text-green-600 focus:outline-none"
+                aria-label="Dismiss success message"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
             </div>
           </div>
         )}
@@ -208,7 +227,9 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
               <button
                 key={goal.id}
                 onClick={() => {
-                  clearMessages();
+                  console.log('🔍 Goal filter clicked:', goal.id, 'NOT clearing success messages');
+                  // Only clear error messages, preserve success messages
+                  setError(null);
                   setSelectedGoal(goal.id);
                 }}
                 className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
@@ -266,7 +287,14 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
         )}
 
         <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
-          <Button variant="outline" onClick={onClose}>
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              console.log('🔍 Modal closing, clearing success message');
+              setSuccessMessage(null);
+              onClose();
+            }}
+          >
             Close
           </Button>
         </div>

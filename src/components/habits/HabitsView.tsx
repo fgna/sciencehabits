@@ -59,6 +59,9 @@ export function HabitsView() {
     if (currentUser) {
       await refreshProgress();
       await loadCustomHabits(currentUser.id);
+      // Also refresh user data to ensure immediate display
+      const { loadUserData } = useUserStore.getState();
+      await loadUserData(currentUser.id);
     }
     
     // Hide success message after 3 seconds
@@ -113,9 +116,13 @@ export function HabitsView() {
         setSuccessMessage(null);
       }, 3000);
       
+      // Refresh all user data to ensure both science-backed and custom habits are updated
       await refreshProgress();
       if (currentUser) {
         await loadCustomHabits(currentUser.id);
+        // Also refresh user data to update science-backed habits list
+        const { loadUserData } = useUserStore.getState();
+        await loadUserData(currentUser.id);
       }
     }
     

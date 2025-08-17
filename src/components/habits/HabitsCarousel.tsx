@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Habit } from '../../types';
 import bundledHabits from '../../data/bundled/habits/all.json';
+import { useUserStore } from '../../stores/userStore';
 
 // Format category names from snake_case to proper titles
 const formatCategoryName = (category: string): string => {
@@ -44,6 +45,21 @@ export function HabitsCarousel({
 }: HabitsCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // Get user progress data for calculating real streaks and totals
+  const { userProgress } = useUserStore();
+  
+  // Helper function to get progress data for a habit
+  const getHabitProgress = (habitId: string) => {
+    return userProgress.find(p => p.habitId === habitId);
+  };
+  
+  // Helper function to check if habit is completed today
+  const isHabitCompletedToday = (habitId: string) => {
+    const today = new Date().toISOString().split('T')[0];
+    const progress = getHabitProgress(habitId);
+    return progress?.completions.includes(today) || false;
+  };
 
   // 🔍 EXTENSIVE DEBUGGING: Check habit data structure
   console.log('🔍 HabitsCarousel received habits:', habits.length, habits);
@@ -125,11 +141,20 @@ export function HabitsCarousel({
     console.log('  - Original sources:', habit.sources);
     console.log('  - Original instructions:', habit.instructions);
     
+    // Get real progress data for this habit
+    const progress = getHabitProgress(habit.id);
+    
+    // 🔍 DEBUG: Log progress data for this habit
+    console.log(`🔍 Progress for habit ${habit.id}:`, progress);
+    console.log(`  - Current streak: ${progress?.currentStreak || 0}`);
+    console.log(`  - Total days: ${progress?.totalDays || 0}`);
+    console.log(`  - Completed today: ${isHabitCompletedToday(habit.id)}`);
+    
     const enhanced = {
       ...habit,
-      completed: Math.random() > 0.5,
-      streak: Math.floor(Math.random() * 20) + 1,
-      totalSessions: Math.floor(Math.random() * 100) + 10,
+      completed: isHabitCompletedToday(habit.id),
+      streak: progress?.currentStreak || 0,
+      totalSessions: progress?.totalDays || 0,
       researchData: {
         keyFindings: habit.researchSummary || `Clinical research on ${formatCategoryName(habit.category).toLowerCase()} shows promising results`,
         mechanismOfAction: habit.whyEffective || `Research on ${formatCategoryName(habit.category).toLowerCase()} benefits is ongoing`,
@@ -423,7 +448,7 @@ function HabitCard({
               </div>
               <div className="flex items-center gap-1">
                 <span className="text-xs font-bold text-blue-600">{habit.totalSessions}</span>
-                <span className="text-xs text-gray-500">sessions</span>
+                <span className="text-xs text-gray-500">total</span>
               </div>
             </div>
           </div>

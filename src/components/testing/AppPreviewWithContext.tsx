@@ -36,7 +36,7 @@ export const AppPreviewWithContext: React.FC<AppPreviewWithContextProps> = ({
         sessionDuration: Date.now() - sessionStartTime,
         totalInteractions: interactions
       },
-      timestamp: new Date().toISOString()
+      timestamp: Date.now()
     };
     
     onBehaviorEvent(event);

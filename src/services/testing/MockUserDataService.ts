@@ -92,7 +92,7 @@ class MockUserDataService {
         userScenario: this.currentUser.scenario,
         engagementLevel: this.currentUser.behavior.engagementLevel
       },
-      timestamp: new Date().toISOString()
+      timestamp: Date.now()
     };
 
     this.behaviorEvents.push(event);

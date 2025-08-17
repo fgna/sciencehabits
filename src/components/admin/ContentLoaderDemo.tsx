@@ -393,7 +393,7 @@ export function ContentLoaderDemo() {
                       <div className="font-medium text-blue-900">{habit.title}</div>
                       <div className="text-sm text-blue-700">{habit.description}</div>
                       <div className="text-xs text-blue-600 mt-1">
-                        {habit.timeMinutes} min • {habit.difficulty} • {habit.goalTags?.join(', ')}
+                        {habit.timeMinutes} min • {habit.difficulty} • {habit.goalTags ? habit.goalTags.map(tag => tag.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())).join(', ') : ''}
                       </div>
                     </div>
                   ))}
