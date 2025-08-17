@@ -501,16 +501,20 @@ function calculateCategoryPerformance(
     );
     const averageCompletionRate = completionRates.reduce((sum, rate) => sum + rate, 0) / completionRates.length;
 
-    const bestPerforming = categoryHabits.reduce((best, current) => 
-      current.completions.length > best.completions.length ? current : best
-    );
+    const bestPerforming = categoryHabits.length > 0 
+      ? categoryHabits.reduce((best, current) => 
+          current.completions.length > best.completions.length ? current : best
+        )
+      : null;
 
-    const mostConsistent = categoryHabits.reduce((best, current) => 
-      current.currentStreak > best.currentStreak ? current : best
-    );
+    const mostConsistent = categoryHabits.length > 0 
+      ? categoryHabits.reduce((best, current) => 
+          current.currentStreak > best.currentStreak ? current : best
+        )
+      : null;
 
-    const bestHabit = habits.find(h => h.id === bestPerforming.habitId);
-    const consistentHabit = habits.find(h => h.id === mostConsistent.habitId);
+    const bestHabit = bestPerforming ? habits.find(h => h.id === bestPerforming.habitId) : null;
+    const consistentHabit = mostConsistent ? habits.find(h => h.id === mostConsistent.habitId) : null;
 
     return {
       category,

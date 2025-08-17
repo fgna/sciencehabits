@@ -278,7 +278,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
             <div className="max-w-4xl mx-auto p-6">
               <div className="mb-6">
                 <h1 className="text-2xl font-bold text-gray-900 mb-2">Settings</h1>
-                <p className="text-gray-600">Manage your app preferences and cloud sync</p>
+                <p className="text-gray-600">Manage your account and cloud sync</p>
               </div>
               
               <SettingsNavigation 
@@ -318,7 +318,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
               {/* Profile Tab */}
               {settingsTab === 'profile' && (
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-6">👤 Profile & Preferences</h2>
+                  <h2 className="text-lg font-semibold text-gray-900 mb-6">👤 Profile</h2>
                   {currentUser ? (
                     <ProfileSettings user={currentUser} />
                   ) : (
@@ -595,7 +595,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
           <div className="max-w-4xl mx-auto p-6">
             <div className="mb-6">
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Settings</h1>
-              <p className="text-gray-600">Manage your app preferences and cloud sync</p>
+              <p className="text-gray-600">Manage your account and cloud sync</p>
             </div>
             
             <SettingsNavigation 
@@ -635,7 +635,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
             {/* Profile Tab */}
             {settingsTab === 'profile' && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-6">👤 Profile & Preferences</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-6">👤 Profile</h2>
                 {currentUser ? (
                   <ProfileSettings user={currentUser} />
                 ) : (
