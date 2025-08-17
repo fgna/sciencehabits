@@ -54,8 +54,12 @@ export function HabitBrowser({ isOpen, onClose, currentUserHabits }: HabitBrowse
     setError(null);
     
     try {
+      // Initialize database first to ensure bundled content is loaded
+      await dbHelpers.initializeDatabase();
+      
       // Get all science-backed habits from the system
       const allHabits = await dbHelpers.getAllHabits();
+      console.log('[HabitBrowser] Found habits in database:', allHabits.length);
       
       // Filter out custom habits and habits the user is already tracking
       const currentHabitIds = new Set(currentUserHabits.map(h => h.id));
@@ -63,6 +67,7 @@ export function HabitBrowser({ isOpen, onClose, currentUserHabits }: HabitBrowse
         !habit.isCustom && !currentHabitIds.has(habit.id)
       );
       
+      console.log('[HabitBrowser] Available habits after filtering:', available.length);
       setAvailableHabits(available);
     } catch (error) {
       console.error('Failed to load available habits:', error);
@@ -74,8 +79,8 @@ export function HabitBrowser({ isOpen, onClose, currentUserHabits }: HabitBrowse
 
   const loadUserGoals = async () => {
     try {
-      // Load goals.json to get goal details
-      const response = await fetch('/data/goals.json');
+      // Load goals-config.json to get goal details
+      const response = await fetch('/data/goals-config.json');
       const goalsData = await response.json();
       
       if (currentUser && currentUser.goals) {
@@ -94,28 +99,33 @@ export function HabitBrowser({ isOpen, onClose, currentUserHabits }: HabitBrowse
     let filtered = availableHabits;
     
     if (selectedGoal !== 'all') {
-      // Map goal IDs to their corresponding tags/keywords that might appear in goalTags
-      const goalTagMappings: Record<string, string[]> = {
-        'reduce_stress': ['stress', 'relaxation', 'mindfulness', 'meditation', 'anxiety'],
-        'increase_focus': ['focus', 'concentration', 'attention', 'productivity', 'cognitive'],
-        'improve_mood': ['mood', 'happiness', 'depression', 'emotional', 'wellbeing'],
-        'increase_energy': ['energy', 'fatigue', 'vitality', 'motivation'],
-        'improve_health': ['health', 'fitness', 'nutrition', 'exercise', 'wellness'],
-        'better_sleep': ['sleep', 'insomnia', 'rest', 'recovery']
-      };
-      
-      const relevantTags = goalTagMappings[selectedGoal] || [selectedGoal];
-      
+      // Filter habits by category (which directly matches goal IDs) or goalTags
       filtered = availableHabits.filter(habit => {
-        if (!habit.goalTags) return false;
+        // First check if category matches the selected goal
+        if (habit.category === selectedGoal) {
+          return true;
+        }
         
-        // Check if any of the habit's goalTags match the selected goal's keywords
-        return habit.goalTags.some(tag => 
-          relevantTags.some(relevantTag => 
-            tag.toLowerCase().includes(relevantTag.toLowerCase()) ||
-            relevantTag.toLowerCase().includes(tag.toLowerCase())
-          )
-        );
+        // If no direct category match, check goalTags
+        if (habit.goalTags && habit.goalTags.length > 0) {
+          // Map goal IDs to their corresponding tags/keywords that might appear in goalTags
+          const goalTagMappings: Record<string, string[]> = {
+            'better_sleep': ['sleep', 'insomnia', 'rest', 'recovery', 'sleep_quality'],
+            'feel_better': ['mood', 'happiness', 'emotional', 'wellbeing', 'stress_reduction', 'anxiety_management'],
+            'get_moving': ['movement', 'exercise', 'fitness', 'physical', 'energy', 'cardiovascular']
+          };
+          
+          const relevantTags = goalTagMappings[selectedGoal] || [selectedGoal];
+          
+          return habit.goalTags.some(tag => 
+            relevantTags.some(relevantTag => 
+              tag.toLowerCase().includes(relevantTag.toLowerCase()) ||
+              relevantTag.toLowerCase().includes(tag.toLowerCase())
+            )
+          );
+        }
+        
+        return false;
       });
     }
     
