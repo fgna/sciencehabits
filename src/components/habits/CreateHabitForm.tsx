@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Textarea, Card, CardHeader, CardContent } from '../ui';
-import { useHabitStore, habitTemplates } from '../../stores/habitStore';
+import { useHabitStore } from '../../stores/habitStore';
 import { useUserStore } from '../../stores/userStore';
 import { lifestyleOptions, timePreferenceOptions } from '../../stores/onboardingStore';
 import { Goal, loadGoals, getAvailableGoals } from '../../services/goalsService';
@@ -14,7 +14,6 @@ interface CreateHabitFormProps {
 }
 
 export function CreateHabitForm({ onClose, onSuccess }: CreateHabitFormProps) {
-  const [showTemplates, setShowTemplates] = useState(false);
   const [currentStep, setCurrentStep] = useState<'basic' | 'frequency' | 'details' | 'preferences'>('basic');
   const [selectedFrequency, setSelectedFrequency] = useState<HabitFrequency>(createDefaultFrequency());
   const [availableGoals, setAvailableGoals] = useState<Goal[]>([]);
@@ -108,30 +107,6 @@ export function CreateHabitForm({ onClose, onSuccess }: CreateHabitFormProps) {
     }
   };
 
-  const handleTemplateSelect = (template: typeof habitTemplates[0]) => {
-    setFormData({
-      title: template.title,
-      description: template.description,
-      category: template.category,
-      timeMinutes: template.timeMinutes,
-      difficulty: template.difficulty,
-      instructions: template.instructions,
-      equipment: 'none',
-      goalTags: [],
-      lifestyleTags: ['professional', 'parent', 'student'],
-      timeTags: ['flexible']
-    });
-    setSelectedFrequency(createDefaultFrequency());
-    setShowTemplates(false);
-  };
-
-
-  const equipment = [
-    { id: 'none', name: 'No Equipment', description: 'Can be done anywhere' },
-    { id: 'minimal', name: 'Minimal Equipment', description: 'Basic items you likely have' },
-    { id: 'equipment', name: 'Special Equipment', description: 'Requires specific gear' }
-  ];
-
   const canProceed = () => {
     if (currentStep === 'basic') {
       return formData.title.trim() && formData.description.trim() && formData.timeMinutes > 0;
@@ -150,65 +125,6 @@ export function CreateHabitForm({ onClose, onSuccess }: CreateHabitFormProps) {
       case 'basic':
         return (
           <div className="space-y-6">
-            {/* Template suggestions */}
-            {!editingHabit && !showTemplates && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-sm font-medium text-blue-900">Need inspiration?</h4>
-                    <p className="text-sm text-blue-700">Choose from proven habit templates</p>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowTemplates(true)}
-                  >
-                    Browse Templates
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Template selection */}
-            {showTemplates && (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Habit Templates</h3>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowTemplates(false)}
-                    >
-                      ✕
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {habitTemplates.map((template, index) => (
-                      <div
-                        key={index}
-                        className="p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-primary-300 hover:bg-primary-50 transition-colors"
-                        onClick={() => handleTemplateSelect(template)}
-                      >
-                        <div className="font-medium text-gray-900">{template.title}</div>
-                        <div className="text-sm text-gray-600 mt-1">{template.description}</div>
-                        <div className="flex items-center space-x-2 mt-2 text-xs text-gray-500">
-                          <span>{template.timeMinutes} min</span>
-                          <span>•</span>
-                          <span className="capitalize">{template.difficulty}</span>
-                          <span>•</span>
-                          <span className="capitalize">{template.category}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Basic info form */}
             <div className="space-y-4">
@@ -243,22 +159,6 @@ export function CreateHabitForm({ onClose, onSuccess }: CreateHabitFormProps) {
                   max={120}
                 />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Equipment
-                  </label>
-                  <select
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
-                    value={formData.equipment}
-                    onChange={(e) => setFormData({ equipment: e.target.value as any })}
-                  >
-                    {equipment.map((eq) => (
-                      <option key={eq.id} value={eq.id}>
-                        {eq.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
             </div>
           </div>
