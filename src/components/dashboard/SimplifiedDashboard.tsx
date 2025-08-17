@@ -175,7 +175,7 @@ export function SimplifiedDashboard() {
                     title: habit.title,
                     duration: `${habit.timeMinutes} min`,
                     isCompleted: habit.isCompletedToday,
-                    instructions: habit.instructions,
+                    instructions: Array.isArray(habit.instructions) ? habit.instructions.join('\n') : habit.instructions,
                     whyEffective: habit.whyEffective
                   }}
                   onComplete={handleCompleteHabit}

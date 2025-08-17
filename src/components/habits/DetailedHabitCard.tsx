@@ -30,10 +30,9 @@ export const DetailedHabitCard: React.FC<DetailedHabitCardProps> = ({
   const hasResearch = habit.researchIds && habit.researchIds.length > 0;
   
   // Parse instructions into numbered steps
-  const instructionSteps = habit.instructions
-    .split('\n')
-    .filter(step => step.trim())
-    .map(step => step.replace(/^\d+\.\s*/, '').trim());
+  const instructionSteps = Array.isArray(habit.instructions) 
+    ? habit.instructions.filter(step => step.trim()).map(step => step.replace(/^\d+\.\s*/, '').trim())
+    : habit.instructions.split('\n').filter(step => step.trim()).map(step => step.replace(/^\d+\.\s*/, '').trim());
   
   const handleToggleComplete = () => {
     onComplete(habit.id);

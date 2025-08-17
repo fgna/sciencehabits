@@ -89,12 +89,44 @@ export function ResearchProvider({ children }: ResearchProviderProps) {
       // Try to load from bundled research data first
       try {
         const bundledResearch = await import('../data/bundled/research/all.json');
-        const loadedArticles = bundledResearch.data || [];
-        console.log(`📚 Successfully loaded ${loadedArticles.length} research articles from bundled data`);
+        const rawArticles = bundledResearch.data || [];
+        console.log(`📚 Successfully loaded ${rawArticles.length} research articles from bundled data`);
+        
+        // Convert simple research objects to full ResearchArticle format
+        const loadedArticles = rawArticles.map((article: any) => ({
+          id: article.id,
+          studyId: article.id,
+          title: article.title,
+          subtitle: article.summary || '',
+          category: article.category || 'general',
+          tags: [],
+          readingTime: 5,
+          difficulty: 'beginner' as const,
+          language: article.language || 'en',
+          publishedDate: new Date().toISOString().split('T')[0],
+          author: article.authors || 'Research Team',
+          relatedHabits: [],
+          keyTakeaways: [],
+          studyDetails: {
+            journal: article.journal || 'Research Journal',
+            year: article.year || new Date().getFullYear(),
+            sampleSize: article.sampleSize || 0,
+            studyType: article.evidenceLevel || 'review',
+            evidenceLevel: 'Level 3',
+            statisticalSignificance: article.pValue || 'N/A'
+          },
+          content: `# ${article.title}\n\n${article.summary || 'Research summary not available.'}`,
+          seo: {
+            metaTitle: article.title,
+            metaDescription: article.summary || '',
+            keywords: [],
+            canonicalUrl: ''
+          }
+        }));
         
         const sortedArticles = loadedArticles.sort((a: any, b: any) => {
-          const dateA = a.publishedDate ? new Date(a.publishedDate) : new Date(a.year || 0, 0, 1);
-          const dateB = b.publishedDate ? new Date(b.publishedDate) : new Date(b.year || 0, 0, 1);
+          const dateA = a.publishedDate ? new Date(a.publishedDate) : new Date(a.studyDetails?.year || 0, 0, 1);
+          const dateB = b.publishedDate ? new Date(b.publishedDate) : new Date(b.studyDetails?.year || 0, 0, 1);
           return dateB.getTime() - dateA.getTime();
         });
         

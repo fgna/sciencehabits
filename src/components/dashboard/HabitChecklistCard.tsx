@@ -148,7 +148,7 @@ export function HabitChecklistCard({ habit, progress, showActions, onEdit, onDel
 
         {/* Collapsible instructions */}
         <HabitInstructions 
-          instructions={habit.instructions}
+          instructions={Array.isArray(habit.instructions) ? habit.instructions.join('\n') : habit.instructions}
           isCompleted={isCompletedToday}
         />
         

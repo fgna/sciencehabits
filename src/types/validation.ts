@@ -51,7 +51,7 @@ export interface HabitWithResearch {
   timeMinutes: number;
   category: string;
   goalTags: string[];
-  instructions: string;
+  instructions: string | string[];
   researchIds: string[];
   isCustom: boolean;
   difficulty: string;

@@ -41,7 +41,7 @@ export interface CMSHabit {
   id: string;
   title: LocalizedField<string>;
   description: LocalizedField<string>;
-  instructions: LocalizedField<string>;
+  instructions: LocalizedField<string | string[]>;
   timeMinutes: number;
   category: string;
   goalTags: string[];

@@ -39,21 +39,15 @@ function HabitCard({ habit, isSelected, onToggle, recommendation, isTop3Recommen
     return colors[difficulty as keyof typeof colors] || 'text-gray-600 bg-gray-100';
   };
 
-  const getStarRating = (effectivenessScore: number) => {
-    if (effectivenessScore >= 9.0) return { stars: 5, label: 'Highly Effective', color: 'text-green-600' };
-    if (effectivenessScore >= 8.0) return { stars: 4, label: 'Very Effective', color: 'text-green-500' };
-    if (effectivenessScore >= 6.5) return { stars: 3, label: 'Moderately Effective', color: 'text-yellow-500' };
-    if (effectivenessScore >= 5.0) return { stars: 2, label: 'Somewhat Effective', color: 'text-orange-500' };
-    return { stars: 1, label: 'Emerging Evidence', color: 'text-red-500' };
+  const getEffectivenessRating = (effectivenessScore: number) => {
+    if (effectivenessScore >= 9.0) return { label: 'Highly Effective', color: 'text-green-600 bg-green-50' };
+    if (effectivenessScore >= 8.0) return { label: 'Very Effective', color: 'text-green-500 bg-green-50' };
+    if (effectivenessScore >= 6.5) return { label: 'Moderately Effective', color: 'text-yellow-600 bg-yellow-50' };
+    if (effectivenessScore >= 5.0) return { label: 'Somewhat Effective', color: 'text-orange-600 bg-orange-50' };
+    return { label: 'Emerging Evidence', color: 'text-red-600 bg-red-50' };
   };
 
-  const renderStars = (count: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <span key={i} className={i < count ? 'text-yellow-400' : 'text-gray-300'}>⭐</span>
-    ));
-  };
-
-  const effectivenessRating = getStarRating(habit.effectivenessScore || 7.0);
+  const effectivenessRating = getEffectivenessRating(habit.effectivenessScore || 7.0);
   const isPrimary = isTop3Recommended;
 
   return (
@@ -82,12 +76,9 @@ function HabitCard({ habit, isSelected, onToggle, recommendation, isTop3Recommen
               {habit.title}
             </h3>
             
-            {/* Star rating and effectiveness */}
-            <div className="flex items-center space-x-2 mb-2">
-              <div className="flex items-center">
-                {renderStars(effectivenessRating.stars)}
-              </div>
-              <span className={`text-sm font-medium ${effectivenessRating.color}`}>
+            {/* Effectiveness rating */}
+            <div className="mb-2">
+              <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${effectivenessRating.color} border border-current border-opacity-20`}>
                 {effectivenessRating.label}
               </span>
             </div>

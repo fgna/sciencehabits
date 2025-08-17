@@ -5,6 +5,7 @@ import { ResearchArticleCard } from '../ui/ResearchArticleCard';
 import { useResearch } from '../../contexts/ResearchContext';
 import { useUserStore } from '../../stores/userStore';
 import { researchEngagementService } from '../../services/analytics/ResearchEngagementService';
+import { ResearchArticle } from '../../types';
 
 // Helper functions for creating research content from habit data
 function createResearchContentFromHabit(habit: any): string {
@@ -84,7 +85,7 @@ export function HabitResearchModal({
   );
 
   // Handle synthetic research articles for habits with embedded research data
-  const syntheticArticles = researchIds
+  const syntheticArticles: ResearchArticle[] = researchIds
     .filter(id => id.endsWith('_research'))
     .map(id => {
       const habitIdFromResearch = id.replace('_research', '');
@@ -93,22 +94,32 @@ export function HabitResearchModal({
       if (habit && habit.researchBacked && (habit.researchSummary || habit.sources || habit.whyEffective)) {
         return {
           id: id,
+          studyId: id,
           title: `Research Supporting "${habit.title}"`,
           subtitle: habit.researchSummary || 'Scientific backing for this habit',
-          content: createResearchContentFromHabit(habit),
           category: habit.category,
-          studyDetails: habit.sources && habit.sources.length > 0 ? {
-            journal: extractJournalFromSource(habit.sources[0]),
-            year: extractYearFromSource(habit.sources[0]),
-            source: habit.sources[0]
-          } : null,
+          tags: [],
+          readingTime: 5,
+          difficulty: 'beginner' as const,
+          language: 'en',
+          publishedDate: new Date().toISOString().split('T')[0],
+          author: 'ScienceHabits Research Team',
+          relatedHabits: [habit.id],
           keyTakeaways: habit.progressionTips || [],
-          relatedHabits: [habit.id]
+          studyDetails: {
+            journal: habit.sources && habit.sources.length > 0 ? extractJournalFromSource(habit.sources[0]) : 'Research Journal',
+            year: habit.sources && habit.sources.length > 0 ? extractYearFromSource(habit.sources[0]) : new Date().getFullYear(),
+            sampleSize: 0,
+            studyType: 'review',
+            evidenceLevel: 'Level 3',
+            statisticalSignificance: 'N/A'
+          },
+          content: createResearchContentFromHabit(habit)
         };
       }
       return null;
     })
-    .filter(Boolean);
+    .filter(Boolean) as ResearchArticle[];
 
   // Combine real articles with synthetic articles
   relatedArticles = [...relatedArticles, ...syntheticArticles];

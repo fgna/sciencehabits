@@ -237,7 +237,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       category: habit.category,
       difficulty: habit.difficulty,
       equipment: habit.equipment,
-      instructions: habit.instructions,
+      instructions: Array.isArray(habit.instructions) ? habit.instructions.join('\n') : habit.instructions,
       goalTags: habit.goalTags,
       lifestyleTags: habit.lifestyleTags,
       timeTags: habit.timeTags

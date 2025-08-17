@@ -316,7 +316,10 @@ export class ContentValidator {
   private async validateContentQuality(habits: Habit[], research: ResearchStudy[]): Promise<void> {
     // Check for habits without instructions
     for (const habit of habits) {
-      if (!habit.instructions || habit.instructions.trim().length < 10) {
+      const instructionsText = Array.isArray(habit.instructions) 
+        ? habit.instructions.join(' ')
+        : habit.instructions;
+      if (!instructionsText || instructionsText.trim().length < 10) {
         await this.logger.logContentWarning({
           type: 'INCOMPLETE_DATA',
           category: 'incomplete_data',
