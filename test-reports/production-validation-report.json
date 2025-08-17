@@ -1,59 +1,58 @@
 {
-  "startTime": "2025-08-17T12:44:37.347Z",
+  "startTime": "2025-08-17T12:53:21.303Z",
   "baseUrl": "https://sciencehabits.vercel.app",
   "tests": [
     {
       "name": "Production Site Accessible",
       "status": "passed",
-      "duration": 1508,
-      "timestamp": "2025-08-17T12:44:39.175Z"
+      "duration": 2006,
+      "timestamp": "2025-08-17T12:53:23.629Z"
     },
     {
       "name": "No JavaScript Errors",
-      "status": "failed",
-      "duration": 1504,
-      "error": "this.page.waitForTimeout is not a function",
-      "timestamp": "2025-08-17T12:44:40.679Z"
+      "status": "passed",
+      "duration": 4513,
+      "timestamp": "2025-08-17T12:53:28.142Z"
     },
     {
       "name": "Critical Onboarding Path",
       "status": "failed",
-      "duration": 11060,
-      "error": "Waiting for selector `[data-testid=\"onboarding\"], .onboarding, button:contains(\"Select a goal\"), button:contains(\"Add habits\")` failed",
-      "timestamp": "2025-08-17T12:44:51.740Z"
+      "duration": 10674,
+      "error": "No onboarding or goal selection found",
+      "timestamp": "2025-08-17T12:53:38.816Z"
     },
     {
       "name": "Habit Loading in Production (Critical)",
       "status": "failed",
-      "duration": 50011,
-      "error": "Production habit loading timed out after 50011ms - CRITICAL BUG DETECTED",
-      "timestamp": "2025-08-17T12:45:41.752Z"
+      "duration": 50040,
+      "error": "Production habit loading timed out after 50040ms - CRITICAL BUG DETECTED",
+      "timestamp": "2025-08-17T12:54:28.857Z"
     },
     {
       "name": "Performance Metrics",
       "status": "passed",
-      "duration": 804,
-      "timestamp": "2025-08-17T12:45:42.556Z"
+      "duration": 773,
+      "timestamp": "2025-08-17T12:54:29.630Z"
     },
     {
       "name": "Critical User Journeys",
       "status": "failed",
-      "duration": 724,
+      "duration": 755,
       "error": "SyntaxError: Failed to execute 'querySelector' on 'Document': '[data-testid=\"onboarding\"], .onboarding, button:contains(\"Select\"), button:contains(\"goal\")' is not a valid selector.",
-      "timestamp": "2025-08-17T12:45:43.281Z"
+      "timestamp": "2025-08-17T12:54:30.385Z"
     }
   ],
   "performance": {
-    "domContentLoaded": 145,
-    "loadComplete": 146,
-    "firstPaint": 164,
-    "firstContentfulPaint": 164
+    "domContentLoaded": 102,
+    "loadComplete": 103,
+    "firstPaint": 124,
+    "firstContentfulPaint": 124
   },
   "summary": {
-    "passed": 2,
-    "failed": 4,
+    "passed": 3,
+    "failed": 3,
     "total": 6
   },
-  "endTime": "2025-08-17T12:45:43.281Z",
-  "duration": 65934
+  "endTime": "2025-08-17T12:54:30.385Z",
+  "duration": 69082
 }
