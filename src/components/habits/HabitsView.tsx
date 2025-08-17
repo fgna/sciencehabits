@@ -52,14 +52,14 @@ export function HabitsView() {
   }, [currentUser, loadCustomHabits]);
 
   const handleCreateSuccess = async () => {
-    // Refresh user data to show new custom habits
+    // Show success message first
+    setSuccessMessage('New habit has been created and added to your collection!');
+    
+    // Refresh user data to show new custom habits  
     if (currentUser) {
       await refreshProgress();
       await loadCustomHabits(currentUser.id);
     }
-    
-    // Show success message
-    setSuccessMessage('New habit has been created and added to your collection!');
     
     // Hide success message after 3 seconds
     setTimeout(() => {

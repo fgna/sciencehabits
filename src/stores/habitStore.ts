@@ -122,7 +122,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       // Create initial progress entry for the user
       await dbHelpers.createProgress(userId, habit.id);
 
-      // Add to local state and reload custom habits to ensure consistency
+      // Add to local state 
       set((state) => ({
         customHabits: [...state.customHabits, habit],
         isLoading: false,
@@ -130,9 +130,6 @@ export const useHabitStore = create<HabitState>((set, get) => ({
         formData: defaultFormData,
         formErrors: {}
       }));
-
-      // Reload custom habits to ensure UI consistency
-      await get().loadCustomHabits(userId);
 
       return habit;
       

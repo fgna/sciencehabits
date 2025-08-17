@@ -106,11 +106,11 @@ export function CreateHabitForm({ onClose, onSuccess }: CreateHabitFormProps) {
       resetForm();
       onSuccess();
       
-      // Close after showing success message briefly
+      // Close after showing success message
       setTimeout(() => {
         setShowSuccessMessage(false);
         onClose();
-      }, 1500);
+      }, 2500);
     }
   };
 
