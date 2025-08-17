@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-08-17T11:55:22.679Z",
+  "timestamp": "2025-08-17T12:46:42.395Z",
   "bundleVersion": "1.0.0",
   "buildType": "vercel-build-time",
   "contentSources": {
@@ -12,7 +12,7 @@
     "research": 1
   },
   "stats": {
-    "startTime": 1755431722665,
+    "startTime": 1755434802384,
     "filesProcessed": 5,
     "contentBundled": {
       "habits": 16,
@@ -20,175 +20,175 @@
       "research": 1
     },
     "errors": [],
-    "duration": 14
+    "duration": 11
   },
   "manifest": {
     "files": [
       {
         "path": "habits/all.json",
         "size": 29307,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.391Z"
       },
       {
         "path": "habits/by-goal.json",
         "size": 31985,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.392Z"
       },
       {
         "path": "habits/all.json",
         "size": 29307,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.391Z"
       },
       {
         "path": "habits/by-goal.json",
         "size": 31985,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.392Z"
       },
       {
         "path": "locales/all.json",
         "size": 2909,
-        "modified": "2025-08-17T11:55:22.677Z"
+        "modified": "2025-08-17T12:46:42.394Z"
       },
       {
         "path": "locales/de.json",
         "size": 1133,
-        "modified": "2025-08-17T11:55:22.673Z"
+        "modified": "2025-08-17T12:46:42.392Z"
       },
       {
         "path": "locales/en.json",
         "size": 1733,
-        "modified": "2025-08-17T11:55:22.676Z"
+        "modified": "2025-08-17T12:46:42.393Z"
       },
       {
         "path": "habits/all.json",
         "size": 29307,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.391Z"
       },
       {
         "path": "habits/by-goal.json",
         "size": 31985,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.392Z"
       },
       {
         "path": "habits/all.json",
         "size": 29307,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.391Z"
       },
       {
         "path": "habits/by-goal.json",
         "size": 31985,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.392Z"
       },
       {
         "path": "locales/all.json",
         "size": 2909,
-        "modified": "2025-08-17T11:55:22.677Z"
+        "modified": "2025-08-17T12:46:42.394Z"
       },
       {
         "path": "locales/de.json",
         "size": 1133,
-        "modified": "2025-08-17T11:55:22.673Z"
+        "modified": "2025-08-17T12:46:42.392Z"
       },
       {
         "path": "locales/en.json",
         "size": 1733,
-        "modified": "2025-08-17T11:55:22.676Z"
+        "modified": "2025-08-17T12:46:42.393Z"
       },
       {
         "path": "manifest.json",
         "size": 4591,
-        "modified": "2025-08-17T11:52:46.165Z"
+        "modified": "2025-08-17T12:20:19.716Z"
       },
       {
         "path": "research/all.json",
         "size": 629,
-        "modified": "2025-08-17T11:55:22.678Z"
+        "modified": "2025-08-17T12:46:42.394Z"
       },
       {
         "path": "habits/all.json",
         "size": 29307,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.391Z"
       },
       {
         "path": "habits/by-goal.json",
         "size": 31985,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.392Z"
       },
       {
         "path": "habits/all.json",
         "size": 29307,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.391Z"
       },
       {
         "path": "habits/by-goal.json",
         "size": 31985,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.392Z"
       },
       {
         "path": "locales/all.json",
         "size": 2909,
-        "modified": "2025-08-17T11:55:22.677Z"
+        "modified": "2025-08-17T12:46:42.394Z"
       },
       {
         "path": "locales/de.json",
         "size": 1133,
-        "modified": "2025-08-17T11:55:22.673Z"
+        "modified": "2025-08-17T12:46:42.392Z"
       },
       {
         "path": "locales/en.json",
         "size": 1733,
-        "modified": "2025-08-17T11:55:22.676Z"
+        "modified": "2025-08-17T12:46:42.393Z"
       },
       {
         "path": "habits/all.json",
         "size": 29307,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.391Z"
       },
       {
         "path": "habits/by-goal.json",
         "size": 31985,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.392Z"
       },
       {
         "path": "habits/all.json",
         "size": 29307,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.391Z"
       },
       {
         "path": "habits/by-goal.json",
         "size": 31985,
-        "modified": "2025-08-17T11:55:22.672Z"
+        "modified": "2025-08-17T12:46:42.392Z"
       },
       {
         "path": "locales/all.json",
         "size": 2909,
-        "modified": "2025-08-17T11:55:22.677Z"
+        "modified": "2025-08-17T12:46:42.394Z"
       },
       {
         "path": "locales/de.json",
         "size": 1133,
-        "modified": "2025-08-17T11:55:22.673Z"
+        "modified": "2025-08-17T12:46:42.392Z"
       },
       {
         "path": "locales/en.json",
         "size": 1733,
-        "modified": "2025-08-17T11:55:22.676Z"
+        "modified": "2025-08-17T12:46:42.393Z"
       },
       {
         "path": "manifest.json",
         "size": 4591,
-        "modified": "2025-08-17T11:52:46.165Z"
+        "modified": "2025-08-17T12:20:19.716Z"
       },
       {
         "path": "research/all.json",
         "size": 629,
-        "modified": "2025-08-17T11:55:22.678Z"
+        "modified": "2025-08-17T12:46:42.394Z"
       }
     ],
     "integrity": {
       "fileCount": 32,
       "totalSize": 523876,
-      "checksum": "32-523876-1755431722681"
+      "checksum": "32-523876-1755434802396"
     }
   }
 }

@@ -1,0 +1,56 @@
+{
+  "startTime": "2025-08-17T12:41:48.607Z",
+  "tests": [
+    {
+      "name": "Bundled Content Files Exist",
+      "status": "passed",
+      "duration": 1,
+      "timestamp": "2025-08-17T12:41:48.612Z"
+    },
+    {
+      "name": "Bundled Habits Data Integrity",
+      "status": "passed",
+      "duration": 1,
+      "timestamp": "2025-08-17T12:41:48.613Z"
+    },
+    {
+      "name": "Goal-Based Habits Structure",
+      "status": "passed",
+      "duration": 0,
+      "timestamp": "2025-08-17T12:41:48.613Z"
+    },
+    {
+      "name": "BundledContentService Methods",
+      "status": "passed",
+      "duration": 0,
+      "timestamp": "2025-08-17T12:41:48.613Z"
+    },
+    {
+      "name": "goalBasedRecommendations Compatibility",
+      "status": "passed",
+      "duration": 1,
+      "timestamp": "2025-08-17T12:41:48.614Z"
+    },
+    {
+      "name": "Fallback Data Structure",
+      "status": "passed",
+      "duration": 0,
+      "timestamp": "2025-08-17T12:41:48.615Z"
+    }
+  ],
+  "dataValidation": {
+    "habitCounts": {
+      "better_sleep": 4,
+      "feel_better": 8,
+      "get_moving": 4
+    },
+    "totalHabits": 16
+  },
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  },
+  "endTime": "2025-08-17T12:41:48.615Z",
+  "duration": 8
+}
