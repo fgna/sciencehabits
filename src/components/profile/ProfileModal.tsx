@@ -20,7 +20,6 @@ export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
     language: user.language
   });
   
-  const [isLoading, setIsLoading] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
   const [availableGoals, setAvailableGoals] = useState<Goal[]>([]);
   const [goalsLoading, setGoalsLoading] = useState(true);
@@ -102,13 +101,7 @@ export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
     };
   }, [formData, user, autoSave]);
 
-  useEffect(() => {
-    if (isOpen) {
-      loadAvailableGoals();
-    }
-  }, [isOpen, user.isPremium]);
-
-  const loadAvailableGoals = async () => {
+  const loadAvailableGoals = useCallback(async () => {
     try {
       setGoalsLoading(true);
       const goals = await getAvailableGoalsForProfile(user.isPremium);
@@ -118,7 +111,14 @@ export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
     } finally {
       setGoalsLoading(false);
     }
-  };
+  }, [user.isPremium]);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadAvailableGoals();
+    }
+  }, [isOpen, loadAvailableGoals]);
+
 
   const handleSave = async () => {
     await autoSave();
@@ -166,7 +166,7 @@ export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
               variant="ghost"
               size="sm"
               onClick={handleClose}
-              disabled={isLoading}
+              disabled={false}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

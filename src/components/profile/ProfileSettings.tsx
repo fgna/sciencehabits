@@ -19,13 +19,9 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
     language: user.language
   });
   
-  const [isLoading, setIsLoading] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
   const [availableGoals, setAvailableGoals] = useState<AppGoal[]>([]);
   const [goalsLoading, setGoalsLoading] = useState(true);
-  const [timeOptions, setTimeOptions] = useState<TimeOption[]>([]);
-  const [languages, setLanguages] = useState<Language[]>([]);
-  const [configLoading, setConfigLoading] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const { updateUser, clearUser } = useUserStore();
@@ -90,7 +86,6 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
 
   useEffect(() => {
     loadAvailableGoals();
-    loadUIConfiguration();
   }, []);
 
   const loadAvailableGoals = async () => {
@@ -105,21 +100,6 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
     }
   };
 
-  const loadUIConfiguration = async () => {
-    try {
-      setConfigLoading(true);
-      const [timeOpts, langs] = await Promise.all([
-        getTimeOptions(),
-        getSupportedLanguages()
-      ]);
-      setTimeOptions(timeOpts);
-      setLanguages(langs);
-    } catch (error) {
-      console.error('Failed to load UI configuration:', error);
-    } finally {
-      setConfigLoading(false);
-    }
-  };
 
   // Legacy manual save function (keeping for compatibility, but hiding the button)
   const handleSave = async () => {
