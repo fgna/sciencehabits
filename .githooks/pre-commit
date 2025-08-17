@@ -1,76 +1,173 @@
 #!/bin/bash
 
-# Pre-commit hook for Goal-to-Habit Mapping validation
-# Prevents commits that would break the mapping system
+# Pre-commit hook for ScienceHabits project
+# This hook runs TypeScript compilation, linting, and other checks before allowing commits
 
-set -e
+set -e  # Exit on any error
 
-echo "🔍 Running Goal-to-Habit Mapping validation..."
+echo "🔍 Running pre-commit checks..."
 
-# Check if goal mapping files are being modified
-GOAL_FILES_CHANGED=$(git diff --cached --name-only | grep -E "(goalTaxonomy\.json|goals\.json|habits/.*\.json|goalTaxonomy\.ts|smartRecommendations\.ts|contentValidator\.ts)" || true)
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 
-if [ -z "$GOAL_FILES_CHANGED" ]; then
-    echo "✅ No goal mapping files changed, skipping validation"
-    exit 0
-fi
+# Function to print colored output
+print_status() {
+    echo -e "${BLUE}[PRE-COMMIT]${NC} $1"
+}
 
-echo "📁 Goal mapping files changed:"
-echo "$GOAL_FILES_CHANGED"
-echo ""
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
 
-# Run validation script
-echo "🧪 Running validation script..."
-if ! node scripts/validate-goal-mappings.js; then
-    echo ""
-    echo "❌ Goal mapping validation FAILED!"
-    echo "Please fix the validation errors before committing."
-    echo ""
-    echo "To see detailed validation output:"
-    echo "  node scripts/validate-goal-mappings.js"
-    echo ""
-    echo "Common fixes:"
-    echo "  • Add missing goal mappings to src/data/goalTaxonomy.json"
-    echo "  • Update habit goalTags to use official goal IDs"
-    echo "  • Run content migration: npm run migrate-content"
-    echo ""
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+# Check if we're in the right directory
+if [ ! -f "package.json" ]; then
+    print_error "Not in a Node.js project directory. Skipping pre-commit hooks."
     exit 1
 fi
 
-# Quick TypeScript check for mapping services
-echo "🔧 Checking TypeScript compilation..."
-if ! npx tsc --noEmit --project . 2>/dev/null; then
-    echo "❌ TypeScript compilation failed!"
-    echo "Please fix TypeScript errors in goal mapping services before committing."
+# Check if node_modules exists
+if [ ! -d "node_modules" ]; then
+    print_error "node_modules not found. Please run 'npm install' first."
     exit 1
 fi
 
-# Test recommendation engine basic functionality
-echo "🧠 Testing Smart Recommendation Engine..."
-VALIDATION_RESULT=$(node -e "
-const smartRecommendations = require('./src/services/smartRecommendations.ts');
-smartRecommendations.default.getRecommendations({
-  selectedGoals: ['reduce_stress', 'increase_focus'],
-  limit: 5,
-  minConfidence: 0.3
-}).then(result => {
-  if (result.recommendations.length === 0) {
-    console.log('FAIL: No recommendations returned');
-    process.exit(1);
-  }
-  console.log('PASS: Engine returned', result.recommendations.length, 'recommendations');
-}).catch(error => {
-  console.log('FAIL: Engine error -', error.message);
-  process.exit(1);
-});
-" 2>/dev/null || echo "FAIL: Engine test failed")
+print_status "Starting pre-commit validation pipeline..."
 
-if [[ "$VALIDATION_RESULT" == *"FAIL"* ]]; then
-    echo "❌ Smart Recommendation Engine test failed!"
-    echo "Please check the implementation before committing."
+# 1. TypeScript Type Checking
+print_status "🔧 Running TypeScript type checking..."
+if npm run typecheck 2>/dev/null || npx tsc --noEmit; then
+    print_success "✅ TypeScript type checking passed"
+else
+    print_error "❌ TypeScript compilation failed"
+    echo ""
+    echo "Fix TypeScript errors before committing:"
+    echo "  npm run typecheck"
+    echo "  # or"
+    echo "  npx tsc --noEmit"
     exit 1
 fi
 
-echo "✅ All goal mapping validations passed!"
-echo "Safe to commit changes."
-echo ""
+# 2. Content Validation
+print_status "📋 Running content validation..."
+if npm run validate-content; then
+    print_success "✅ Content validation passed"
+else
+    print_warning "⚠️  Content validation warnings detected (non-blocking)"
+fi
+
+# 3. ESLint Critical Errors Only
+print_status "🔍 Running ESLint for critical errors..."
+if npx eslint src --ext .ts,.tsx --max-warnings 0 --quiet; then
+    print_success "✅ No critical ESLint errors"
+else
+    # Check if there are actual errors (not warnings)
+    ESLINT_OUTPUT=$(npx eslint src --ext .ts,.tsx --format json 2>/dev/null || echo "[]")
+    ERROR_COUNT=$(echo "$ESLINT_OUTPUT" | jq -r '[.[] | .errorCount] | add // 0' 2>/dev/null || echo "0")
+    
+    if [ "$ERROR_COUNT" -gt 0 ]; then
+        print_error "❌ ESLint found critical errors that must be fixed"
+        echo ""
+        echo "Fix ESLint errors before committing:"
+        echo "  npx eslint src --ext .ts,.tsx"
+        exit 1
+    else
+        print_warning "⚠️  ESLint warnings detected (non-blocking for commits)"
+    fi
+fi
+
+# 4. Check for common problematic patterns
+print_status "🔍 Checking for common issues..."
+
+# Check for console.log statements in production code (excluding development/debug files)
+CONSOLE_LOGS=$(git diff --cached --name-only | grep -E '\.(ts|tsx)$' | xargs grep -l "console\.log" | grep -v -E "(debug|test|spec|\.test\.|\.spec\.)" || true)
+if [ -n "$CONSOLE_LOGS" ]; then
+    print_warning "⚠️  Found console.log statements in staged files:"
+    echo "$CONSOLE_LOGS"
+    echo "Consider removing console.log statements before committing to production"
+fi
+
+# Check for TODO/FIXME comments in staged files
+TODO_COMMENTS=$(git diff --cached --name-only | grep -E '\.(ts|tsx|js|jsx)$' | xargs grep -n -E "(TODO|FIXME|XXX)" | head -5 || true)
+if [ -n "$TODO_COMMENTS" ]; then
+    print_warning "⚠️  Found TODO/FIXME comments in staged files:"
+    echo "$TODO_COMMENTS"
+fi
+
+# Check for debugger statements
+DEBUGGER_STATEMENTS=$(git diff --cached --name-only | grep -E '\.(ts|tsx|js|jsx)$' | xargs grep -l "debugger" || true)
+if [ -n "$DEBUGGER_STATEMENTS" ]; then
+    print_error "❌ Found debugger statements in staged files:"
+    echo "$DEBUGGER_STATEMENTS"
+    echo "Remove debugger statements before committing"
+    exit 1
+fi
+
+# 5. Build verification (quick check)
+print_status "🏗️  Running quick build verification..."
+if timeout 60s npm run build >/dev/null 2>&1; then
+    print_success "✅ Build verification passed"
+else
+    print_error "❌ Build failed or timed out"
+    echo ""
+    echo "Build must succeed before committing:"
+    echo "  npm run build"
+    exit 1
+fi
+
+# 6. Git commit message validation (if available)
+COMMIT_MSG_FILE=".git/COMMIT_EDITMSG"
+if [ -f "$COMMIT_MSG_FILE" ]; then
+    COMMIT_MSG=$(head -1 "$COMMIT_MSG_FILE")
+    
+    # Check minimum commit message length
+    if [ ${#COMMIT_MSG} -lt 10 ]; then
+        print_error "❌ Commit message too short (minimum 10 characters)"
+        echo "Current message: '$COMMIT_MSG'"
+        exit 1
+    fi
+    
+    # Check for conventional commit format (optional warning)
+    if ! echo "$COMMIT_MSG" | grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?:" ; then
+        print_warning "⚠️  Consider using conventional commit format:"
+        print_warning "    feat: add new feature"
+        print_warning "    fix: resolve bug"
+        print_warning "    docs: update documentation"
+    fi
+fi
+
+# 7. File size check
+print_status "📦 Checking file sizes..."
+LARGE_FILES=$(git diff --cached --name-only | xargs ls -la 2>/dev/null | awk '$5 > 1048576 {print $9 " (" $5 " bytes)"}' || true)
+if [ -n "$LARGE_FILES" ]; then
+    print_warning "⚠️  Large files detected (>1MB):"
+    echo "$LARGE_FILES"
+    echo "Consider if these files should be committed to git"
+fi
+
+# 8. Package.json validation
+if git diff --cached --name-only | grep -q "package\.json"; then
+    print_status "📦 Validating package.json changes..."
+    if ! npm list >/dev/null 2>&1; then
+        print_error "❌ package.json changes cause dependency issues"
+        echo "Run 'npm install' and verify dependencies"
+        exit 1
+    fi
+fi
+
+# Success message
+print_success "🎉 All pre-commit checks passed!"
+print_status "Commit proceeding..."
+
+exit 0

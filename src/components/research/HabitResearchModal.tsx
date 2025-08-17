@@ -6,6 +6,48 @@ import { useResearch } from '../../contexts/ResearchContext';
 import { useUserStore } from '../../stores/userStore';
 import { researchEngagementService } from '../../services/analytics/ResearchEngagementService';
 
+// Helper functions for creating research content from habit data
+function createResearchContentFromHabit(habit: any): string {
+  let content = `# Research Supporting "${habit.title}"\n\n`;
+  
+  if (habit.researchSummary) {
+    content += `## Research Summary\n\n${habit.researchSummary}\n\n`;
+  }
+  
+  if (habit.whyEffective) {
+    content += `## Why This Habit Works\n\n${habit.whyEffective}\n\n`;
+  }
+  
+  if (habit.sources && habit.sources.length > 0) {
+    content += `## Scientific Sources\n\n`;
+    habit.sources.forEach((source: string, index: number) => {
+      content += `${index + 1}. ${source}\n\n`;
+    });
+  }
+  
+  if (habit.progressionTips && habit.progressionTips.length > 0) {
+    content += `## Implementation Tips\n\n`;
+    habit.progressionTips.forEach((tip: string) => {
+      content += `- ${tip}\n`;
+    });
+    content += `\n`;
+  }
+  
+  return content;
+}
+
+function extractJournalFromSource(source: string): string {
+  // Try to extract journal name from citation
+  const journalMatch = source.match(/\.\s*([A-Z][^,]+),\s*\d+/);
+  return journalMatch ? journalMatch[1] : 'Scientific Publication';
+}
+
+function extractYearFromSource(source: string): number {
+  // Try to extract year from citation
+  const yearMatch = source.match(/\((\d{4})\)/);
+  return yearMatch ? parseInt(yearMatch[1]) : new Date().getFullYear();
+}
+
 interface HabitResearchModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -22,7 +64,7 @@ export function HabitResearchModal({
   researchIds 
 }: HabitResearchModalProps) {
   const { articles } = useResearch();
-  const { currentUser } = useUserStore();
+  const { currentUser, userHabits } = useUserStore();
   const [fullArticleView, setFullArticleView] = useState<{article: any, isOpen: boolean}>({
     article: null,
     isOpen: false
@@ -31,7 +73,7 @@ export function HabitResearchModal({
 
   // Filter articles based on the habit's research IDs
   // Support both exact matches and partial matches (with/without _article suffix)
-  const relatedArticles = articles.filter(article => 
+  let relatedArticles = articles.filter(article => 
     researchIds.some(researchId => 
       article.id === researchId || 
       article.id === `${researchId}_article` ||
@@ -40,6 +82,36 @@ export function HabitResearchModal({
       researchId.startsWith(article.id.replace('_article', ''))
     )
   );
+
+  // Handle synthetic research articles for habits with embedded research data
+  const syntheticArticles = researchIds
+    .filter(id => id.endsWith('_research'))
+    .map(id => {
+      const habitIdFromResearch = id.replace('_research', '');
+      const habit = userHabits.find(h => h.id === habitIdFromResearch);
+      
+      if (habit && habit.researchBacked && (habit.researchSummary || habit.sources || habit.whyEffective)) {
+        return {
+          id: id,
+          title: `Research Supporting "${habit.title}"`,
+          subtitle: habit.researchSummary || 'Scientific backing for this habit',
+          content: createResearchContentFromHabit(habit),
+          category: habit.category,
+          studyDetails: habit.sources && habit.sources.length > 0 ? {
+            journal: extractJournalFromSource(habit.sources[0]),
+            year: extractYearFromSource(habit.sources[0]),
+            source: habit.sources[0]
+          } : null,
+          keyTakeaways: habit.progressionTips || [],
+          relatedHabits: [habit.id]
+        };
+      }
+      return null;
+    })
+    .filter(Boolean);
+
+  // Combine real articles with synthetic articles
+  relatedArticles = [...relatedArticles, ...syntheticArticles];
 
   // Track modal opening
   useEffect(() => {

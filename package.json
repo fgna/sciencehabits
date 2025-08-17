@@ -74,7 +74,11 @@
     "lighthouse": "lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json",
     "analyze": "npm run build && npx webpack-bundle-analyzer build/static/js/*.js",
     "test:all": "npm run test:coverage && npm run test:integration && npm run test:system && npm run test:multilingual",
-    "ci:validation": "npm run test:all && npm run lighthouse && npm run validate:translations"
+    "ci:validation": "npm run test:all && npm run lighthouse && npm run validate:translations",
+    "validate:pre-commit": ".git/hooks/pre-commit",
+    "validate:pre-push": ".git/hooks/pre-push",
+    "validate:typescript": "npx tsc --noEmit",
+    "validate:all": "npm run validate:typescript && npm run validate:pre-commit"
   },
   "eslintConfig": {
     "extends": [

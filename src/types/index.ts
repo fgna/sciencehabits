@@ -149,7 +149,7 @@ export interface Habit {
   goalTags: string[];
   lifestyleTags: string[];
   timeTags: string[];
-  instructions: string;
+  instructions: string | string[];
   researchIds: string[];
   isCustom: boolean;
   difficulty: 'trivial' | 'easy' | 'moderate' | 'beginner' | 'intermediate' | 'advanced';
@@ -161,17 +161,22 @@ export interface Habit {
   
   // Enhanced fields (keeping existing for backward compatibility)
   effectivenessScore?: number;
+  
+  // Research-related fields from bundled data
+  researchBacked?: boolean;
+  researchSummary?: string;
+  sources?: string[];
+  whyEffective?: string;
+  progressionTips?: string[];
+  optimalTiming?: string;
   evidenceStrength?: 'very_high' | 'high' | 'moderate' | 'low';
   legacyFrequency?: string; // For backward compatibility with old frequency field
-  whyEffective?: string;
   contraindications?: string;
   cost?: string;
   germanSuppliers?: string;
   
   // UX Enhancement fields
   icon?: string;
-  researchBacked?: boolean;
-  researchSummary?: string;
   researchCitations?: ResearchCitation[];
   createdAt?: string;
 }

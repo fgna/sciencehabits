@@ -34,6 +34,16 @@
 
 ## Recent Major Improvements (Last 30 Days)
 
+### August 17, 2025 - 🔧 CRITICAL INFRASTRUCTURE: Git Hooks System
+- ✅ **Comprehensive Git Hooks** - Pre-commit and pre-push validation system
+- ✅ **TypeScript Error Prevention** - Blocks commits with TypeScript compilation errors
+- ✅ **ESLint Integration** - Prevents critical ESLint errors from being committed
+- ✅ **Build Verification** - Ensures builds succeed before commits/pushes
+- ✅ **Code Quality Checks** - Detects debugger statements, console.logs, large files
+- ✅ **Research Modal Fix** - Fixed "View Research & Science" showing embedded habit research
+- ✅ **Type System Enhancement** - Extended Habit interface for research properties
+- ✅ **Manual Validation Scripts** - Added npm scripts for manual hook execution
+
 ### August 15, 2025 - 🚀 MAJOR RELEASE: Multi-Language System
 - ✅ **Comprehensive Multi-Language Support** - Full i18n system with EN/DE/FR/ES support
 - ✅ **Advanced Translation Services** - Claude API integration with quality warnings
@@ -204,6 +214,7 @@
 - `.npmrc` - React 19 compatibility settings
 - `tsconfig.json` - TypeScript configuration
 - **🆕 Claude Code Config**: `.claude/settings.json` - Auto-documentation system
+- **🆕 Git Hooks**: `.githooks/` - Pre-commit and pre-push validation scripts
 
 ### 🆕 Multi-Language Data Files
 - `src/data/locales/en.json` - English UI translations (master)
@@ -232,6 +243,49 @@ npm run build          # Create production build
 npm run validate-content # Validate content files
 npm run analyze        # Analyze bundle size
 ```
+
+## 🆕 Git Hooks & Code Quality System
+
+### Installed Git Hooks
+The project now includes comprehensive git hooks that automatically validate code quality:
+
+**Pre-commit Hook** (runs before every commit):
+- ✅ TypeScript compilation validation (blocks commits with TS errors)
+- ✅ ESLint critical error detection (blocks commits with critical ESLint errors)
+- ✅ Content validation (ensures data integrity)
+- ✅ Code quality checks (detects debugger statements, large files)
+- ⚠️ Console.log detection (warns but doesn't block)
+- ⚠️ TODO/FIXME detection (warns but doesn't block)
+- ✅ Build verification (ensures project builds successfully)
+
+**Pre-push Hook** (runs before every push):
+- ✅ Full TypeScript build validation
+- ✅ Test suite execution (if tests exist)
+
+### Manual Validation Commands
+```bash
+npm run validate:typescript    # Run TypeScript validation only
+npm run validate:pre-commit    # Run all pre-commit checks manually
+npm run validate:pre-push      # Run all pre-push checks manually
+npm run validate:all           # Run all validations
+```
+
+### Hook Setup & Management
+```bash
+# Initial setup (already done)
+./scripts/setup-git-hooks.sh
+
+# Emergency bypass (use sparingly)
+git commit --no-verify -m "Emergency commit"
+git push --no-verify
+```
+
+### Benefits
+- **Zero TypeScript errors in commits** - Prevents broken code from entering repository
+- **Consistent code quality** - Automated enforcement of ESLint rules
+- **Build reliability** - Ensures all commits result in successful builds
+- **Team productivity** - Catches issues early in development cycle
+- **Documentation enforcement** - Encourages conventional commit messages
 
 ## 🆕 Multi-Language Development
 

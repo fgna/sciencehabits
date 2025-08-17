@@ -103,25 +103,39 @@ export function HabitsView() {
 
   const handleViewResearch = (habitId: string) => {
     const habit = userHabits.find(h => h.id === habitId);
+    console.log('🔬 handleViewResearch called:', { habitId, habit, hasResearchBacked: habit?.researchBacked });
+    
     if (habit) {
-      // Generate research IDs based on habit content if researchIds don't exist
-      let researchIds = habit.researchIds || [];
-      
-      // If no explicit research IDs, create fallback based on habit's research content
-      if (researchIds.length === 0) {
-        // For science-backed habits, show the general habit formation research
-        // In the future, this can be enhanced with proper research linking
-        if (habit.researchBacked) {
-          researchIds = ['habit-formation-overview'];
-        }
+      // For habits with embedded research data, create a synthetic research article
+      if (habit.researchBacked && (habit.researchSummary || habit.sources || habit.whyEffective)) {
+        console.log('🔬 Habit has embedded research data:', {
+          researchSummary: habit.researchSummary,
+          sources: habit.sources,
+          whyEffective: habit.whyEffective
+        });
+        
+        // Create a synthetic research article from the habit's embedded data
+        const syntheticResearchId = `${habit.id}_research`;
+        console.log('🔬 Creating synthetic research article:', syntheticResearchId);
+        
+        setResearchModal({
+          isOpen: true,
+          habitId: habit.id,
+          habitTitle: habit.title,
+          researchIds: [syntheticResearchId]
+        });
+      } else {
+        console.log('🔬 Habit has no embedded research data available');
+        // Still try to open the modal - the modal will show "No research articles found"
+        setResearchModal({
+          isOpen: true,
+          habitId: habit.id,
+          habitTitle: habit.title,
+          researchIds: []
+        });
       }
-      
-      setResearchModal({
-        isOpen: true,
-        habitId: habit.id,
-        habitTitle: habit.title,
-        researchIds: researchIds
-      });
+    } else {
+      console.log('🔬 Habit not found for ID:', habitId);
     }
   };
 

@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# Pre-push hook for ScienceHabits project
+# Additional checks before pushing to remote
+
+set -e
+
+echo "🚀 Running pre-push checks..."
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+print_status() {
+    echo -e "${BLUE}[PRE-PUSH]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+# Full TypeScript build check
+print_status "🏗️  Running full TypeScript build..."
+if npm run build; then
+    print_success "✅ Full build successful"
+else
+    print_error "❌ Full build failed - cannot push"
+    exit 1
+fi
+
+# Run tests if they exist
+if [ -f "package.json" ] && npm list jest &>/dev/null; then
+    print_status "🧪 Running tests..."
+    if npm test -- --watchAll=false --passWithNoTests; then
+        print_success "✅ Tests passed"
+    else
+        print_error "❌ Tests failed - cannot push"
+        exit 1
+    fi
+fi
+
+print_success "🎉 All pre-push checks passed!"
+print_status "Push proceeding..."
+
+exit 0

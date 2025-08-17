@@ -86,7 +86,25 @@ export function ResearchProvider({ children }: ResearchProviderProps) {
     try {
       setIsLoading(true);
       
-      // Try to load from research.json first
+      // Try to load from bundled research data first
+      try {
+        const bundledResearch = await import('../data/bundled/research/all.json');
+        const loadedArticles = bundledResearch.data || [];
+        console.log(`📚 Successfully loaded ${loadedArticles.length} research articles from bundled data`);
+        
+        const sortedArticles = loadedArticles.sort((a: any, b: any) => {
+          const dateA = a.publishedDate ? new Date(a.publishedDate) : new Date(a.year || 0, 0, 1);
+          const dateB = b.publishedDate ? new Date(b.publishedDate) : new Date(b.year || 0, 0, 1);
+          return dateB.getTime() - dateA.getTime();
+        });
+        
+        setArticles(sortedArticles);
+        return;
+      } catch (error) {
+        console.warn('Failed to load bundled research data, trying public endpoints:', error);
+      }
+      
+      // Fallback: Try to load from research.json
       try {
         const response = await fetch('/data/research.json');
         if (response.ok) {
