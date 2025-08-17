@@ -4,7 +4,7 @@
  * Allows users to browse and add science-backed habits that they're not currently tracking
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Modal, Button, Card } from '../ui';
 import { Habit } from '../../types';
 import { dbHelpers } from '../../services/storage/database';
@@ -15,39 +15,25 @@ interface Goal {
   title: string;
   description: string;
   icon: string;
-  tier: string;
   category: string;
-  priority: number;
 }
 
 interface HabitBrowserProps {
   isOpen: boolean;
   onClose: () => void;
-  currentUserHabits: Habit[];
 }
 
-export function HabitBrowser({ isOpen, onClose, currentUserHabits }: HabitBrowserProps) {
+export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
   const [availableHabits, setAvailableHabits] = useState<Habit[]>([]);
   const [filteredHabits, setFilteredHabits] = useState<Habit[]>([]);
+  const [selectedGoal, setSelectedGoal] = useState('all');
+  const [userGoals, setUserGoals] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedGoal, setSelectedGoal] = useState<string>('all');
   const [error, setError] = useState<string | null>(null);
-  const [userGoals, setUserGoals] = useState<Goal[]>([]);
-  
-  const { currentUser, refreshProgress } = useUserStore();
 
-  useEffect(() => {
-    if (isOpen) {
-      loadAvailableHabits();
-      loadUserGoals();
-    }
-  }, [isOpen]);
+  const { currentUser, userHabits, refreshProgress } = useUserStore();
 
-  useEffect(() => {
-    filterHabits();
-  }, [availableHabits, selectedGoal, currentUserHabits, userGoals]);
-
-  const loadAvailableHabits = async () => {
+  const loadAvailableHabits = useCallback(async () => {
     if (!currentUser) return;
     
     setIsLoading(true);
@@ -59,236 +45,174 @@ export function HabitBrowser({ isOpen, onClose, currentUserHabits }: HabitBrowse
       
       // Get all science-backed habits from the system
       const allHabits = await dbHelpers.getAllHabits();
-      console.log('[HabitBrowser] Found habits in database:', allHabits.length);
       
-      // Filter out custom habits and habits the user is already tracking
-      const currentHabitIds = new Set(currentUserHabits.map(h => h.id));
-      const available = allHabits.filter(habit => 
-        !habit.isCustom && !currentHabitIds.has(habit.id)
-      );
+      // Sort by category and name for consistent display
+      const sortedHabits = allHabits.sort((a, b) => {
+        if (a.category !== b.category) {
+          return a.category.localeCompare(b.category);
+        }
+        return a.title.localeCompare(b.title);
+      });
       
-      console.log('[HabitBrowser] Available habits after filtering:', available.length);
-      setAvailableHabits(available);
+      setAvailableHabits(sortedHabits);
+      console.log(`📚 Loaded ${sortedHabits.length} available habits`);
     } catch (error) {
       console.error('Failed to load available habits:', error);
-      setError('Failed to load available habits');
+      setError('Failed to load habits. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentUser]);
 
-  const loadUserGoals = async () => {
-    try {
-      // Load goals-config.json to get goal details
-      const response = await fetch('/data/goals-config.json');
-      const goalsData = await response.json();
-      
-      if (currentUser && currentUser.goals) {
-        // Filter to only show goals the user has selected
-        const relevantGoals = goalsData.goals.filter((goal: Goal) => 
-          currentUser.goals.includes(goal.id)
-        );
-        setUserGoals(relevantGoals);
-      }
-    } catch (error) {
-      console.error('Failed to load user goals:', error);
-    }
-  };
-
-  const filterHabits = () => {
-    let filtered = availableHabits;
-    
-    if (selectedGoal !== 'all') {
-      // Filter habits by category (which directly matches goal IDs) or goalTags
-      filtered = availableHabits.filter(habit => {
-        // First check if category matches the selected goal
-        if (habit.category === selectedGoal) {
-          return true;
-        }
-        
-        // If no direct category match, check goalTags
-        if (habit.goalTags && habit.goalTags.length > 0) {
-          // Map goal IDs to their corresponding tags/keywords that might appear in goalTags
-          const goalTagMappings: Record<string, string[]> = {
-            'better_sleep': ['sleep', 'insomnia', 'rest', 'recovery', 'sleep_quality'],
-            'feel_better': ['mood', 'happiness', 'emotional', 'wellbeing', 'stress_reduction', 'anxiety_management'],
-            'get_moving': ['movement', 'exercise', 'fitness', 'physical', 'energy', 'cardiovascular']
-          };
-          
-          const relevantTags = goalTagMappings[selectedGoal] || [selectedGoal];
-          
-          return habit.goalTags.some(tag => 
-            relevantTags.some(relevantTag => 
-              tag.toLowerCase().includes(relevantTag.toLowerCase()) ||
-              relevantTag.toLowerCase().includes(tag.toLowerCase())
-            )
-          );
-        }
-        
-        return false;
-      });
-    }
-    
-    setFilteredHabits(filtered);
-  };
-
-  const handleAddHabit = async (habit: Habit) => {
+  const loadUserGoals = useCallback(async () => {
     if (!currentUser) return;
     
     try {
-      setError(null);
+      // Get user's selected goals from their profile
+      const goals = currentUser.goals || [];
+      setUserGoals(goals);
+      console.log(`🎯 User has ${goals.length} selected goals:`, goals);
+    } catch (error) {
+      console.error('Failed to load user goals:', error);
+    }
+  }, [currentUser]);
+
+  const filterHabits = useCallback(() => {
+    if (!availableHabits.length) return;
+    
+    let filtered = [...availableHabits];
+    
+    // Filter by selected goal
+    if (selectedGoal && selectedGoal !== 'all') {
+      filtered = filtered.filter(habit => 
+        habit.goalTags && habit.goalTags.includes(selectedGoal)
+      );
+    }
+    
+    // Filter out habits user already has
+    const userHabitIds = new Set(userHabits.map(h => h.id));
+    filtered = filtered.filter(habit => !userHabitIds.has(habit.id));
+    
+    setFilteredHabits(filtered);
+    console.log(`🔍 Filtered to ${filtered.length} habits (goal: ${selectedGoal || 'all'})`);
+  }, [availableHabits, selectedGoal, userHabits]);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadAvailableHabits();
+      loadUserGoals();
+    }
+  }, [isOpen, loadAvailableHabits, loadUserGoals]);
+
+  useEffect(() => {
+    filterHabits();
+  }, [filterHabits]);
+
+  const handleAddHabit = async (habit: Habit) => {
+    try {
+      // Add habit to database - this should be implemented via userStore or directly
+      await dbHelpers.addHabit(habit);
       
-      // Create a progress entry for this habit (this will make it appear in user's habit list)
-      await dbHelpers.createProgress(currentUser.id, habit.id);
-      
-      // Refresh user data to show the new habit
+      // Refresh available habits to remove the newly added one
+      await loadAvailableHabits();
       await refreshProgress();
       
-      // Remove from available list
-      setAvailableHabits(prev => prev.filter(h => h.id !== habit.id));
-      
+      console.log('✅ Habit added successfully:', habit.title);
     } catch (error) {
       console.error('Failed to add habit:', error);
-      setError('Failed to add habit to your list');
+      setError('Failed to add habit. Please try again.');
     }
   };
 
   const goalOptions = [
-    { id: 'all', title: 'All Goals', icon: '🎯' },
-    ...userGoals.map(goal => ({
-      id: goal.id,
-      title: goal.title,
-      icon: goal.icon
-    }))
+    { id: 'all', label: 'All Categories', icon: '🎯' },
+    { id: 'better_sleep', label: 'Better Sleep', icon: '😴' },
+    { id: 'feel_better', label: 'Feel Better', icon: '😊' },
+    { id: 'get_moving', label: 'Get Moving', icon: '🏃‍♂️' }
   ];
-
-  if (!isOpen) return null;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <div className="p-6">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Add Science-Backed Habits</h2>
-            <p className="text-gray-600 mt-1">
-              Choose from research-verified habits to add to your tracking
-            </p>
-          </div>
-          <Button variant="ghost" onClick={onClose}>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </Button>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Browse Science-Backed Habits
+          </h2>
         </div>
 
-        {/* Goal Filter */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Filter by Your Goals
-          </label>
-          <select
-            value={selectedGoal}
-            onChange={(e) => setSelectedGoal(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full md:w-auto"
-          >
-            {goalOptions.map(goal => (
-              <option key={goal.id} value={goal.id}>
-                {goal.icon} {goal.title}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Error Display */}
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-red-700 text-sm">{error}</p>
           </div>
         )}
 
-        {/* Loading State */}
+        {/* Goal Filter */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Filter by Goal Category
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {goalOptions.map((goal) => (
+              <button
+                key={goal.id}
+                onClick={() => setSelectedGoal(goal.id)}
+                className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
+                  selectedGoal === goal.id
+                    ? 'bg-primary-100 text-primary-700 border border-primary-300'
+                    : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'
+                }`}
+              >
+                <span>{goal.icon}</span>
+                <span>{goal.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Habit List */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-3 text-gray-600">Loading habits...</span>
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-2"></div>
+            <p className="text-sm text-gray-600">Loading habits...</p>
+          </div>
+        ) : filteredHabits.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-gray-600 mb-2">No habits found for the selected category.</p>
+            <p className="text-sm text-gray-500">
+              Try selecting a different category or check back later for new habits.
+            </p>
           </div>
         ) : (
-          /* Habits List */
-          <div className="max-h-96 overflow-y-auto">
-            {filteredHabits.length === 0 ? (
-              <div className="text-center py-8">
-                <div className="text-4xl mb-4">🎯</div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No New Habits Available</h3>
-                <p className="text-gray-600">
-                  {availableHabits.length === 0 
-                    ? "You're already tracking all available science-backed habits!"
-                    : "No habits match the selected goal."
-                  }
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {filteredHabits.map((habit) => (
-                  <Card key={habit.id} className="hover:shadow-md transition-shadow">
-                    <div className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <h3 className="font-semibold text-gray-900">{habit.title}</h3>
-                            <span className="text-sm text-gray-500">{habit.timeMinutes} min</span>
-                            {habit.category && (
-                              <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
-                                {habit.category}
-                              </span>
-                            )}
-                            {habit.difficulty && (
-                              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                                {habit.difficulty}
-                              </span>
-                            )}
-                          </div>
-                          
-                          {habit.description && (
-                            <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                              {habit.description}
-                            </p>
-                          )}
-                          
-                          {habit.researchIds && habit.researchIds.length > 0 && (
-                            <div className="flex items-center text-xs text-blue-600">
-                              <span>🔬</span>
-                              <span className="ml-1">{habit.researchIds.length} research studies</span>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <Button
-                          onClick={() => handleAddHabit(habit)}
-                          size="sm"
-                          className="ml-4 bg-blue-600 hover:bg-blue-700 text-white"
-                        >
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                          </svg>
-                          Add
-                        </Button>
-                      </div>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {filteredHabits.map((habit) => (
+              <Card key={habit.id} className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900 mb-1">{habit.title}</h3>
+                    <p className="text-sm text-gray-600 mb-2">{habit.description}</p>
+                    <div className="flex items-center space-x-2 text-xs text-gray-500">
+                      <span className="px-2 py-1 bg-gray-100 rounded-full">
+                        {habit.category}
+                      </span>
+                      <span>🔬 Science-backed</span>
                     </div>
-                  </Card>
-                ))}
-              </div>
-            )}
+                  </div>
+                  <Button
+                    onClick={() => handleAddHabit(habit)}
+                    size="sm"
+                    className="ml-4"
+                  >
+                    Add Habit
+                  </Button>
+                </div>
+              </Card>
+            ))}
           </div>
         )}
 
-        {/* Footer */}
-        <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
-          <p className="text-sm text-gray-500">
-            {filteredHabits.length} habit{filteredHabits.length !== 1 ? 's' : ''} available
-          </p>
+        <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
           <Button variant="outline" onClick={onClose}>
-            Done
+            Close
           </Button>
         </div>
       </div>

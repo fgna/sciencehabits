@@ -347,7 +347,6 @@ export function HabitsView() {
       <HabitBrowser
         isOpen={showHabitBrowser}
         onClose={() => setShowHabitBrowser(false)}
-        currentUserHabits={userHabits}
       />
     </div>
   );
