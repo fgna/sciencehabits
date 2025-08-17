@@ -112,11 +112,13 @@ export function HabitBrowser({ isOpen, onClose }: HabitBrowserProps) {
   }, [filterHabits]);
 
   const handleAddHabit = async (habit: Habit) => {
+    if (!currentUser) return;
+    
     try {
-      // Add habit to database - this should be implemented via userStore or directly
-      await dbHelpers.addHabit(habit);
+      // Create progress tracking for this habit for the current user
+      await dbHelpers.createProgress(currentUser.id, habit.id);
       
-      // Refresh available habits to remove the newly added one
+      // Refresh available habits to remove the newly added one from the list
       await loadAvailableHabits();
       await refreshProgress();
       
