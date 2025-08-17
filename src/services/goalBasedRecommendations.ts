@@ -152,59 +152,54 @@ class GoalBasedRecommendationEngine {
       return; // Already discovered
     }
 
-    try {
-      const contentApiBase = process.env.REACT_APP_CONTENT_API_URL || 'http://localhost:3002';
+    // Use local content files in public/content-api instead of external API
+    const goalPatterns = [
+      { goal: 'feel_better', patterns: ['feel_better_habits-{lang}.json'] },
+      { goal: 'get_moving', patterns: ['get_moving_habits-{lang}.json'] },
+      { goal: 'better_sleep', patterns: ['better_sleep_habit-{lang}.json', 'better_sleep_habits-{lang}.json'] }
+    ];
+    const commonLanguages = ['en']; // Start with English only for MVP
+    
+    for (const { goal, patterns } of goalPatterns) {
+      const availableLanguages: string[] = [];
+      let workingPattern: string | null = null;
       
-      // Try different filename patterns for each goal
-      const goalPatterns = [
-        { goal: 'feel_better', patterns: ['feel_better_habits-{lang}.json'] },
-        { goal: 'get_moving', patterns: ['get_moving_habits-{lang}.json'] },
-        { goal: 'better_sleep', patterns: ['better_sleep_habit-{lang}.json', 'better_sleep_habits-{lang}.json'] }
-      ];
-      const commonLanguages = ['en', 'de', 'fr', 'es'];
-      
-      for (const { goal, patterns } of goalPatterns) {
-        const availableLanguages: string[] = [];
-        let workingPattern: string | null = null;
-        
-        for (const pattern of patterns) {
-          for (const lang of commonLanguages) {
-            try {
-              const filename = pattern.replace('{lang}', lang);
-              const response = await fetch(`${contentApiBase}/habits/${filename}`);
-              
-              if (response.ok) {
-                availableLanguages.push(lang);
-                workingPattern = pattern;
-                console.log(`[GoalBasedRecommendations] Discovered: ${filename}`);
-              }
-            } catch (error) {
-              // File doesn't exist, skip silently
+      for (const pattern of patterns) {
+        for (const lang of commonLanguages) {
+          try {
+            const filename = pattern.replace('{lang}', lang);
+            const response = await fetch(`/content-api/habits/${filename}`);
+            
+            if (response.ok) {
+              availableLanguages.push(lang);
+              workingPattern = pattern;
+              console.log(`[GoalBasedRecommendations] Discovered local file: ${filename}`);
             }
-          }
-          
-          // If we found files with this pattern, don't try other patterns
-          if (availableLanguages.length > 0) {
-            break;
+          } catch (error) {
+            // File doesn't exist, skip silently
           }
         }
         
+        // If we found files with this pattern, don't try other patterns
         if (availableLanguages.length > 0) {
-          this.availableFiles.set(goal, availableLanguages);
-          // Store the working pattern for this goal
-          this.availableFiles.set(`${goal}_pattern`, [workingPattern!]);
+          break;
         }
       }
-
-      console.log(`[GoalBasedRecommendations] Discovered files for goals:`, 
-        Array.from(this.availableFiles.keys()).filter(k => !k.endsWith('_pattern')));
-
-    } catch (error) {
-      console.error('[GoalBasedRecommendations] Failed to discover files from content API:', error);
       
-      // Fallback: Use BundledContentService to discover available goals
+      if (availableLanguages.length > 0) {
+        this.availableFiles.set(goal, availableLanguages);
+        // Store the working pattern for this goal
+        this.availableFiles.set(`${goal}_pattern`, [workingPattern!]);
+      }
+    }
+
+    console.log(`[GoalBasedRecommendations] Discovered local files for goals:`, 
+      Array.from(this.availableFiles.keys()).filter(k => !k.endsWith('_pattern')));
+
+    // If no local files found, fallback to BundledContentService
+    if (this.availableFiles.size === 0) {
+      console.log('[GoalBasedRecommendations] No local files found, falling back to BundledContentService...');
       try {
-        console.log('[GoalBasedRecommendations] Trying BundledContentService for goal discovery...');
         const availableGoalsResult = await bundledContentService.getAvailableGoals();
         
         if (availableGoalsResult.success && availableGoalsResult.data.length > 0) {
@@ -213,24 +208,9 @@ class GoalBasedRecommendationEngine {
             this.availableFiles.set(`${goal}_pattern`, [`${goal}_habits-{lang}.json`]);
           }
           console.log('[GoalBasedRecommendations] Discovered goals from BundledContentService:', availableGoalsResult.data);
-        } else {
-          // Final fallback with hardcoded goals
-          this.availableFiles.set('feel_better', ['en']);
-          this.availableFiles.set('feel_better_pattern', ['feel_better_habits-{lang}.json']);
-          this.availableFiles.set('get_moving', ['en']);
-          this.availableFiles.set('get_moving_pattern', ['get_moving_habits-{lang}.json']);
-          this.availableFiles.set('better_sleep', ['en']);
-          this.availableFiles.set('better_sleep_pattern', ['better_sleep_habit-{lang}.json']);
         }
       } catch (bundledError) {
         console.error('[GoalBasedRecommendations] BundledContentService also failed:', bundledError);
-        // Final fallback with hardcoded goals
-        this.availableFiles.set('feel_better', ['en']);
-        this.availableFiles.set('feel_better_pattern', ['feel_better_habits-{lang}.json']);
-        this.availableFiles.set('get_moving', ['en']);
-        this.availableFiles.set('get_moving_pattern', ['get_moving_habits-{lang}.json']);
-        this.availableFiles.set('better_sleep', ['en']);
-        this.availableFiles.set('better_sleep_pattern', ['better_sleep_habit-{lang}.json']);
       }
     }
   }
@@ -247,17 +227,15 @@ class GoalBasedRecommendationEngine {
     }
 
     try {
-      // First, try the content API approach
+      // First, try local content files
       const availableLanguages = this.availableFiles.get(goal);
       if (availableLanguages && availableLanguages.includes(language)) {
-        const contentApiBase = process.env.REACT_APP_CONTENT_API_URL || 'http://localhost:3002';
-        
         // Get the discovered pattern for this goal
         const patternArray = this.availableFiles.get(`${goal}_pattern`);
         const pattern = patternArray ? patternArray[0] : `${goal}_habits-{lang}.json`;
         const filename = pattern.replace('{lang}', language);
         
-        const response = await fetch(`${contentApiBase}/habits/${filename}`);
+        const response = await fetch(`/content-api/habits/${filename}`);
         
         if (response.ok) {
           const habits: GoalBasedHabit[] = await response.json();
@@ -266,7 +244,7 @@ class GoalBasedRecommendationEngine {
           this.habitsCache.set(cacheKey, habits);
           this.cacheExpiry = Date.now() + this.CACHE_DURATION;
           
-          console.log(`[GoalBasedRecommendations] Loaded ${habits.length} habits from content API: ${filename}`);
+          console.log(`[GoalBasedRecommendations] Loaded ${habits.length} habits from local content: ${filename}`);
           return habits;
         }
       }
