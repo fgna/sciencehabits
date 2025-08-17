@@ -32,6 +32,13 @@ export interface BundledHabit {
   isPrimaryRecommendation?: boolean;
   recommendedForYou?: boolean;
   fallback?: boolean;
+  // Optional properties that may exist in bundled data
+  whyEffective?: string;
+  researchSummary?: string;
+  sources?: string[];
+  optimalTiming?: string;
+  progressionTips?: string[];
+  equipment?: string;
 }
 
 export interface BundledResearch {
@@ -46,6 +53,12 @@ export interface BundledResearch {
   qualityScore: number;
   language: string;
   fallback?: boolean;
+  // Optional properties that may exist in bundled data
+  finding?: string;
+  sampleSize?: number;
+  studyType?: string;
+  fullCitation?: string;
+  credibilityTier?: 'high' | 'medium' | 'low';
 }
 
 export interface BundledLocale {

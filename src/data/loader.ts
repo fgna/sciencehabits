@@ -26,10 +26,10 @@ export async function loadInitialData() {
           instructions: Array.isArray(bundledHabit.instructions) 
             ? bundledHabit.instructions.join('\n') 
             : bundledHabit.instructions || bundledHabit.description,
-          researchIds: [],
+          researchIds: bundledHabit.sources || [],
           isCustom: false,
           difficulty: bundledHabit.difficulty,
-          equipment: 'none',
+          equipment: bundledHabit.equipment || 'none',
           effectivenessScore: bundledHabit.effectivenessScore,
           frequency: createDefaultFrequency(),
           reminders: createDefaultReminders()
@@ -79,13 +79,13 @@ export async function loadInitialData() {
           authors: bundledResearch.authors,
           year: bundledResearch.year,
           summary: bundledResearch.summary,
-          finding: bundledResearch.summary, // Use summary as finding
-          sampleSize: 100, // Default sample size
-          studyType: 'systematic_review', // Default study type
-          fullCitation: `${bundledResearch.authors} (${bundledResearch.year}). ${bundledResearch.title}. ${bundledResearch.journal}.`,
+          finding: bundledResearch.finding || bundledResearch.summary,
+          sampleSize: bundledResearch.sampleSize || 100,
+          studyType: bundledResearch.studyType || 'systematic_review',
+          fullCitation: bundledResearch.fullCitation || `${bundledResearch.authors} (${bundledResearch.year}). ${bundledResearch.title}. ${bundledResearch.journal}.`,
           journal: bundledResearch.journal,
           category: bundledResearch.category,
-          credibilityTier: 'medium' as const // Default to medium credibility
+          credibilityTier: (bundledResearch.credibilityTier as 'high' | 'medium' | 'low') || 'medium'
         }));
         
         await db.research.bulkAdd(databaseResearch);
