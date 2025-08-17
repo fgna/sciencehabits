@@ -56,7 +56,7 @@
       "description": "Improving focus and concentration abilities"
     },
     {
-      "officialId": "improve_mood",
+      "officialId": "feel_better",
       "aliases": [
         "mood",
         "happiness",
@@ -65,7 +65,45 @@
         "positive_emotions",
         "emotional_regulation",
         "mental_wellness",
-        "mood_stabilization"
+        "mood_stabilization",
+        "improve_mood",
+        "confidence",
+        "mood_boost",
+        "stress_resilience",
+        "alertness",
+        "anxiety_management",
+        "present_moment",
+        "panic_relief",
+        "optimism",
+        "future_planning",
+        "motivation",
+        "mindfulness",
+        "appreciation",
+        "social_connection",
+        "empathy"
+      ],
+      "semanticTerms": [
+        "depression_prevention",
+        "positivity",
+        "joy",
+        "emotional_balance",
+        "mental_health",
+        "wellbeing",
+        "life_satisfaction",
+        "emotional_resilience",
+        "hormone_optimization",
+        "stress_reduction"
+      ],
+      "category": "mental_health",
+      "priority": 1,
+      "description": "Feeling better emotionally and mentally"
+    },
+    {
+      "officialId": "improve_mood",
+      "aliases": [
+        "mood_improvement",
+        "emotional_enhancement",
+        "mental_wellness_improvement"
       ],
       "semanticTerms": [
         "depression_prevention",
@@ -108,11 +146,50 @@
       "description": "Increasing energy levels and reducing fatigue"
     },
     {
+      "officialId": "get_moving",
+      "aliases": [
+        "exercise",
+        "physical_activity",
+        "movement",
+        "fitness",
+        "workout",
+        "active_lifestyle",
+        "physical_exercise",
+        "daily_movement",
+        "cardiovascular_health",
+        "metabolic_boost",
+        "energy_increase",
+        "energy_boost",
+        "strength_building",
+        "metabolic_health",
+        "high_intensity",
+        "glucose_control",
+        "workplace_fitness",
+        "sedentary_breaks",
+        "circulation"
+      ],
+      "semanticTerms": [
+        "cardio",
+        "strength_training",
+        "flexibility",
+        "mobility",
+        "walking",
+        "running",
+        "stretching",
+        "physical_fitness",
+        "metabolic_enhancement",
+        "cardiovascular_fitness",
+        "energy_management"
+      ],
+      "category": "physical_health",
+      "priority": 1,
+      "description": "Getting more physical movement and exercise"
+    },
+    {
       "officialId": "improve_health",
       "aliases": [
         "health",
         "wellness",
-        "fitness",
         "general_health",
         "physical_health",
         "health_optimization",
@@ -143,7 +220,16 @@
         "sleep_optimization",
         "restful_sleep",
         "sleep_duration",
-        "sleep_hygiene"
+        "sleep_hygiene",
+        "stress_reduction",
+        "anxiety_management",
+        "temperature_regulation",
+        "racing_thoughts",
+        "mental_relaxation",
+        "sleep_onset",
+        "sleep_efficiency",
+        "insomnia",
+        "sleep_consolidation"
       ],
       "semanticTerms": [
         "insomnia_prevention",
@@ -153,7 +239,10 @@
         "rem_sleep",
         "sleep_recovery",
         "bedtime_routine",
-        "sleep_environment"
+        "sleep_environment",
+        "thermal_regulation",
+        "cognitive_quieting",
+        "sleep_architecture"
       ],
       "category": "physical_health",
       "priority": 2,

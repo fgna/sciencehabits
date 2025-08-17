@@ -6,27 +6,70 @@ export async function loadInitialData() {
   try {
     console.log('Loading initial data...');
     
-    // Try to load habits data from public folder
+    // Try to load habits data from content API first, then fallback to public folder
     try {
-      const habitsResponse = await fetch('/data/habits.json');
-      if (habitsResponse.ok) {
-        const habitsData = await habitsResponse.json();
-        // Handle both old format (array) and new format (object with habits property)
-        const habits = Array.isArray(habitsData) ? habitsData : habitsData.habits;
-        if (habits && Array.isArray(habits)) {
-          await db.habits.bulkAdd(habits);
-          console.log(`Loaded ${habits.length} habits from JSON file`);
+      console.log('Attempting to load habits from content API...');
+      const contentApiBase = process.env.REACT_APP_CONTENT_API_URL || 'http://localhost:3002';
+      const contentApiResponse = await fetch(`${contentApiBase}/habits/multilingual-science-habits-en.json`);
+      
+      if (contentApiResponse.ok) {
+        const contentApiHabits = await contentApiResponse.json();
+        if (Array.isArray(contentApiHabits)) {
+          // Convert content API format to database format
+          const databaseHabits: Habit[] = contentApiHabits.map(contentHabit => ({
+            id: contentHabit.id,
+            title: contentHabit.title,
+            description: contentHabit.description,
+            timeMinutes: contentHabit.timeMinutes,
+            category: contentHabit.category,
+            goalTags: contentHabit.goalTags || [contentHabit.category],
+            lifestyleTags: ['professional', 'parent', 'student'], // Default to all lifestyles
+            timeTags: ['flexible'], // Default to flexible timing
+            instructions: Array.isArray(contentHabit.instructions) 
+              ? contentHabit.instructions.join('\n') 
+              : contentHabit.instructions || contentHabit.description,
+            researchIds: contentHabit.sources || [],
+            isCustom: false,
+            difficulty: contentHabit.difficulty,
+            equipment: contentHabit.equipment || 'none',
+            effectivenessScore: contentHabit.effectivenessScore,
+            frequency: createDefaultFrequency(),
+            reminders: createDefaultReminders()
+          }));
+          
+          await db.habits.bulkAdd(databaseHabits);
+          console.log(`✅ Loaded ${databaseHabits.length} habits from content API`);
         } else {
-          throw new Error('Invalid habits data structure');
+          throw new Error('Content API returned invalid habits format');
         }
       } else {
-        throw new Error('Failed to fetch habits.json');
+        throw new Error(`Content API not available: ${contentApiResponse.status}`);
       }
-    } catch (habitsError) {
-      console.warn('Could not load habits.json, using fallback data:', habitsError);
-      const habits = getDefaultHabits();
-      await db.habits.bulkAdd(habits);
-      console.log(`Loaded ${habits.length} default habits`);
+    } catch (contentApiError) {
+      console.warn('Could not load habits from content API, trying public folder:', contentApiError);
+      
+      // Fallback to public folder
+      try {
+        const habitsResponse = await fetch('/data/habits.json');
+        if (habitsResponse.ok) {
+          const habitsData = await habitsResponse.json();
+          // Handle both old format (array) and new format (object with habits property)
+          const habits = Array.isArray(habitsData) ? habitsData : habitsData.habits;
+          if (habits && Array.isArray(habits)) {
+            await db.habits.bulkAdd(habits);
+            console.log(`Loaded ${habits.length} habits from JSON file`);
+          } else {
+            throw new Error('Invalid habits data structure');
+          }
+        } else {
+          throw new Error('Failed to fetch habits.json');
+        }
+      } catch (habitsError) {
+        console.warn('Could not load habits.json, using fallback data:', habitsError);
+        const habits = getDefaultHabits();
+        await db.habits.bulkAdd(habits);
+        console.log(`Loaded ${habits.length} default habits`);
+      }
     }
     
     // Try to load research studies data from public folder

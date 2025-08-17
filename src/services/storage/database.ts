@@ -64,7 +64,7 @@ export async function initializeDatabase() {
   try {
     // Check if we need to reload data (for enhanced data format)
     const currentVersion = localStorage.getItem('sciencehabits_data_version');
-    const expectedVersion = '4.0'; // Offline queue support for service worker
+    const expectedVersion = '4.2'; // Debug recommendation system with filters removed
     
     if (currentVersion !== expectedVersion) {
       console.log('Data version mismatch, clearing and reloading data...');
@@ -124,13 +124,18 @@ export const dbHelpers = {
     // Filter and score habits based on user preferences
     const scoredHabits = allHabits
       .map(habit => {
-        // Map old goal tags to new ones for compatibility
+        // Map goal categories to goal tags for compatibility
         const userGoalsMapped = user.goals.map(goal => {
           const goalMap: {[key: string]: string[]} = {
+            // Current goal categories (from ProgressiveGoalSelector)
+            'better_sleep': ['sleep_quality', 'sleep_duration', 'stress_reduction'],
+            'get_moving': ['cardiovascular_health', 'metabolic_boost', 'energy_increase', 'fitness', 'energy_boost', 'strength_building'],
+            'feel_better': ['happiness', 'mental_health', 'positive_psychology', 'mood', 'life_satisfaction'],
+            
+            // Legacy goal mappings for backward compatibility
             'improve_focus': ['cognitive_performance', 'focus'],
             'reduce_stress': ['stress_reduction', 'anxiety_management'],
             'increase_energy': ['energy'],
-            'better_sleep': ['sleep_quality'],
             'build_confidence': ['mood', 'life_satisfaction'],
             'improve_mood': ['mood'],
             'boost_creativity': ['cognitive_performance'],
@@ -151,21 +156,25 @@ export const dbHelpers = {
         if (matchesTime) score += 20;
         if (matchesDuration) score += 20;
         
-        // Prioritize by tier and effectiveness
-        if (habit.category === 'tier1_foundation') score += 100;
+        // Prioritize by category and effectiveness
+        if (habit.category === 'better_sleep') score += 100;
+        else if (habit.category === 'get_moving') score += 100;
+        else if (habit.category === 'feel_better') score += 100;
+        // Legacy tier support
+        else if (habit.category === 'tier1_foundation') score += 100;
         else if (habit.category === 'tier2_optimization') score += 50;
         else if (habit.category === 'tier3_microhabits') score += 25;
         
         // Add effectiveness bonus
         if (habit.effectivenessScore) score += habit.effectivenessScore / 10;
         
-        console.log(`Habit ${habit.title}: score=${score}, category=${habit.category}, effectiveness=${habit.effectivenessScore}`);
+        console.log(`Habit ${habit.title}: score=${score}, category=${habit.category}, effectiveness=${habit.effectivenessScore}, goalMatch=${matchesGoals}, lifestyleMatch=${matchesLifestyle}, timeMatch=${matchesTime}, durationMatch=${matchesDuration}`);
         
         return { habit, score, matches: matchesGoals && matchesLifestyle && matchesTime && matchesDuration };
       })
-      .filter(item => item.score > 40) // Must have at least basic matching
+      // .filter(item => item.score > 40) // TEMPORARILY REMOVED: Must have at least basic matching
       .sort((a, b) => b.score - a.score) // Sort by score descending
-      .slice(0, 6); // Limit to 6 recommendations
+      .slice(0, 12); // TEMPORARILY INCREASED: Limit to 12 recommendations
     
     return scoredHabits.map(item => item.habit);
   },
@@ -540,6 +549,11 @@ export const dbHelpers = {
         userId
       });
     }
+  },
+
+  // Clear all personal data for privacy compliance
+  async clearAllData(): Promise<void> {
+    return clearAllData();
   }
 };
 
@@ -608,4 +622,37 @@ function calculateStreaks(completions: string[]): { currentStreak: number; longe
   longestStreak = Math.max(longestStreak, tempStreak);
 
   return { currentStreak, longestStreak };
+}
+
+/**
+ * Clear all personal data from the database
+ * This function completely wipes all user data for privacy compliance
+ */
+export async function clearAllData(): Promise<void> {
+  try {
+    console.log('Starting complete data deletion...');
+    
+    // Clear all tables
+    await Promise.all([
+      db.users.clear(),
+      db.habits.clear(), 
+      db.progress.clear(),
+      db.research.clear(),
+      db.offlineQueue.clear()
+    ]);
+    
+    console.log('All database tables cleared');
+    
+    // Close and delete the database entirely
+    db.close();
+    
+    // Delete the database
+    await Dexie.delete('ScienceHabitsDB');
+    
+    console.log('Database deleted successfully');
+    
+  } catch (error) {
+    console.error('Error clearing all data:', error);
+    throw new Error('Failed to clear all personal data');
+  }
 }

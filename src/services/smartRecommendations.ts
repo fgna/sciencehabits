@@ -7,6 +7,25 @@
  */
 
 import goalTaxonomy, { ValidationResult } from './goalTaxonomy';
+import { EffectivenessRankingService } from './localization/EffectivenessRankingService';
+import { MultilingualHabit } from '../types/localization';
+
+/**
+ * Map content API difficulty values to legacy format
+ */
+function mapDifficultyToLegacy(difficulty: string): string {
+  const difficultyMap: Record<string, string> = {
+    'trivial': 'trivial',
+    'easy': 'easy',
+    'moderate': 'moderate',
+    'challenging': 'intermediate', // Map challenging to intermediate
+    'advanced': 'advanced',
+    'beginner': 'beginner',
+    'intermediate': 'intermediate'
+  };
+  
+  return difficultyMap[difficulty] || 'beginner'; // Default fallback to beginner
+}
 
 export interface HabitRecommendation {
   habitId: string;
@@ -61,10 +80,14 @@ export interface HabitData {
 class SmartRecommendationEngine {
   private habitsCache: HabitData[] | null = null;
   private cacheExpiry: number = 0;
-  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+  private readonly CACHE_DURATION = 0; // TEMPORARILY DISABLED: 5 * 60 * 1000; // 5 minutes
 
   constructor() {
     console.log('[SmartRecommendations] Engine initialized');
+    // Clear cache on initialization to force fresh data load
+    this.clearCache();
+    // Force cache expiry to ensure fresh data
+    this.cacheExpiry = 0;
   }
 
   /**
@@ -76,8 +99,8 @@ class SmartRecommendationEngine {
     const {
       selectedGoals,
       userProfile = {},
-      limit = 10,
-      minConfidence = 0.3
+      limit = 15, // TEMPORARILY INCREASED
+      minConfidence = 0.0 // TEMPORARILY REMOVED FILTER
     } = request;
 
     console.log(`[SmartRecommendations] Processing request for goals: ${selectedGoals.join(', ')}`);
@@ -89,6 +112,13 @@ class SmartRecommendationEngine {
     const goalMappings = this.validateAndMapGoals(selectedGoals);
     const mappedGoals = goalMappings.filter(m => m.isValid).map(m => m.mappedGoalId!);
     const unmappedGoals = goalMappings.filter(m => !m.isValid).map(m => selectedGoals[goalMappings.indexOf(m)]);
+
+    // Debug goal mapping
+    console.log(`[SmartRecommendations] Goal mapping results:`);
+    goalMappings.forEach((mapping, index) => {
+      console.log(`  ${selectedGoals[index]} → ${mapping.isValid ? mapping.mappedGoalId : 'UNMAPPED'} (confidence: ${mapping.confidence})`);
+    });
+    console.log(`[SmartRecommendations] Mapped goals for recommendations: [${mappedGoals.join(', ')}]`);
 
     // Generate recommendations using multi-tier matching
     const recommendations = this.generateRecommendations(habits, mappedGoals, userProfile, minConfidence);
@@ -168,8 +198,9 @@ class SmartRecommendationEngine {
     for (const habit of habits) {
       const recommendation = this.evaluateHabit(habit, mappedGoals, userProfile);
       
-      if (recommendation && recommendation.confidence >= minConfidence) {
+      if (recommendation) { // TEMPORARILY REMOVED: && recommendation.confidence >= minConfidence
         recommendations.push(recommendation);
+        console.log(`[SmartRecommendations] Added habit ${habit.id} with confidence ${recommendation.confidence}`);
       }
     }
 
@@ -195,15 +226,22 @@ class SmartRecommendationEngine {
     let maxConfidence = 0;
     let bestMatchType: 'exact' | 'alias' | 'semantic' | 'category' = 'category';
 
+    console.log(`[SmartRecommendations] Evaluating habit: ${habit.id}`);
+    console.log(`[SmartRecommendations]   Habit goalTags: [${habit.goalTags.join(', ')}]`);
+    console.log(`[SmartRecommendations]   Target goals: [${targetGoals.join(', ')}]`);
+
     // Check each habit goal tag against user's target goals
     for (const habitGoalTag of habit.goalTags) {
       const validation = goalTaxonomy.validateGoalTag(habitGoalTag);
+      
+      console.log(`[SmartRecommendations]     GoalTag "${habitGoalTag}" → ${validation.isValid ? validation.mappedGoalId : 'UNMAPPED'} (confidence: ${validation.confidence})`);
       
       if (validation.isValid && validation.mappedGoalId) {
         const mappedGoalId = validation.mappedGoalId;
         
         // Check if this mapped goal matches any of the user's target goals
         if (targetGoals.includes(mappedGoalId)) {
+          console.log(`[SmartRecommendations]       ✅ MATCH! "${mappedGoalId}" is in target goals`);
           matchedGoals.push(mappedGoalId);
           goalMappings.push({
             goalId: mappedGoalId,
@@ -215,14 +253,19 @@ class SmartRecommendationEngine {
             maxConfidence = validation.confidence;
             bestMatchType = validation.matchType as 'exact' | 'alias' | 'semantic' | 'category';
           }
+        } else {
+          console.log(`[SmartRecommendations]       ❌ No match: "${mappedGoalId}" not in target goals`);
         }
       }
     }
 
     // No goal matches found
     if (matchedGoals.length === 0) {
+      console.log(`[SmartRecommendations]   Result: NO MATCHES for habit ${habit.id}`);
       return null;
     }
+
+    console.log(`[SmartRecommendations]   Result: ${matchedGoals.length} matches for habit ${habit.id}: [${matchedGoals.join(', ')}]`);
 
     // Apply user profile filters and boost confidence
     let finalConfidence = maxConfidence;
@@ -318,7 +361,7 @@ class SmartRecommendationEngine {
       if (categoryOverlap.length > 0) {
         const confidence = 0.4 * (categoryOverlap.length / targetCategories.size);
         
-        if (confidence >= minConfidence) {
+        // TEMPORARILY REMOVED: if (confidence >= minConfidence) {
           fallbacks.push({
             habitId: habit.id,
             matchType: 'category',
@@ -326,7 +369,8 @@ class SmartRecommendationEngine {
             matchedGoals: [],
             goalMappings: []
           });
-        }
+          console.log(`[SmartRecommendations] Added fallback habit ${habit.id} with confidence ${confidence}`);
+        // }
       }
     }
 
@@ -337,56 +381,66 @@ class SmartRecommendationEngine {
    * Load habits data with caching
    */
   private async loadHabitsData(): Promise<HabitData[]> {
+    // Force fresh data load - disable cache for now to ensure new content is loaded
+    console.log('[SmartRecommendations] Force loading fresh data from content API (cache disabled)');
     // Check cache
-    if (this.habitsCache && Date.now() < this.cacheExpiry) {
-      return this.habitsCache;
-    }
+    // if (this.habitsCache && Date.now() < this.cacheExpiry) {
+    //   return this.habitsCache;
+    // }
 
     try {
-      // Load from multiple sources and combine
-      const habitSources = [
-        '/data/habits/mindfulness-habits.json',
-        '/data/habits/nutrition-habits.json',
-        '/data/habits/exercise-habits.json',
-        '/data/habits/sleep-habits.json',
-        '/data/habits/cognitive-habits.json',
-        '/data/habits/productivity-habits.json'
-      ];
+      // Load directly from Content API (not through EffectivenessRankingService which expects different format)
+      console.log('[SmartRecommendations] Loading habits directly from content API...');
+      const contentApiBase = process.env.REACT_APP_CONTENT_API_URL || 'http://localhost:3002';
+      console.log('[SmartRecommendations] Content API base URL:', contentApiBase);
+      
+      const response = await fetch(`${contentApiBase}/habits/multilingual-science-habits-en.json`);
+      if (!response.ok) {
+        throw new Error(`Content API error: ${response.status}`);
+      }
+      
+      const rawHabits = await response.json();
+      console.log('[SmartRecommendations] Raw habits from Content API:', rawHabits);
+      console.log('[SmartRecommendations] API returned', rawHabits.length, 'habits total');
+      
+      // Convert Content API format to SmartRecommendations format
+      const convertedHabits: HabitData[] = rawHabits.map((habit: any) => ({
+        id: habit.id,
+        title: habit.title,
+        description: habit.description,
+        category: habit.category,
+        goalTags: habit.goalTags || [habit.category],
+        lifestyleTags: ['general'], // Default lifestyle tags
+        timeTags: ['flexible'], // Default time tags
+        difficulty: mapDifficultyToLegacy(habit.difficulty),
+        timeMinutes: habit.timeMinutes,
+        effectivenessScore: habit.effectivenessScore,
+        isCustom: false
+      }));
 
-      const habitArrays = await Promise.allSettled(
-        habitSources.map(async (source) => {
-          try {
-            const response = await fetch(source);
-            if (!response.ok) {
-              console.warn(`[SmartRecommendations] Failed to load ${source}: ${response.status}`);
-              return [];
-            }
-            return await response.json();
-          } catch (error) {
-            console.warn(`[SmartRecommendations] Error loading ${source}:`, error);
-            return [];
-          }
-        })
-      );
-
-      // Combine all habits
-      const allHabits: HabitData[] = [];
-      habitArrays.forEach((result) => {
-        if (result.status === 'fulfilled' && Array.isArray(result.value)) {
-          allHabits.push(...result.value);
-        }
+      console.log(`[SmartRecommendations] Loaded ${convertedHabits.length} habits from content API`);
+      console.log(`[SmartRecommendations] Goal categories found: ${[...new Set(convertedHabits.map(h => h.category))].join(', ')}`);
+      
+      // Debug: Show habit details for troubleshooting
+      convertedHabits.forEach(habit => {
+        console.log(`[SmartRecommendations] Habit: ${habit.id} | Category: ${habit.category} | GoalTags: [${habit.goalTags.join(', ')}]`);
       });
 
-      console.log(`[SmartRecommendations] Loaded ${allHabits.length} habits from ${habitSources.length} sources`);
-
       // Cache the result
-      this.habitsCache = allHabits;
+      this.habitsCache = convertedHabits;
       this.cacheExpiry = Date.now() + this.CACHE_DURATION;
 
-      return allHabits;
+      return convertedHabits;
     } catch (error) {
-      console.error('[SmartRecommendations] Failed to load habits data:', error);
-      return [];
+      console.error('[SmartRecommendations] CRITICAL ERROR: Failed to load habits from content API:', error);
+      
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : 'No stack trace available';
+      console.error('[SmartRecommendations] Error stack:', errorStack);
+      
+      // Do NOT fallback to old data - we want to use content API only
+      console.error('[SmartRecommendations] No fallback - returning empty array to force debugging');
+      throw new Error(`Content API failed: ${errorMessage}. Please check that sciencehabits-content-api is running on port 3002.`);
     }
   }
 
@@ -482,6 +536,7 @@ class SmartRecommendationEngine {
       taxonomyStats: goalTaxonomy.getStats()
     };
   }
+
 }
 
 // Create singleton instance
