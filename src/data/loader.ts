@@ -1,52 +1,47 @@
 import { db } from '../services/storage/database';
 import { Habit, ResearchStudy } from '../types';
 import { createDefaultFrequency, createDefaultReminders, migrateLegacyFrequency } from '../utils/frequencyHelpers';
+import { bundledContentService } from '../services/BundledContentService';
 
 export async function loadInitialData() {
   try {
-    console.log('Loading initial data...');
+    console.log('🎯 Loading initial data using BundledContentService...');
     
-    // Try to load habits data from content API first, then fallback to public folder
+    // Load habits from bundled content
     try {
-      console.log('Attempting to load habits from content API...');
-      const contentApiBase = process.env.REACT_APP_CONTENT_API_URL || 'http://localhost:3002';
-      const contentApiResponse = await fetch(`${contentApiBase}/habits/multilingual-science-habits-en.json`);
+      console.log('📋 Loading habits from bundled content...');
+      const habitsResult = await bundledContentService.getAllHabits();
       
-      if (contentApiResponse.ok) {
-        const contentApiHabits = await contentApiResponse.json();
-        if (Array.isArray(contentApiHabits)) {
-          // Convert content API format to database format
-          const databaseHabits: Habit[] = contentApiHabits.map(contentHabit => ({
-            id: contentHabit.id,
-            title: contentHabit.title,
-            description: contentHabit.description,
-            timeMinutes: contentHabit.timeMinutes,
-            category: contentHabit.category,
-            goalTags: contentHabit.goalTags || [contentHabit.category],
-            lifestyleTags: ['professional', 'parent', 'student'], // Default to all lifestyles
-            timeTags: ['flexible'], // Default to flexible timing
-            instructions: Array.isArray(contentHabit.instructions) 
-              ? contentHabit.instructions.join('\n') 
-              : contentHabit.instructions || contentHabit.description,
-            researchIds: contentHabit.sources || [],
-            isCustom: false,
-            difficulty: contentHabit.difficulty,
-            equipment: contentHabit.equipment || 'none',
-            effectivenessScore: contentHabit.effectivenessScore,
-            frequency: createDefaultFrequency(),
-            reminders: createDefaultReminders()
-          }));
-          
-          await db.habits.bulkAdd(databaseHabits);
-          console.log(`✅ Loaded ${databaseHabits.length} habits from content API`);
-        } else {
-          throw new Error('Content API returned invalid habits format');
-        }
+      if (habitsResult.success && habitsResult.data.length > 0) {
+        // Convert bundled content format to database format
+        const databaseHabits: Habit[] = habitsResult.data.map(bundledHabit => ({
+          id: bundledHabit.id,
+          title: bundledHabit.title,
+          description: bundledHabit.description,
+          timeMinutes: bundledHabit.timeMinutes,
+          category: bundledHabit.category,
+          goalTags: bundledHabit.goalTags || [bundledHabit.category],
+          lifestyleTags: ['professional', 'parent', 'student'], // Default to all lifestyles
+          timeTags: ['flexible'], // Default to flexible timing
+          instructions: Array.isArray(bundledHabit.instructions) 
+            ? bundledHabit.instructions.join('\n') 
+            : bundledHabit.instructions || bundledHabit.description,
+          researchIds: [],
+          isCustom: false,
+          difficulty: bundledHabit.difficulty,
+          equipment: 'none',
+          effectivenessScore: bundledHabit.effectivenessScore,
+          frequency: createDefaultFrequency(),
+          reminders: createDefaultReminders()
+        }));
+        
+        await db.habits.bulkAdd(databaseHabits);
+        console.log(`✅ Loaded ${databaseHabits.length} habits from bundled content (${habitsResult.source})`);
       } else {
-        throw new Error(`Content API not available: ${contentApiResponse.status}`);
+        throw new Error(`Bundled content service failed: ${habitsResult.error || 'Unknown error'}`);
       }
-    } catch (contentApiError) {
-      console.warn('Could not load habits from content API, trying public folder:', contentApiError);
+    } catch (bundledContentError) {
+      console.warn('Could not load habits from bundled content, trying public folder:', bundledContentError);
       
       // Fallback to public folder
       try {
@@ -72,24 +67,34 @@ export async function loadInitialData() {
       }
     }
     
-    // Try to load research studies data from public folder
+    // Load research studies from bundled content
     try {
-      const researchResponse = await fetch('/data/research.json');
-      if (researchResponse.ok) {
-        const researchData = await researchResponse.json();
-        // Handle both old format (array) and new format (object with studies property)
-        const studies = Array.isArray(researchData) ? researchData : researchData.studies;
-        if (studies && Array.isArray(studies)) {
-          await db.research.bulkAdd(studies);
-          console.log(`Loaded ${studies.length} research studies from JSON file`);
-        } else {
-          throw new Error('Invalid research data structure');
-        }
+      console.log('📚 Loading research from bundled content...');
+      const researchResult = await bundledContentService.getResearch();
+      
+      if (researchResult.success && researchResult.data.length > 0) {
+        const databaseResearch: ResearchStudy[] = researchResult.data.map(bundledResearch => ({
+          id: bundledResearch.id,
+          title: bundledResearch.title,
+          authors: bundledResearch.authors,
+          year: bundledResearch.year,
+          summary: bundledResearch.summary,
+          finding: bundledResearch.summary, // Use summary as finding
+          sampleSize: 100, // Default sample size
+          studyType: 'systematic_review', // Default study type
+          fullCitation: `${bundledResearch.authors} (${bundledResearch.year}). ${bundledResearch.title}. ${bundledResearch.journal}.`,
+          journal: bundledResearch.journal,
+          category: bundledResearch.category,
+          credibilityTier: 'medium' as const // Default to medium credibility
+        }));
+        
+        await db.research.bulkAdd(databaseResearch);
+        console.log(`✅ Loaded ${databaseResearch.length} research studies from bundled content (${researchResult.source})`);
       } else {
-        throw new Error('Failed to fetch research.json');
+        throw new Error('Bundled content returned no research data');
       }
     } catch (researchError) {
-      console.warn('Could not load research.json, using fallback data:', researchError);
+      console.warn('Could not load research from bundled content, using fallback data:', researchError);
       const studies = getDefaultResearch();
       await db.research.bulkAdd(studies);
       console.log(`Loaded ${studies.length} default research studies`);
