@@ -278,7 +278,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
             <div className="max-w-4xl mx-auto p-6">
               <div className="mb-6">
                 <h1 className="text-2xl font-bold text-gray-900 mb-2">Settings</h1>
-                <p className="text-gray-600">Manage your account and cloud sync</p>
+                <p className="text-gray-600">Manage your account settings</p>
               </div>
               
               <SettingsNavigation 
@@ -595,7 +595,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
           <div className="max-w-4xl mx-auto p-6">
             <div className="mb-6">
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Settings</h1>
-              <p className="text-gray-600">Manage your account and cloud sync</p>
+              <p className="text-gray-600">Manage your account settings</p>
             </div>
             
             <SettingsNavigation 

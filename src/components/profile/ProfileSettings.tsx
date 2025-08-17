@@ -211,9 +211,6 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
         )}
       </div>
 
-      {/* Preferences */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Preferences</h3>
         {/* MVP: Daily Time Commitment Disabled for MVP - restore for full version
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -272,7 +269,6 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
           )}
         </div>
         */}
-      </div>
 
       {/* MVP: Language Settings Disabled for MVP - restore for full version
       <div className="space-y-4">
