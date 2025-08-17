@@ -36,11 +36,11 @@ export function CreateHabitForm({ onClose, onSuccess }: CreateHabitFormProps) {
     // Set sensible defaults for simplified form
     const defaultData = {
       ...formData,
-      category: 'productivity', // Default category
+      category: 'feel_better', // Default category
       difficulty: 'beginner', // Default difficulty
       equipment: 'none', // Default equipment
       instructions: formData.description, // Use description as instructions
-      goalTags: ['productivity'], // Default goal tags
+      goalTags: ['feel_better'], // Default goal tags
       lifestyleTags: ['all'], // Default lifestyle tags
       timeTags: ['flexible'] // Default time tags
     };
@@ -55,11 +55,11 @@ export function CreateHabitForm({ onClose, onSuccess }: CreateHabitFormProps) {
         title: formData.title,
         description: formData.description,
         timeMinutes: formData.timeMinutes,
-        category: 'productivity',
+        category: 'feel_better',
         difficulty: 'beginner' as const,
         equipment: 'none',
         instructions: formData.description,
-        goalTags: ['productivity'],
+        goalTags: ['feel_better'],
         lifestyleTags: ['all'],
         timeTags: ['flexible'],
         frequency: createDefaultFrequency(),

@@ -8,12 +8,7 @@ const formatCategoryName = (category: string): string => {
   const categoryMap: { [key: string]: string } = {
     'better_sleep': 'Better Sleep',
     'get_moving': 'Get Moving',
-    'feel_better': 'Feel Better',
-    'productivity': 'Productivity',
-    'health': 'Health',
-    'mindfulness': 'Mindfulness',
-    'social': 'Social',
-    'nutrition': 'Nutrition'
+    'feel_better': 'Feel Better'
   };
   return categoryMap[category] || category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 };
@@ -88,7 +83,7 @@ export function HabitsCarousel({
   const hasResearchData = habits.length > 0 && habits[0]?.whyEffective && habits[0]?.researchSummary && habits[0]?.sources;
   console.log('🔍 Received habits have research data:', hasResearchData);
   
-  const habitsToUse = hasResearchData ? habits : bundledHabits.data.slice(0, 5).map((bundledHabit: any): Habit => {
+  const habitsToUse = hasResearchData ? habits : bundledHabits.data.map((bundledHabit: any): Habit => {
     const mappedHabit = {
       id: bundledHabit.id,
       title: bundledHabit.title,

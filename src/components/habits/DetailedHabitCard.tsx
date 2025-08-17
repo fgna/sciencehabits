@@ -7,7 +7,6 @@ interface DetailedHabitCardProps {
   progress?: Progress;
   onComplete: (habitId: string) => void;
   onSkip?: (habitId: string) => void;
-  onDelete?: (habitId: string) => void;
   onViewResearch?: (habitId: string) => void;
   isCompleted: boolean;
   showActions?: boolean;
@@ -19,7 +18,6 @@ export const DetailedHabitCard: React.FC<DetailedHabitCardProps> = ({
   progress,
   onComplete,
   onSkip,
-  onDelete,
   onViewResearch,
   isCompleted,
   showActions = false,
@@ -180,17 +178,6 @@ export const DetailedHabitCard: React.FC<DetailedHabitCardProps> = ({
                     className="text-sm px-3 py-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-colors"
                   >
                     Edit
-                  </button>
-                )}
-                {onDelete && (
-                  <button
-                    onClick={() => onDelete(habit.id)}
-                    className="text-sm px-3 py-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md transition-colors flex items-center space-x-1"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    <span>Delete</span>
                   </button>
                 )}
               </>

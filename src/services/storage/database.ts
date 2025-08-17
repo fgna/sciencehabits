@@ -64,7 +64,7 @@ export async function initializeDatabase() {
   try {
     // Check if we need to reload data (for enhanced data format)
     const currentVersion = localStorage.getItem('sciencehabits_data_version');
-    const expectedVersion = '4.2'; // Debug recommendation system with filters removed
+    const expectedVersion = '4.3'; // Fixed obsolete categories and updated bundled content
     
     if (currentVersion !== expectedVersion) {
       console.log('Data version mismatch, clearing and reloading data...');
