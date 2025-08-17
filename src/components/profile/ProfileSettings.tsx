@@ -206,6 +206,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
       {/* Preferences */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900 mb-4">Preferences</h3>
+        {/* MVP: Daily Time Commitment Disabled for MVP - restore for full version
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Daily Time Commitment
@@ -225,7 +226,9 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
             </span>
           </div>
         </div>
+        */}
 
+        {/* MVP: Preferred Time Disabled for MVP - restore for full version
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Preferred Time
@@ -260,9 +263,10 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
             </div>
           )}
         </div>
+        */}
       </div>
 
-      {/* Language Settings */}
+      {/* MVP: Language Settings Disabled for MVP - restore for full version
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900 mb-4">Language & Display</h3>
         <div>
@@ -288,6 +292,7 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
           )}
         </div>
       </div>
+      */}
 
       {/* Data Management */}
       <div className="space-y-4 border-t border-gray-200 pt-6">

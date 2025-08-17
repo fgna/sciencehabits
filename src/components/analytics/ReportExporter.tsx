@@ -13,7 +13,7 @@ type ReportFormat = 'pdf' | 'csv' | 'json';
 type ReportType = 'summary' | 'detailed' | 'habits' | 'insights';
 
 export function ReportExporter({ analytics, habitPerformance, timeRange }: ReportExporterProps) {
-  const [selectedFormat, setSelectedFormat] = useState<ReportFormat>('pdf');
+  const [selectedFormat, setSelectedFormat] = useState<ReportFormat>('json'); // MVP: Default to JSON instead of PDF
   const [selectedTypes, setSelectedTypes] = useState<ReportType[]>(['summary']);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -44,13 +44,16 @@ export function ReportExporter({ analytics, habitPerformance, timeRange }: Repor
     }
   ];
 
+  // MVP: Simplified export options - hide PDF for MVP
   const formatOptions: { id: ReportFormat; name: string; description: string; icon: string }[] = [
+    /* MVP: PDF reports disabled for MVP
     {
       id: 'pdf',
       name: 'PDF Report',
       description: 'Professional formatted document',
       icon: '📄'
     },
+    */
     {
       id: 'csv',
       name: 'CSV Data',

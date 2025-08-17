@@ -22,6 +22,7 @@ import { CloudProviderSelector } from '../auth/CloudProviderSelector';
 import { ReportExporter } from '../analytics/ReportExporter';
 import { CloudConfig } from '../../types/sync';
 import { useAnalyticsStore } from '../../stores/analyticsStore';
+import { BackupSection } from '../settings/BackupSection';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -33,14 +34,17 @@ type DashboardTab = 'today' | 'habits' | 'progress' | 'recovery' | 'research' | 
 
 // Settings Navigation Component
 function SettingsNavigation({ activeTab, onTabChange }: { 
-  activeTab: 'sync' | 'profile' | 'layout' | 'export';
-  onTabChange: (tab: 'sync' | 'profile' | 'layout' | 'export') => void;
+  activeTab: 'profile'; // MVP: Simplified settings tabs - only profile for now
+  onTabChange: (tab: 'profile') => void;
 }) {
   const tabs = [
-    { id: 'sync' as const, name: 'Cloud Sync', icon: '☁️' },
+    // MVP: Disabled for MVP - restore for full version
+    // { id: 'sync' as const, name: 'Cloud Sync', icon: '☁️' },
     { id: 'profile' as const, name: 'Profile', icon: '👤' },
-    { id: 'layout' as const, name: 'Layout', icon: '🎯' },
-    { id: 'export' as const, name: 'Export', icon: '📤' }
+    // MVP: Disabled for MVP - restore for full version
+    // { id: 'layout' as const, name: 'Layout', icon: '🎯' },
+    // MVP: Disabled for MVP - export feature needs more work
+    // { id: 'export' as const, name: 'Export', icon: '📤' }
   ];
 
   return (
@@ -66,40 +70,15 @@ function SettingsNavigation({ activeTab, onTabChange }: {
 }
 
 // Analytics Export Section Component
+// MVP: Simplified Export Section using BackupSection
 function AnalyticsExportSection() {
-  const { analyticsData, selectedTimeRange } = useAnalyticsStore();
-  const { userProgress, userHabits } = useUserStore();
-
-  if (!analyticsData || userProgress.length === 0 || userHabits.length === 0) {
-    return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">📤 Export Analytics</h2>
-        <p className="text-gray-600">
-          Export functionality will be available once you have habit tracking data.
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">📤 Export Analytics</h2>
-      <p className="text-gray-600 mb-4">
-        Export your habit tracking data and analytics reports in various formats.
-      </p>
-      <ReportExporter 
-        analytics={analyticsData}
-        habitPerformance={analyticsData.habitPerformance}
-        timeRange={selectedTimeRange}
-      />
-    </div>
-  );
+  return <BackupSection />;
 }
 
 export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutProps) {
   const [activeTab, setActiveTab] = useState<DashboardTab>('today');
   const [simplifiedTab, setSimplifiedTab] = useState<'today' | 'habits' | 'analytics' | 'settings'>('today');
-  const [settingsTab, setSettingsTab] = useState<'sync' | 'profile' | 'layout' | 'export'>('sync');
+  const [settingsTab, setSettingsTab] = useState<'profile'>('profile'); // MVP: Only profile tab for now
 
   const handleTabChange = (tab: 'today' | 'habits' | 'analytics' | 'settings') => {
     setSimplifiedTab(tab);
@@ -307,7 +286,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
                 onTabChange={setSettingsTab} 
               />
               
-              {/* Cloud Sync Tab */}
+              {/* MVP: Cloud Sync Disabled for MVP - restore for full version
               {settingsTab === 'sync' && (
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">☁️ Cloud Sync</h2>
@@ -334,6 +313,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
                   />
                 </div>
               )}
+              */}
               
               {/* Profile Tab */}
               {settingsTab === 'profile' && (
@@ -351,7 +331,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
                 </div>
               )}
 
-              {/* Layout Tab */}
+              {/* MVP: Layout Tab Disabled for MVP - restore for full version
               {settingsTab === 'layout' && (
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">🎯 Layout Mode</h2>
@@ -375,27 +355,26 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
                   </p>
                 </div>
               )}
+              */}
 
-              {/* Export Tab */}
-              {settingsTab === 'export' && <AnalyticsExportSection />}
+              {/* MVP: Export Tab - Disabled for MVP, needs more work */}
             </div>
           )}
         </main>
         
-        {/* Settings toggle - temporary for development */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="fixed bottom-4 right-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setLayoutMode('enhanced')}
-              className="bg-white shadow-lg"
-              title="Switch to Enhanced Layout"
-            >
-              🔄 Enhanced
-            </Button>
-          </div>
-        )}
+        {/* MVP: Layout toggle disabled for MVP - restore for full version
+        <div className="fixed bottom-4 right-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setLayoutMode('enhanced')}
+            className="bg-white shadow-lg"
+            title="Switch to Enhanced Layout"
+          >
+            🔄 Enhanced
+          </Button>
+        </div>
+        */}
         
         {/* Profile Modal */}
         {user && (
@@ -471,6 +450,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
                     >
                       📊 Sample Data
                     </Button>
+                    {/* MVP: Layout toggle disabled for MVP - restore for full version
                     <Button
                       variant="outline"
                       size="sm"
@@ -480,6 +460,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
                     >
                       🎯 Simplified
                     </Button>
+                    */}
                   </>
                 )}
                 
@@ -622,7 +603,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
               onTabChange={setSettingsTab} 
             />
             
-            {/* Cloud Sync Tab */}
+            {/* MVP: Cloud Sync Disabled for MVP - restore for full version
             {settingsTab === 'sync' && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">☁️ Cloud Sync</h2>
@@ -649,6 +630,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
                 />
               </div>
             )}
+            */}
             
             {/* Profile Tab */}
             {settingsTab === 'profile' && (
@@ -666,7 +648,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
               </div>
             )}
 
-            {/* Layout Tab */}
+            {/* MVP: Layout Tab Disabled for MVP - restore for full version
             {settingsTab === 'layout' && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">🎯 Layout Mode</h2>
@@ -690,9 +672,9 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
                 </p>
               </div>
             )}
+            */}
 
-            {/* Export Tab */}
-            {settingsTab === 'export' && <AnalyticsExportSection />}
+            {/* MVP: Export Tab - Disabled for MVP, needs more work */}
           </div>
         )}
         

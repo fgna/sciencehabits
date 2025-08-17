@@ -29,8 +29,14 @@ export class HabitSyncService {
 
   /**
    * Initialize sync service
+   * MVP: Disabled for MVP - restore for full version
    */
   static initialize(): void {
+    // MVP: Disable cloud sync for MVP
+    console.log('🔇 MVP: Cloud sync disabled for MVP');
+    return;
+    
+    /* Full sync initialization (restore for full version):
     const syncStatus = this.getSyncStatus();
     
     if (syncStatus.isEnabled && syncStatus.provider === 'google-drive') {
@@ -42,6 +48,7 @@ export class HabitSyncService {
         this.disableSync();
       }
     }
+    */
   }
 
   /**

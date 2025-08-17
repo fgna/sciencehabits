@@ -21,7 +21,7 @@ export { HabitPerformanceChart } from './HabitPerformanceChart';
 export { GoalProgressTracker } from './GoalProgressTracker';
 export { ReportExporter } from './ReportExporter';
 
-// Enhanced analytics components are deprecated (overkill)
+// MVP: Enhanced analytics components disabled for MVP - restore for full version
 // export { EnhancedAnalyticsView } from './EnhancedAnalyticsView';
 // export { HabitHeatmap } from './HabitHeatmap';
 // export { FrequencyAnalyticsCharts } from './FrequencyAnalyticsCharts';

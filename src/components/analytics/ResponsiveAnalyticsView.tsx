@@ -1,8 +1,8 @@
 /**
  * Responsive Analytics View
  * 
- * Automatically switches between desktop and mobile analytics views
- * based on screen size for optimal user experience.
+ * MVP: Mobile-first analytics optimized for small screens
+ * Always uses mobile-optimized view for MVP
  */
 
 import React, { useState, useEffect } from 'react';
@@ -10,12 +10,12 @@ import { SimpleAnalyticsView } from './SimpleAnalyticsView';
 import { MobileAnalyticsView } from './MobileAnalyticsView';
 
 export function ResponsiveAnalyticsView() {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(true); // MVP: Default to mobile-first
 
   useEffect(() => {
-    // Check initial screen size
+    // MVP: Check initial screen size with mobile bias
     const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 768); // md breakpoint
+      setIsMobile(window.innerWidth < 1024); // MVP: Use mobile view for tablets too
     };
 
     // Check on mount
@@ -28,11 +28,11 @@ export function ResponsiveAnalyticsView() {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  // Use mobile view for screens smaller than 768px (md breakpoint)
+  // MVP: Use mobile view for most screens (mobile-first approach)
   if (isMobile) {
     return <MobileAnalyticsView />;
   }
 
-  // Use desktop view for larger screens
+  // Use simple desktop view only for large screens
   return <SimpleAnalyticsView />;
 }

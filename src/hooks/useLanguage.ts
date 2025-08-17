@@ -149,12 +149,28 @@ export function useLanguage(): UseLanguageReturn {
 
   /**
    * Initialize language on mount
+   * MVP: Always use English for MVP
    */
   useEffect(() => {
     const initializeLanguage = async () => {
       try {
         setIsLoading(true);
         
+        // MVP: Always use English for MVP - restore full detection for full version
+        const initialLanguage = 'en';
+        console.log('MVP: Initializing with English only for MVP');
+        
+        // Load UI translations first
+        await uiTranslationService.loadUITranslations();
+        
+        // Set language without triggering full switch (to avoid loop)
+        await contentManager.loadContent(initialLanguage);
+        uiTranslationService.setCurrentLanguage(initialLanguage);
+        setCurrentLanguage(initialLanguage);
+        
+        console.log('✅ Language initialization complete (English only)');
+        
+        /* Full language detection (restore for full version):
         // Load UI translations first
         await uiTranslationService.loadUITranslations();
         
@@ -171,6 +187,7 @@ export function useLanguage(): UseLanguageReturn {
         setCurrentLanguage(initialLanguage);
         
         console.log('✅ Language initialization complete');
+        */
         
       } catch (err) {
         console.error('Language initialization failed:', err);

@@ -83,8 +83,14 @@ export class I18nContentLoader {
 
   /**
    * Detect user's preferred language
+   * MVP: Always return English for MVP
    */
   async detectUserLanguage(): Promise<string> {
+    // MVP: Always return English for MVP - restore full detection for full version
+    console.log(`🔍 MVP: Using English only for MVP`);
+    return 'en';
+    
+    /* Full language detection (restore for full version):
     // Check browser language preferences
     const browserLanguages = navigator.languages || [navigator.language];
     
@@ -105,6 +111,7 @@ export class I18nContentLoader {
 
     console.log(`🔍 No supported language detected, using default: ${this.defaultLanguage}`);
     return this.defaultLanguage;
+    */
   }
 
   /**

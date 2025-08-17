@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-08-16T19:27:52.729Z",
+  "timestamp": "2025-08-17T11:49:58.958Z",
   "summary": {
     "total": 14,
-    "passed": 10,
-    "failed": 4,
-    "success_rate": "71%"
+    "passed": 8,
+    "failed": 6,
+    "success_rate": "57%"
   },
   "tests": [
     {
@@ -25,17 +25,17 @@
     {
       "name": "Content API is running",
       "status": "FAILED",
-      "details": "Content API server is not running"
+      "details": "Request failed with status code 404"
     },
     {
       "name": "Content API returns habit data",
       "status": "FAILED",
-      "details": "connect ECONNREFUSED 127.0.0.1:3001"
+      "details": "API returned invalid or empty habit data"
     },
     {
       "name": "Content API supports all languages",
       "status": "FAILED",
-      "details": "connect ECONNREFUSED 127.0.0.1:3001"
+      "details": "No habits returned for language en"
     },
     {
       "name": "Goal selection data is available",
@@ -45,12 +45,12 @@
     {
       "name": "Goal taxonomy is valid",
       "status": "FAILED",
-      "details": "Request failed with status code 404"
+      "details": "Goal taxonomy structure is invalid"
     },
     {
       "name": "UI translations are available",
-      "status": "PASSED",
-      "details": null
+      "status": "FAILED",
+      "details": "Invalid translation data for en"
     },
     {
       "name": "Language detection works",
@@ -64,8 +64,8 @@
     },
     {
       "name": "Static assets are compressed",
-      "status": "PASSED",
-      "details": null
+      "status": "FAILED",
+      "details": "Main JS bundle is not gzipped"
     },
     {
       "name": "Security headers are present",
