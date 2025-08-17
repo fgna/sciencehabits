@@ -49,12 +49,31 @@ export function OnboardingContainer({ onComplete }: OnboardingContainerProps) {
         isPremium: false
       });
 
-      // Create initial progress entries for selected habits
+      // Store selected habits in database and create progress entries
       const selectedHabits = (userData as any).selectedInitialHabits || [];
-      console.log('Creating progress entries for selected habits:', selectedHabits.length, selectedHabits);
+      console.log('Storing selected habits and creating progress entries:', selectedHabits.length, selectedHabits);
       
       for (const habit of selectedHabits) {
-        console.log('Creating progress for habit:', habit.id, habit.title);
+        console.log('Storing habit:', habit.id, habit.title);
+        
+        // First, store the habit in the database (it won't duplicate if it already exists)
+        try {
+          // Check if habit already exists
+          const existingHabit = await dbHelpers.getHabit(habit.id);
+          if (!existingHabit) {
+            // Add the habit directly to preserve its ID and structure
+            await dbHelpers.addHabit(habit);
+            console.log('Habit added to database:', habit.id);
+          } else {
+            console.log('Habit already exists in database:', habit.id);
+          }
+        } catch (error) {
+          console.error('Error storing habit:', error);
+          // Continue anyway, progress creation might still work
+        }
+        
+        // Then create progress entry
+        console.log('Creating progress for habit:', habit.id);
         await dbHelpers.createProgress(user.id, habit.id);
       }
       

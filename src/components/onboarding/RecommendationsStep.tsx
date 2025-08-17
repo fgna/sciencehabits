@@ -3,18 +3,22 @@ import { Button } from '../ui';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { Habit } from '../../types';
 import { dbHelpers } from '../../services/storage/database';
-import smartRecommendations, { HabitRecommendation } from '../../services/smartRecommendations';
+import goalBasedRecommendations, { GoalBasedHabit } from '../../services/goalBasedRecommendations';
 
 interface HabitCardProps {
-  habit: Habit;
+  habit: Habit & { researchSummary?: string };
   isSelected: boolean;
   onToggle: () => void;
-  recommendation?: HabitRecommendation;
+  recommendation?: GoalBasedHabit;
+  isTop3Recommended?: boolean;
 }
 
-function HabitCard({ habit, isSelected, onToggle, recommendation }: HabitCardProps) {
+function HabitCard({ habit, isSelected, onToggle, recommendation, isTop3Recommended = false }: HabitCardProps) {
   const getCategoryIcon = (category: string) => {
     const icons = {
+      better_sleep: '🛏️',
+      get_moving: '🚶‍♀️', 
+      feel_better: '😊',
       stress: '🧘‍♀️',
       productivity: '⚡',
       health: '💪',
@@ -26,55 +30,82 @@ function HabitCard({ habit, isSelected, onToggle, recommendation }: HabitCardPro
 
   const getDifficultyColor = (difficulty: string) => {
     const colors = {
+      easy: 'text-green-600 bg-green-100',
       beginner: 'text-green-600 bg-green-100',
+      moderate: 'text-yellow-600 bg-yellow-100',
       intermediate: 'text-yellow-600 bg-yellow-100',
       advanced: 'text-red-600 bg-red-100'
     };
     return colors[difficulty as keyof typeof colors] || 'text-gray-600 bg-gray-100';
   };
 
+  const getStarRating = (effectivenessScore: number) => {
+    if (effectivenessScore >= 9.0) return { stars: 5, label: 'Highly Effective', color: 'text-green-600' };
+    if (effectivenessScore >= 8.0) return { stars: 4, label: 'Very Effective', color: 'text-green-500' };
+    if (effectivenessScore >= 6.5) return { stars: 3, label: 'Moderately Effective', color: 'text-yellow-500' };
+    if (effectivenessScore >= 5.0) return { stars: 2, label: 'Somewhat Effective', color: 'text-orange-500' };
+    return { stars: 1, label: 'Emerging Evidence', color: 'text-red-500' };
+  };
+
+  const renderStars = (count: number) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <span key={i} className={i < count ? 'text-yellow-400' : 'text-gray-300'}>⭐</span>
+    ));
+  };
+
+  const effectivenessRating = getStarRating(habit.effectivenessScore || 7.0);
+  const isPrimary = isTop3Recommended;
+
   return (
     <div
       className={`
-        relative p-5 rounded-lg border-2 cursor-pointer transition-all hover:border-primary-300
+        relative p-4 rounded-lg border-2 cursor-pointer transition-all hover:border-primary-300
         ${isSelected 
           ? 'border-primary-500 bg-primary-50' 
           : 'border-gray-200 bg-white hover:bg-gray-50'
         }
+        ${isPrimary ? 'ring-2 ring-green-200' : ''}
       `}
       onClick={onToggle}
     >
+      {/* Header with icon and primary badge */}
       <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center">
+        <div className="flex items-center flex-1">
           <span className="text-2xl mr-3">{getCategoryIcon(habit.category)}</span>
-          <div>
-            <h3 className={`font-semibold ${
-              isSelected ? 'text-primary-900' : 'text-gray-900'
-            }`}>
+          <div className="flex-1">
+            {isPrimary && (
+              <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-1">
+                🌟 RECOMMENDED FOR YOU
+              </div>
+            )}
+            <h3 className="text-lg font-semibold text-gray-900 leading-tight mb-1">
               {habit.title}
             </h3>
-            <div className="flex items-center mt-1 space-x-2">
-              <span className={`text-xs px-2 py-1 rounded-full font-medium ${getDifficultyColor(habit.difficulty)}`}>
+            
+            {/* Star rating and effectiveness */}
+            <div className="flex items-center space-x-2 mb-2">
+              <div className="flex items-center">
+                {renderStars(effectivenessRating.stars)}
+              </div>
+              <span className={`text-sm font-medium ${effectivenessRating.color}`}>
+                {effectivenessRating.label}
+              </span>
+            </div>
+            
+            {/* Time and difficulty */}
+            <div className="flex items-center space-x-3 text-sm text-gray-600">
+              <span className="flex items-center">
+                ⏱️ {habit.timeMinutes} min
+              </span>
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(habit.difficulty)}`}>
                 {habit.difficulty}
               </span>
-              <span className="text-xs text-gray-500">
-                {habit.timeMinutes} min
-              </span>
-              {recommendation && (
-                <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                  recommendation.confidence >= 0.8 ? 'text-green-700 bg-green-100' :
-                  recommendation.confidence >= 0.6 ? 'text-blue-700 bg-blue-100' :
-                  'text-yellow-700 bg-yellow-100'
-                }`}>
-                  {(recommendation.confidence * 100).toFixed(0)}% match
-                </span>
-              )}
             </div>
           </div>
         </div>
         
         {isSelected && (
-          <div className="w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center flex-shrink-0">
+          <div className="w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center flex-shrink-0 ml-2">
             <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
             </svg>
@@ -82,19 +113,45 @@ function HabitCard({ habit, isSelected, onToggle, recommendation }: HabitCardPro
         )}
       </div>
       
-      <p className={`text-sm mb-3 ${
-        isSelected ? 'text-primary-800' : 'text-gray-600'
-      }`}>
-        {habit.description}
-      </p>
+      {/* Habit description - shown for ALL habits */}
+      <div className="mb-3">
+        <p className="text-sm text-gray-700 leading-relaxed">
+          {habit.description}
+        </p>
+      </div>
       
-      <div className="text-xs text-gray-500">
-        <div className="mb-1">
-          {habit.goalTags.join(', ')}
+      {/* Research findings box - shown only when habit is selected */}
+      {isSelected && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+          <div className="text-sm text-blue-900">
+            <strong>✓ Research Finding:</strong> {habit.researchSummary || 'Research data being loaded...'}
+          </div>
+          {habit.effectivenessScore && (
+            <div className="text-xs text-blue-700 mt-1">
+              📊 Effectiveness Score: {habit.effectivenessScore}/10
+            </div>
+          )}
         </div>
-        <div>
-          <strong>Research studies:</strong> {habit.researchIds.length} backing this habit
+      )}
+      
+      {/* Bottom action area */}
+      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+        <div className="text-xs text-gray-500">
+          {habit.goalTags.slice(0, 2).join(', ')}
         </div>
+        <button
+          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+            isSelected 
+              ? 'bg-primary-500 text-white' 
+              : 'bg-gray-100 text-gray-700 hover:bg-primary-100'
+          }`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggle();
+          }}
+        >
+          {isSelected ? 'Selected' : 'Select'}
+        </button>
       </div>
     </div>
   );
@@ -102,10 +159,36 @@ function HabitCard({ habit, isSelected, onToggle, recommendation }: HabitCardPro
 
 export function RecommendationsStep() {
   const { selectedGoals, userData, nextStep, previousStep, setError } = useOnboardingStore();
-  const [recommendedHabits, setRecommendedHabits] = useState<Habit[]>([]);
-  const [recommendations, setRecommendations] = useState<HabitRecommendation[]>([]);
+  const [recommendedHabits, setRecommendedHabits] = useState<(Habit & { researchSummary?: string })[]>([]);
+  const [recommendations, setRecommendations] = useState<GoalBasedHabit[]>([]);
   const [selectedHabits, setSelectedHabits] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAllOptions, setShowAllOptions] = useState(false);
+  const [top3RecommendedHabitIds, setTop3RecommendedHabitIds] = useState<string[]>([]);
+
+  const getCategoryIcon = (category: string) => {
+    const icons = {
+      better_sleep: '🛏️',
+      get_moving: '🚶‍♀️', 
+      feel_better: '😊'
+    };
+    return icons[category as keyof typeof icons] || '✨';
+  };
+
+  const getCategoryTitle = (goal: string) => {
+    const titles = {
+      better_sleep: 'Better Sleep',
+      get_moving: 'Get Moving',
+      feel_better: 'Feel Better',
+      reduce_stress: 'Stress Reduction',
+      increase_focus: 'Focus Enhancement',
+      improve_mood: 'Mood Improvement',
+      increase_energy: 'Energy Boost',
+      improve_health: 'Health Improvement'
+    };
+    return titles[goal as keyof typeof titles] || goal.replace('_', ' ');
+  };
+
   const [debugInfo, setDebugInfo] = useState<{
     goalsMapped: Record<string, string[]>;
     unmappedGoals: string[];
@@ -133,19 +216,19 @@ export function RecommendationsStep() {
         tier: 'free' as const // Onboarding users start with free tier
       };
 
-      const recommendationResult = await smartRecommendations.getRecommendations({
+      const recommendationResult = await goalBasedRecommendations.getRecommendations({
         selectedGoals,
-        userProfile,
-        limit: 12, // Show more options during onboarding
-        minConfidence: 0.3 // Be more inclusive during onboarding
+        language: 'en', // For now, testing with English only
+        limit: 50, // Show many habit choices during onboarding
+        primaryOnly: false // Show all habits, not just primary recommendations
       });
 
       console.log('[Onboarding] Recommendation result:', recommendationResult);
       
       // Set debug info for development
       setDebugInfo({
-        goalsMapped: recommendationResult.goalsMapped,
-        unmappedGoals: recommendationResult.unmappedGoals,
+        goalsMapped: { /* Simple recommendations don't need complex mapping */ },
+        unmappedGoals: [],
         totalMatched: recommendationResult.totalMatched,
         warnings: recommendationResult.warnings
       });
@@ -174,45 +257,94 @@ export function RecommendationsStep() {
           }
         } else {
           console.error('[Onboarding] No habits found in database');
-          setError('No habits available. Please check your connection and try again.');
+          setError('No habits found. This usually means the content API server is not running. Please ensure the sciencehabits-content-api server is started and try again.');
         }
       } else {
         // Success! We have recommendations from the Smart Engine
         console.log('[Onboarding] Found', recommendationResult.recommendations.length, 'recommendations');
         
-        // Load the actual habit objects for the recommended habit IDs
-        await dbHelpers.initializeDatabase();
-        const allHabits = await dbHelpers.getAllHabits();
+        // The smart recommendations system now returns full habit data from content API
+        // Simple recommendations will load habit details directly from the Content API
         
-        const recommendedHabitsData: Habit[] = [];
-        const recommendationsWithData: HabitRecommendation[] = [];
+        const recommendedHabitsData: (Habit & { researchSummary?: string })[] = [];
+        const recommendationsWithData: GoalBasedHabit[] = [];
+        const seenHabitIds = new Set<string>(); // Track processed habit IDs to prevent duplicates
         
-        for (const rec of recommendationResult.recommendations) {
-          const habit = allHabits.find(h => h.id === rec.habitId);
-          if (habit) {
-            recommendedHabitsData.push(habit);
-            recommendationsWithData.push(rec);
-          } else {
-            console.warn('[Onboarding] Habit not found in database:', rec.habitId);
+        for (const goalHabit of recommendationResult.recommendations) {
+          // Skip if we've already processed this habit (prevent duplicates)
+          if (seenHabitIds.has(goalHabit.id)) {
+            console.log('[Onboarding] Skipping duplicate habit:', goalHabit.id);
+            continue;
           }
+          seenHabitIds.add(goalHabit.id);
+          
+          console.log('[Onboarding] Loading habit:', goalHabit.id, 'Title:', goalHabit.title);
+          
+          // Convert GoalBasedHabit to legacy Habit format for UI compatibility
+          const legacyHabit: Habit & { researchSummary?: string } = {
+            id: goalHabit.id,
+            title: goalHabit.title,
+            description: goalHabit.description,
+            category: goalHabit.category,
+            goalTags: goalHabit.goalTags || [goalHabit.category],
+            lifestyleTags: ['general'],
+            timeTags: ['flexible'],
+            difficulty: goalHabit.difficulty as 'trivial' | 'easy' | 'moderate' | 'beginner' | 'intermediate' | 'advanced',
+            timeMinutes: goalHabit.timeMinutes,
+            instructions: Array.isArray(goalHabit.instructions) ? goalHabit.instructions.join('\n') : String(goalHabit.instructions),
+            researchIds: [], // Research mapping would need separate implementation
+            isCustom: false,
+            equipment: 'none',
+            frequency: {
+              type: 'daily'
+            },
+            reminders: {
+              enabled: false,
+              periodicReminderDays: 7
+            },
+            effectivenessScore: goalHabit.effectivenessScore,
+            researchSummary: goalHabit.researchSummary
+          };
+            
+          console.log('[Onboarding] Created legacy habit:', {id: legacyHabit.id, title: legacyHabit.title, category: legacyHabit.category});
+          recommendedHabitsData.push(legacyHabit);
+          recommendationsWithData.push(goalHabit);
         }
+        
+        console.log('[Onboarding] Successfully converted', recommendedHabitsData.length, 'content API habits to legacy format');
         
         setRecommendedHabits(recommendedHabitsData);
         setRecommendations(recommendationsWithData);
         
-        // Pre-select top 3 highest confidence habits
-        const topHabits = recommendationsWithData
-          .sort((a, b) => b.confidence - a.confidence)
+        // Determine top 3 habits for "RECOMMENDED FOR YOU" badges (limit to max 3)
+        const top3RecommendedHabits = recommendationsWithData
+          .filter(h => h.isPrimaryRecommendation)
+          .sort((a, b) => a.priority - b.priority)
           .slice(0, 3)
-          .map(r => r.habitId);
-        setSelectedHabits(topHabits);
+          .map(r => r.id);
         
-        console.log('[Onboarding] Pre-selected habits:', topHabits);
+        // Store top 3 for badge display logic
+        setTop3RecommendedHabitIds(top3RecommendedHabits);
+        
+        // Pre-select only the top 3 recommended habits
+        setSelectedHabits(top3RecommendedHabits);
+        
+        console.log('[Onboarding] Pre-selected top 3 "RECOMMENDED FOR YOU" habits:', top3RecommendedHabits);
       }
       
     } catch (error) {
       console.error('[Onboarding] Failed to load recommendations:', error);
-      setError('Failed to load habit recommendations. Please try again.');
+      
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      // Provide more specific error messages based on the error type
+      if (errorMessage.includes('Content API server is unavailable')) {
+        setError('Content server is not running. Please start the sciencehabits-content-api server and refresh the page.');
+      } else if (errorMessage.includes('invalid data format')) {
+        setError('Content server returned invalid data. Please check the API server configuration.');
+      } else {
+        setError('Failed to load habit recommendations. Please check your internet connection and try again.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -265,24 +397,6 @@ export function RecommendationsStep() {
           Choose the ones you'd like to start with.
         </p>
         
-        {selectedGoals.length > 0 && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
-            <strong>Selected goals:</strong> {selectedGoals.join(', ')}
-          </div>
-        )}
-
-        {/* Debug info for development */}
-        {process.env.NODE_ENV === 'development' && debugInfo && (
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-xs text-gray-700 mb-4">
-            <div><strong>Debug Info:</strong></div>
-            <div>Total matched: {debugInfo.totalMatched}</div>
-            <div>Unmapped goals: {debugInfo.unmappedGoals.join(', ') || 'none'}</div>
-            {debugInfo.warnings.length > 0 && (
-              <div className="text-yellow-700">Warnings: {debugInfo.warnings.join('; ')}</div>
-            )}
-            <div>Goals mapped: {Object.keys(debugInfo.goalsMapped).length}</div>
-          </div>
-        )}
       </div>
 
       {recommendedHabits.length === 0 ? (
@@ -300,20 +414,76 @@ export function RecommendationsStep() {
         </div>
       ) : (
         <>
-          <div className="space-y-4 mb-8">
-            {recommendedHabits.map((habit) => {
-              const recommendation = recommendations.find(r => r.habitId === habit.id);
-              return (
-                <HabitCard
-                  key={habit.id}
-                  habit={habit}
-                  isSelected={selectedHabits.includes(habit.id)}
-                  onToggle={() => handleHabitToggle(habit.id)}
-                  recommendation={recommendation}
-                />
-              );
-            })}
-          </div>
+          {/* Primary Recommendation Display */}
+          {recommendations.length > 0 && (
+            <div className="mb-8">
+              <div className="text-center mb-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-2">
+                  {getCategoryIcon(recommendedHabits[0]?.category || 'better_sleep')} Your {getCategoryTitle(selectedGoals[0] || 'better_sleep')} Plan
+                </h2>
+                <p className="text-gray-600">
+                  Based on scientific evidence and your goals
+                </p>
+              </div>
+
+              {/* Top recommendation as hero card */}
+              {recommendedHabits.length > 0 && (
+                <div className="mb-6">
+                  <HabitCard
+                    key={recommendedHabits[0].id}
+                    habit={recommendedHabits[0]}
+                    isSelected={selectedHabits.includes(recommendedHabits[0].id)}
+                    onToggle={() => handleHabitToggle(recommendedHabits[0].id)}
+                    recommendation={recommendations.find(r => r.id === recommendedHabits[0].id)}
+                    isTop3Recommended={top3RecommendedHabitIds.includes(recommendedHabits[0].id)}
+                  />
+                </div>
+              )}
+
+              {/* See other options button */}
+              {recommendedHabits.length > 1 && (
+                <div className="text-center mb-6">
+                  <button
+                    className="px-6 py-3 border-2 border-gray-300 rounded-lg text-gray-700 font-medium hover:border-primary-300 transition-colors"
+                    onClick={() => setShowAllOptions(true)}
+                  >
+                    See Other Options ({recommendedHabits.length - 1} more)
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* All options view */}
+          {showAllOptions && (
+            <div className="space-y-4 mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  All {getCategoryTitle(selectedGoals[0] || 'better_sleep')} Habits
+                </h3>
+                <button
+                  className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                  onClick={() => setShowAllOptions(false)}
+                >
+                  ← Back to Recommendation
+                </button>
+              </div>
+              
+              {recommendedHabits.map((habit) => {
+                const recommendation = recommendations.find(r => r.id === habit.id);
+                return (
+                  <HabitCard
+                    key={habit.id}
+                    habit={habit}
+                    isSelected={selectedHabits.includes(habit.id)}
+                    onToggle={() => handleHabitToggle(habit.id)}
+                    recommendation={recommendation}
+                    isTop3Recommended={top3RecommendedHabitIds.includes(habit.id)}
+                  />
+                );
+              })}
+            </div>
+          )}
 
           {selectedHabits.length > 0 && (
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
@@ -335,28 +505,15 @@ export function RecommendationsStep() {
             </div>
           )}
 
-          <div className="flex gap-3">
-            <Button 
-              variant="outline" 
-              onClick={previousStep}
-              className="flex-1"
-            >
-              Back
-            </Button>
-            
-            <Button 
-              onClick={handleContinue}
-              disabled={selectedHabits.length === 0}
-              className="flex-1"
-            >
-              Start Building Habits
-            </Button>
-          </div>
-          
-          {selectedHabits.length === 0 && (
-            <p className="text-center text-sm text-gray-500 mt-2">
-              Select at least one habit to get started
-            </p>
+          {selectedHabits.length > 0 && (
+            <div className="text-center">
+              <Button 
+                onClick={handleContinue}
+                className="px-8 py-3"
+              >
+                Start Building Habits
+              </Button>
+            </div>
           )}
         </>
       )}

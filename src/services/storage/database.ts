@@ -190,6 +190,15 @@ export const dbHelpers = {
     return habit;
   },
 
+  async addHabit(habit: Habit): Promise<Habit> {
+    await db.habits.add(habit);
+    return habit;
+  },
+
+  async getHabit(id: string): Promise<Habit | undefined> {
+    return await db.habits.get(id);
+  },
+
   // Progress operations
   async getProgress(userId: string, habitId: string): Promise<Progress | undefined> {
     const id = `${userId}:${habitId}`;

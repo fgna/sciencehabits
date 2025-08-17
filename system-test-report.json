@@ -1,0 +1,46 @@
+{
+  "timestamp": "2025-08-17T09:32:56.685Z",
+  "summary": {
+    "totalTests": 7,
+    "passed": 7,
+    "failed": 0,
+    "successRate": 100
+  },
+  "results": [
+    {
+      "name": "Goal File Discovery",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "name": "Cross-Contamination Prevention",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "name": "Priority Sorting",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "name": "Primary Recommendations",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "name": "Goal-Based Engine",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "name": "Data Integrity",
+      "status": "PASSED",
+      "error": null
+    },
+    {
+      "name": "Recommendation Scenarios",
+      "status": "PASSED",
+      "error": null
+    }
+  ]
+}

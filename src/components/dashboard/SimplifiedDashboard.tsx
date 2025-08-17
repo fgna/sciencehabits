@@ -4,7 +4,7 @@ import { MinimalHabitCard, SimpleProgress } from '../ui';
 import { HabitResearchModal } from '../research/HabitResearchModal';
 
 export function SimplifiedDashboard() {
-  const { currentUser, userHabits, userProgress } = useUserStore();
+  const { currentUser, userHabits, userProgress, clearUser } = useUserStore();
   const [researchModal, setResearchModal] = useState<{
     isOpen: boolean;
     habitId: string;
@@ -16,6 +16,20 @@ export function SimplifiedDashboard() {
     habitTitle: '',
     researchIds: []
   });
+  
+  // Handle restarting onboarding to select goals
+  const handleSelectGoals = async () => {
+    try {
+      // Clear user data to restart onboarding
+      await clearUser();
+      // Remove the stored user ID so onboarding shows again
+      localStorage.removeItem('sciencehabits_user_id');
+      // Refresh the page to restart the app flow
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to restart onboarding:', error);
+    }
+  };
   
   // Get today's date
   const today = new Date().toISOString().split('T')[0];
@@ -143,6 +157,7 @@ export function SimplifiedDashboard() {
           completedToday={todayProgress.completed}
           totalToday={todayProgress.total}
           currentStreak={currentStreak}
+          onSelectGoals={handleSelectGoals}
         />
         
         {/* Minimal Habit List */}
