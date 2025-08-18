@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, CardContent, ConfirmDialog } from '../ui';
+import { Button, Card, CardContent } from '../ui';
 import { CreateHabitForm } from './CreateHabitForm';
 import { useHabitStore } from '../../stores/habitStore';
 import { useUserStore } from '../../stores/userStore';
@@ -22,13 +22,6 @@ export function HabitsView() {
     researchIds: []
   });
   
-  const [deleteConfirmation, setDeleteConfirmation] = useState<{
-    isOpen: boolean;
-    habit: Habit | null;
-  }>({
-    isOpen: false,
-    habit: null
-  });
 
   const [showHabitBrowser, setShowHabitBrowser] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -44,6 +37,7 @@ export function HabitsView() {
   } = useHabitStore();
   
   const { currentUser, userHabits, userProgress, refreshProgress } = useUserStore();
+
 
   useEffect(() => {
     if (currentUser) {
@@ -75,62 +69,6 @@ export function HabitsView() {
     setShowCreateForm(true);
   };
 
-  const handleDelete = (habit: Habit) => {
-    setDeleteConfirmation({
-      isOpen: true,
-      habit
-    });
-  };
-
-  const confirmDelete = async () => {
-    if (!currentUser || !deleteConfirmation.habit) return;
-    
-    const habit = deleteConfirmation.habit;
-    let success = false;
-    
-    if (habit.isCustom) {
-      // For custom habits, delete the habit entirely
-      success = await deleteHabit(habit.id, currentUser.id);
-    } else {
-      // For science-backed habits, just remove from user's tracking (delete progress)
-      try {
-        const { dbHelpers } = await import('../../services/storage/database');
-        await dbHelpers.deleteProgress(currentUser.id, habit.id);
-        success = true;
-      } catch (error) {
-        console.error('Failed to remove habit from tracking:', error);
-        setError('Failed to remove habit from tracking');
-      }
-    }
-    
-    if (success) {
-      // Show success message
-      setSuccessMessage(
-        habit.isCustom 
-          ? `"${habit.title}" has been deleted successfully.`
-          : `"${habit.title}" has been removed from your tracking.`
-      );
-      
-      // Hide success message after 3 seconds
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 3000);
-      
-      // Refresh all user data to ensure both science-backed and custom habits are updated
-      await refreshProgress();
-      if (currentUser) {
-        await loadCustomHabits(currentUser.id);
-        // Also refresh user data to update science-backed habits list
-        const { loadUserData } = useUserStore.getState();
-        await loadUserData(currentUser.id);
-      }
-    }
-    
-    setDeleteConfirmation({
-      isOpen: false,
-      habit: null
-    });
-  };
 
   const handleViewResearch = (habitId: string) => {
     const habit = userHabits.find(h => h.id === habitId);
@@ -301,8 +239,6 @@ export function HabitsView() {
                     onSkip={handleSkipHabit}
                     onViewResearch={handleViewResearch}
                     isCompleted={isCompleted}
-                    showActions
-                    onDelete={() => handleDelete(habit)}
                   />
                 );
               })}
@@ -357,7 +293,6 @@ export function HabitsView() {
                     isCompleted={isCompleted}
                     showActions
                     onEdit={() => handleEdit(habit)}
-                    onDelete={() => handleDelete(habit)}
                   />
                 );
               })}
@@ -383,38 +318,6 @@ export function HabitsView() {
         researchIds={researchModal.researchIds}
       />
 
-      {/* Delete Confirmation Dialog */}
-      <ConfirmDialog
-        isOpen={deleteConfirmation.isOpen}
-        onClose={() => setDeleteConfirmation({ isOpen: false, habit: null })}
-        onConfirm={confirmDelete}
-        title={
-          deleteConfirmation.habit?.isCustom 
-            ? "Delete Habit" 
-            : "Stop Tracking Habit"
-        }
-        message={
-          deleteConfirmation.habit
-            ? deleteConfirmation.habit.isCustom
-              ? `Are you sure you want to delete "${deleteConfirmation.habit.title}"? This will permanently remove the habit and all progress data. This action cannot be undone.`
-              : `Are you sure you want to stop tracking "${deleteConfirmation.habit.title}"? This will remove it from your habit list and delete all progress data. You can always add it back later from the recommendations.`
-            : ''
-        }
-        confirmText={
-          deleteConfirmation.habit?.isCustom 
-            ? "Delete Habit" 
-            : "Stop Tracking"
-        }
-        cancelText="Cancel"
-        confirmVariant="danger"
-        icon={
-          <div className="w-12 h-12 mx-auto flex items-center justify-center rounded-full bg-red-100">
-            <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </div>
-        }
-      />
 
       {/* Habit Browser Modal */}
       <HabitBrowser

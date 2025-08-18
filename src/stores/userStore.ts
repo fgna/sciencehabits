@@ -73,73 +73,69 @@ export const useUserStore = create<UserState>((set, get) => ({
         throw new Error('User not found');
       }
 
-      console.log('Loading user data for:', userId, user);
-
-      // Get user's recommended habits (from initial onboarding)
-      const recommendedHabits = await dbHelpers.getRecommendedHabits(user);
-      console.log('Recommended habits found:', recommendedHabits.length, recommendedHabits);
-      
-      // Get custom habits
-      const customHabits = await dbHelpers.getCustomHabits(userId);
-      console.log('Custom habits found:', customHabits.length, customHabits);
-      
-      // Get user's progress
+      // Get user's progress first to determine which habits they're actually tracking
       const progress = await dbHelpers.getUserProgress(userId);
-      console.log('Progress entries found:', progress.length, progress);
       
-      // Combine all habits
-      const allHabits = [...recommendedHabits, ...customHabits];
-      console.log('All habits before filtering:', allHabits.length, allHabits);
-      
-      // For new users or users with no progress, show recommended habits
-      // For existing users, only show habits with progress (actively tracking)
-      let activeHabits: Habit[];
-      
+      // If no progress, user has no selected habits yet
       if (progress.length === 0) {
-        // New user case: no habits selected yet
-        console.log('New user detected, no habits selected yet');
-        activeHabits = [];
-        
         set({ 
           currentUser: user,
-          userHabits: activeHabits,
+          userHabits: [],
           userProgress: progress,
           isLoading: false 
         });
         return;
-      } else {
-        // Existing user case: filter to only show those with progress (actively tracking)
-        activeHabits = allHabits.filter(habit => 
-          progress.some(p => p.habitId === habit.id)
-        );
-        console.log('Active habits after filtering:', activeHabits.length, activeHabits);
       }
+      
+      // For users with progress, only load the specific habits they're tracking
+      const trackedHabitIds = progress.map(p => p.habitId);
+      
+      // Get science-backed habits that match progress entries
+      const allScienceHabits = await dbHelpers.getAllHabits();
+      const trackedScienceHabits = allScienceHabits.filter(habit => 
+        trackedHabitIds.includes(habit.id)
+      );
+      
+      // Get custom habits that match progress entries
+      const allCustomHabits = await dbHelpers.getCustomHabits(userId);
+      const trackedCustomHabits = allCustomHabits.filter(habit => 
+        trackedHabitIds.includes(habit.id)
+      );
+      
+      // Combine only the habits user is actually tracking
+      const activeHabits = [...trackedScienceHabits, ...trackedCustomHabits];
 
       // If no active habits but user has progress, there might be orphaned progress entries
       if (activeHabits.length === 0 && progress.length > 0) {
-        console.warn('Found progress entries but no matching habits:', progress.map(p => p.habitId));
+        console.warn('Found orphaned progress entries that should be cleaned up:', progress.map(p => p.habitId));
+      }
+      
+      // Clean up orphaned progress entries (progress for habits that no longer exist)
+      const orphanedProgressIds = progress
+        .filter(p => {
+          const scienceMatch = trackedScienceHabits.find(h => h.id === p.habitId);
+          const customMatch = trackedCustomHabits.find(h => h.id === p.habitId);
+          return !(scienceMatch || customMatch);
+        })
+        .map(p => p.habitId);
         
-        // Try to get all habits from database to check for mismatches
-        const allDbHabits = await dbHelpers.getAllHabits();
-        const allCustomHabits = await dbHelpers.getCustomHabits(userId);
-        const combinedHabits = [...allDbHabits, ...allCustomHabits];
-        console.log('All habits in database:', combinedHabits.length, combinedHabits.map(h => h.id));
-        
-        // Find habits that match progress entries (only user-selected habits should have progress)
-        const progressHabits = combinedHabits.filter(habit =>
-          progress.some(p => p.habitId === habit.id)
-        );
-        console.log('Habits matching progress entries:', progressHabits.length, progressHabits);
-        
-        if (progressHabits.length > 0) {
-          set({ 
-            currentUser: user,
-            userHabits: progressHabits,
-            userProgress: progress,
-            isLoading: false 
-          });
-          return;
+      if (orphanedProgressIds.length > 0) {
+        console.log('🧹 Cleaning up orphaned progress entries:', orphanedProgressIds);
+        // Delete orphaned progress entries
+        for (const habitId of orphanedProgressIds) {
+          await dbHelpers.deleteProgress(userId, habitId);
         }
+        // Remove from current progress array
+        const cleanedProgress = progress.filter(p => !orphanedProgressIds.includes(p.habitId));
+        
+        // Update the final result
+        set({ 
+          currentUser: user,
+          userHabits: activeHabits,
+          userProgress: cleanedProgress,
+          isLoading: false 
+        });
+        return;
       }
 
       set({ 

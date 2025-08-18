@@ -56,94 +56,38 @@ export function HabitsCarousel({
     return progress?.completions.includes(today) || false;
   };
 
-  // 🔍 EXTENSIVE DEBUGGING: Check habit data structure
-  console.log('🔍 HabitsCarousel received habits:', habits.length, habits);
-  console.log('🔍 Bundled habits data available:', bundledHabits.data.length, bundledHabits.data);
-
-  // Test first received habit research data
-  if (habits.length > 0) {
-    const firstReceivedHabit = habits[0];
-    console.log('🔍 First received habit research fields:');
-    console.log('  - whyEffective:', firstReceivedHabit.whyEffective);
-    console.log('  - researchSummary:', firstReceivedHabit.researchSummary);
-    console.log('  - sources:', firstReceivedHabit.sources);
-    console.log('  - instructions:', firstReceivedHabit.instructions);
-    console.log('  - Full habit object:', firstReceivedHabit);
-  }
-
-  // Test first bundled habit research data
-  const firstBundledHabit = bundledHabits.data[0];
-  console.log('🔍 First bundled habit research fields:');
-  console.log('  - whyEffective:', firstBundledHabit.whyEffective);
-  console.log('  - researchSummary:', firstBundledHabit.researchSummary);
-  console.log('  - sources:', firstBundledHabit.sources);
-  console.log('  - instructions:', firstBundledHabit.instructions);
-
-  // Check if received habits have research data, if not use bundled data
-  const hasResearchData = habits.length > 0 && habits[0]?.whyEffective && habits[0]?.researchSummary && habits[0]?.sources;
-  console.log('🔍 Received habits have research data:', hasResearchData);
-  
-  const habitsToUse = hasResearchData ? habits : bundledHabits.data.map((bundledHabit: any): Habit => {
-    const mappedHabit = {
-      id: bundledHabit.id,
-      title: bundledHabit.title,
-      description: bundledHabit.description,
-      timeMinutes: bundledHabit.timeMinutes,
-      category: bundledHabit.category,
-      goalTags: bundledHabit.goalTags || [],
-      lifestyleTags: ['all'], // Default for demo
-      timeTags: ['flexible'], // Default for demo
-      instructions: bundledHabit.instructions || [],
-      researchIds: [],
-      isCustom: false,
-      difficulty: bundledHabit.difficulty as 'trivial' | 'easy' | 'moderate' | 'beginner' | 'intermediate' | 'advanced',
-      equipment: '',
-      frequency: {
-        type: 'daily' as const
-      },
-      reminders: {
-        enabled: false,
-        periodicReminderDays: 3
-      },
-      effectivenessScore: bundledHabit.effectivenessScore,
-      researchBacked: bundledHabit.researchBacked,
-      researchSummary: bundledHabit.researchSummary,
-      sources: bundledHabit.sources,
-      whyEffective: bundledHabit.whyEffective,
-      progressionTips: bundledHabit.progressionTips,
-      optimalTiming: bundledHabit.optimalTiming,
-      evidenceStrength: bundledHabit.evidenceStrength
-    };
+  // Always use user's habits - enhance them with research data from bundled habits if needed
+  const habitsToUse = habits.map((userHabit): Habit => {
+    // Find matching bundled habit for research data
+    const bundledHabit = bundledHabits.data.find((bh: any) => bh.id === userHabit.id);
     
-    // 🔍 TEST: Log each mapped habit's research data
-    console.log(`🔍 Mapped habit ${mappedHabit.id} research data:`);
-    console.log('  - whyEffective:', mappedHabit.whyEffective);
-    console.log('  - researchSummary:', mappedHabit.researchSummary);
-    console.log('  - sources:', mappedHabit.sources);
-    console.log('  - instructions:', mappedHabit.instructions);
+    // If user habit has research data, use it as-is
+    if (userHabit.whyEffective && userHabit.researchSummary && userHabit.sources) {
+      return userHabit;
+    }
     
-    return mappedHabit;
+    // Otherwise, enhance user habit with bundled research data
+    if (bundledHabit) {
+      return {
+        ...userHabit,
+        whyEffective: bundledHabit.whyEffective || userHabit.whyEffective,
+        researchSummary: bundledHabit.researchSummary || userHabit.researchSummary,
+        sources: bundledHabit.sources || userHabit.sources,
+        instructions: bundledHabit.instructions || userHabit.instructions,
+        progressionTips: bundledHabit.progressionTips || userHabit.progressionTips,
+        optimalTiming: bundledHabit.optimalTiming || userHabit.optimalTiming,
+        effectivenessScore: bundledHabit.effectivenessScore || userHabit.effectivenessScore
+      };
+    }
+    
+    // Return user habit as-is if no matching bundled data
+    return userHabit;
   });
-  
-  console.log('🔍 Final habitsToUse:', habitsToUse.length, habitsToUse);
 
   // Convert habits to enhanced format with comprehensive research data
   const enhancedHabits: HabitWithStats[] = habitsToUse.map((habit, index) => {
-    // 🔍 TEST: Log each habit's data before enhancement
-    console.log(`🔍 Enhancing habit ${habit.id}:`);
-    console.log('  - Original whyEffective:', habit.whyEffective);
-    console.log('  - Original researchSummary:', habit.researchSummary);
-    console.log('  - Original sources:', habit.sources);
-    console.log('  - Original instructions:', habit.instructions);
-    
     // Get real progress data for this habit
     const progress = getHabitProgress(habit.id);
-    
-    // 🔍 DEBUG: Log progress data for this habit
-    console.log(`🔍 Progress for habit ${habit.id}:`, progress);
-    console.log(`  - Current streak: ${progress?.currentStreak || 0}`);
-    console.log(`  - Total days: ${progress?.totalDays || 0}`);
-    console.log(`  - Completed today: ${isHabitCompletedToday(habit.id)}`);
     
     const enhanced = {
       ...habit,
@@ -164,32 +108,8 @@ export function HabitsCarousel({
       ]
     };
     
-    // 🔍 TEST: Log enhanced research data
-    console.log(`🔍 Enhanced habit ${habit.id} research data:`);
-    console.log('  - keyFindings:', enhanced.researchData.keyFindings);
-    console.log('  - mechanismOfAction:', enhanced.researchData.mechanismOfAction);
-    console.log('  - citations:', enhanced.researchData.citations);
-    console.log('  - instructions:', enhanced.instructions);
-    
-    // 🚨 DEVELOPER WARNINGS: Check for missing data
-    if (!habit.researchSummary) {
-      console.warn(`🚨 Missing researchSummary for habit: ${habit.id} (${habit.title})`);
-    }
-    if (!habit.whyEffective) {
-      console.warn(`🚨 Missing whyEffective for habit: ${habit.id} (${habit.title})`);
-    }
-    if (!habit.sources || habit.sources.length === 0) {
-      console.warn(`🚨 Missing sources for habit: ${habit.id} (${habit.title})`);
-    }
-    if (!Array.isArray(habit.instructions) || habit.instructions.length === 0) {
-      console.warn(`🚨 Missing instructions for habit: ${habit.id} (${habit.title})`);
-    }
-    
     return enhanced;
   });
-  
-  // 🔍 FINAL TEST: Log all enhanced habits
-  console.log('🔍 All enhanced habits with research data:', enhancedHabits);
 
 
   // Dynamic color functions
