@@ -174,9 +174,6 @@ export function ActualAppPreview({ testingContext, onBehaviorEvent }: ActualAppP
     recordEvent('habit_completed', { habitId, completed: true });
   };
 
-  const handleHideHabit = (habitId: string) => {
-    recordEvent('habit_hidden', { habitId });
-  };
 
   const handleAddHabit = () => {
     recordEvent('add_habit_clicked');
@@ -267,7 +264,6 @@ export function ActualAppPreview({ testingContext, onBehaviorEvent }: ActualAppP
             <HabitsCarousel 
               habits={fakeHabits}
               onHabitToggle={handleHabitToggle}
-              onHideHabit={handleHideHabit}
               onAddHabit={handleAddHabit}
             />
           </div>

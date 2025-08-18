@@ -277,13 +277,9 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
             <div className="p-6">
               <HabitsCarousel 
                 habits={userHabits.length > 0 ? userHabits : []}
-                onHabitToggle={(habitId) => {
-                  console.log('Habit toggle:', habitId);
-                  // TODO: Implement habit completion logic
-                }}
-                onHideHabit={(habitId) => {
-                  console.log('Hide habit:', habitId);
-                  // TODO: Implement hide habit logic
+                onHabitToggle={async (habitId) => {
+                  const { updateUserProgress } = useUserStore.getState();
+                  await updateUserProgress(habitId);
                 }}
                 onAddHabit={() => {
                   console.log('Add habit clicked');

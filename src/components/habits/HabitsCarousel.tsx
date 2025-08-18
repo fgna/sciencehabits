@@ -16,7 +16,6 @@ const formatCategoryName = (category: string): string => {
 interface HabitsCarouselProps {
   habits: Habit[];
   onHabitToggle?: (habitId: string) => void;
-  onHideHabit?: (habitId: string) => void;
   onAddHabit?: () => void;
 }
 
@@ -35,7 +34,6 @@ interface HabitWithStats extends Habit {
 export function HabitsCarousel({ 
   habits, 
   onHabitToggle, 
-  onHideHabit, 
   onAddHabit 
 }: HabitsCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -223,7 +221,6 @@ export function HabitsCarousel({
               <HabitCard 
                 habit={habit} 
                 onToggle={() => onHabitToggle?.(habit.id)}
-                onHide={() => onHideHabit?.(habit.id)}
                 getCategoryColor={getCategoryColor}
                 getDifficultyColor={getDifficultyColor}
                 getEvidenceColor={getEvidenceColor}
@@ -294,7 +291,6 @@ export function HabitsCarousel({
 interface HabitCardProps {
   habit: HabitWithStats;
   onToggle: () => void;
-  onHide: () => void;
   getCategoryColor: (category: string) => string;
   getDifficultyColor: (difficulty: string) => string;
   getEvidenceColor: (evidenceStrength: string) => string;
@@ -303,7 +299,6 @@ interface HabitCardProps {
 function HabitCard({ 
   habit, 
   onToggle, 
-  onHide, 
   getCategoryColor, 
   getDifficultyColor, 
   getEvidenceColor 
@@ -409,16 +404,6 @@ function HabitCard({
         </div>
       </div>
 
-      {/* Footer Section */}
-      <div className="px-6 py-4 bg-gray-50 border-t">
-        {/* Action Button */}
-        <button 
-          onClick={onHide}
-          className="w-full bg-red-50 hover:bg-red-100 text-red-700 text-sm font-medium py-2 px-4 rounded-lg transition-colors duration-200 border border-red-200"
-        >
-          Hide Habit
-        </button>
-      </div>
     </div>
   );
 }
