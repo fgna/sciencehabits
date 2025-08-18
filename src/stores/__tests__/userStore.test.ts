@@ -119,9 +119,7 @@ describe('UserStore', () => {
         result.current.setUser(mockUser);
       });
 
-      await act(async () => {
-        // await result.current.addUserHabit(mockHabits[0]); // Method doesn't exist
-      });
+      // await result.current.addUserHabit(mockHabits[0]); // Method doesn't exist
       
       expect(result.current.userHabits).toContain(mockHabits[0]);
       expect(result.current.userHabits).toHaveLength(1);
@@ -135,14 +133,10 @@ describe('UserStore', () => {
       });
 
       // Add habit first
-      await act(async () => {
-        // await result.current.addUserHabit(mockHabits[0]); // Method doesn't exist
-      });
+      // await result.current.addUserHabit(mockHabits[0]); // Method doesn't exist
       
       // Then remove it
-      await act(async () => {
-        // await result.current.removeUserHabit('habit-1'); // Method doesn't exist
-      });
+      // await result.current.removeUserHabit('habit-1'); // Method doesn't exist
       
       expect(result.current.userHabits).toHaveLength(0);
       expect(result.current.userHabits.find(h => h.id === 'habit-1')).toBeUndefined();
@@ -155,10 +149,8 @@ describe('UserStore', () => {
         result.current.setUser(mockUser);
       });
 
-      await act(async () => {
-        // await result.current.addUserHabit(mockHabits[0]); // Method doesn't exist
-        // await result.current.addUserHabit(mockHabits[0]); // Method doesn't exist // Same habit
-      });
+      // await result.current.addUserHabit(mockHabits[0]); // Method doesn't exist
+      // await result.current.addUserHabit(mockHabits[0]); // Method doesn't exist // Same habit
       
       expect(result.current.userHabits).toHaveLength(1);
     });
@@ -378,9 +370,7 @@ describe('UserStore', () => {
         result.current.setUser(mockUser);
       });
 
-      await act(async () => {
-        // await result.current.addUserHabit(mockHabits[0]); // Method doesn't exist
-      });
+      // await result.current.addUserHabit(mockHabits[0]); // Method doesn't exist
       
       expect(result.current.error).toBeNull();
     });

@@ -251,8 +251,9 @@ describe('Integration Tests: User Flows', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('habit-instructions-habit-1')).toBeVisible();
-        expect(screen.getByText(/Find a comfortable seated position/)).toBeInTheDocument();
       });
+      
+      expect(screen.getByText(/Find a comfortable seated position/)).toBeInTheDocument();
 
       // Complete habit after reading instructions
       const completeButton = within(habitCard).getByTestId('habit-complete-habit-1');
@@ -274,8 +275,9 @@ describe('Integration Tests: User Flows', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('habit-details-habit-1')).toBeVisible();
-        expect(screen.getByText(/Why this works:/)).toBeInTheDocument();
       });
+      
+      expect(screen.getByText(/Why this works:/)).toBeInTheDocument();
 
       // Should show research links
       const researchLinks = within(screen.getByTestId('habit-details-habit-1'))

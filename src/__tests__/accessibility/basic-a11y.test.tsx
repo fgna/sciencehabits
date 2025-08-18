@@ -7,6 +7,10 @@ import {
   createMockProgress,
   TestWrapper 
 } from '../utils/testUtils';
+import { HabitChecklistCard } from '../../components/dashboard/HabitChecklistCard';
+import { Button } from '../../components/ui/Button';
+import { Card, CardHeader, CardContent, CardFooter } from '../../components/ui/Card';
+import { Input } from '../../components/ui/Input';
 
 // Mock research context
 const mockResearchContext = {
@@ -21,11 +25,6 @@ const mockResearchContext = {
   loadArticles: jest.fn()
 };
 
-// Import existing components
-import { HabitChecklistCard } from '../../components/dashboard/HabitChecklistCard';
-import { Button } from '../../components/ui/Button';
-import { Card, CardHeader, CardContent, CardFooter } from '../../components/ui/Card';
-import { Input } from '../../components/ui/Input';
 
 // Extend Jest matchers
 expect.extend(toHaveNoViolations);

@@ -72,7 +72,8 @@ export const DeviceManagement: React.FC<DeviceManagementProps> = ({
   };
 
   const handleRemoveDevice = async (deviceId: string, deviceName: string) => {
-    if (!confirm(`Remove device "${deviceName}"? This action cannot be undone.`)) {
+    // Use window.confirm to avoid ESLint warning
+    if (!window.confirm(`Remove device "${deviceName}"? This action cannot be undone.`)) {
       return;
     }
 

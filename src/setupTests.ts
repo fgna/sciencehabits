@@ -1,12 +1,11 @@
 // Jest-dom adds custom jest matchers for asserting on DOM nodes
 import '@testing-library/jest-dom';
-
 // Add axe-core accessibility testing
 import { toHaveNoViolations } from 'jest-axe';
-expect.extend(toHaveNoViolations);
-
 // Mock IndexedDB for testing
 import 'fake-indexeddb/auto';
+
+expect.extend(toHaveNoViolations);
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
