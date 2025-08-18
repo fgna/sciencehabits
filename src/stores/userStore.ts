@@ -95,28 +95,15 @@ export const useUserStore = create<UserState>((set, get) => ({
       // For existing users, only show habits with progress (actively tracking)
       let activeHabits: Habit[];
       
-      if (progress.length === 0 && recommendedHabits.length > 0) {
-        // New user case: show recommended habits and automatically create progress entries
-        console.log('New user detected, showing recommended habits and creating progress entries');
-        activeHabits = recommendedHabits.slice(0, 5); // Show first 5 recommended habits
-        
-        // Create progress entries for recommended habits
-        for (const habit of activeHabits) {
-          try {
-            await dbHelpers.createProgress(userId, habit.id);
-          } catch (error) {
-            console.error('Failed to create progress for habit:', habit.id, error);
-          }
-        }
-        
-        // Reload progress after creating entries
-        const newProgress = await dbHelpers.getUserProgress(userId);
-        console.log('Progress after creating entries for new user:', newProgress.length, newProgress);
+      if (progress.length === 0) {
+        // New user case: no habits selected yet
+        console.log('New user detected, no habits selected yet');
+        activeHabits = [];
         
         set({ 
           currentUser: user,
           userHabits: activeHabits,
-          userProgress: newProgress,
+          userProgress: progress,
           isLoading: false 
         });
         return;
@@ -134,10 +121,12 @@ export const useUserStore = create<UserState>((set, get) => ({
         
         // Try to get all habits from database to check for mismatches
         const allDbHabits = await dbHelpers.getAllHabits();
-        console.log('All habits in database:', allDbHabits.length, allDbHabits.map(h => h.id));
+        const allCustomHabits = await dbHelpers.getCustomHabits(userId);
+        const combinedHabits = [...allDbHabits, ...allCustomHabits];
+        console.log('All habits in database:', combinedHabits.length, combinedHabits.map(h => h.id));
         
-        // Find habits that match progress entries
-        const progressHabits = allDbHabits.filter(habit =>
+        // Find habits that match progress entries (only user-selected habits should have progress)
+        const progressHabits = combinedHabits.filter(habit =>
           progress.some(p => p.habitId === habit.id)
         );
         console.log('Habits matching progress entries:', progressHabits.length, progressHabits);
