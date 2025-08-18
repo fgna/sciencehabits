@@ -19,52 +19,13 @@ interface HabitRemoverProps {
 export function HabitRemover({ isOpen, onClose }: HabitRemoverProps) {
   const [currentHabits, setCurrentHabits] = useState<Habit[]>([]);
   const [filteredHabits, setFilteredHabits] = useState<Habit[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [availableCategories, setAvailableCategories] = useState<{id: string, label: string, icon: string}[]>([]);
 
   const { currentUser, userHabits, userProgress, refreshProgress, loadUserData } = useUserStore();
   const { customHabits, loadCustomHabits } = useHabitStore();
 
-  // Generate category options dynamically from actual habit data
-  const generateCategoryOptions = useCallback((habits: Habit[]) => {
-    const categoryMap = new Map();
-    
-    // Add "All Categories" first
-    categoryMap.set('all', { id: 'all', label: 'All Categories', icon: '🎯' });
-    
-    // Extract unique categories from habits
-    habits.forEach(habit => {
-      if (habit.category && !categoryMap.has(habit.category)) {
-        // Create user-friendly labels and icons for categories
-        const categoryInfo = getCategoryInfo(habit.category);
-        categoryMap.set(habit.category, {
-          id: habit.category,
-          label: categoryInfo.label,
-          icon: categoryInfo.icon
-        });
-      }
-    });
-    
-    return Array.from(categoryMap.values());
-  }, []);
-
-  // Get category display info
-  const getCategoryInfo = (categoryId: string) => {
-    const categoryMap: Record<string, {label: string, icon: string}> = {
-      'better_sleep': { label: 'Better Sleep', icon: '😴' },
-      'feel_better': { label: 'Feel Better', icon: '😊' },
-      'get_moving': { label: 'Get Moving', icon: '🏃‍♂️' },
-      // Add more mappings as needed when new categories are added to the data
-    };
-    
-    return categoryMap[categoryId] || { 
-      label: categoryId.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), 
-      icon: '📁' 
-    };
-  };
 
   const loadCurrentHabits = useCallback(async () => {
     if (!currentUser) return;
@@ -94,10 +55,6 @@ export function HabitRemover({ isOpen, onClose }: HabitRemoverProps) {
       
       setCurrentHabits(sortedHabits);
       
-      // Generate available categories from the loaded habits
-      const categories = generateCategoryOptions(combinedHabits);
-      setAvailableCategories(categories);
-      
       console.log(`📚 Loaded ${sortedHabits.length} current habits for removal`);
     } catch (error) {
       console.error('Failed to load current habits:', error);
@@ -110,16 +67,10 @@ export function HabitRemover({ isOpen, onClose }: HabitRemoverProps) {
   const filterHabits = useCallback(() => {
     if (!currentHabits.length) return;
     
-    let filtered = [...currentHabits];
-    
-    // Filter by selected category
-    if (selectedCategory && selectedCategory !== 'all') {
-      filtered = filtered.filter(habit => habit.category === selectedCategory);
-    }
-    
-    setFilteredHabits(filtered);
-    console.log(`🔍 Showing ${filtered.length} habits for category: ${selectedCategory || 'all'}`);
-  }, [currentHabits, selectedCategory]);
+    // Show all habits without category filtering
+    setFilteredHabits([...currentHabits]);
+    console.log(`🔍 Showing ${currentHabits.length} habits`);
+  }, [currentHabits]);
 
   useEffect(() => {
     if (isOpen && currentUser) {
@@ -219,28 +170,6 @@ export function HabitRemover({ isOpen, onClose }: HabitRemoverProps) {
           </div>
         )}
 
-        {/* Category Filter */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Filter by Category
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {availableCategories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
-                  selectedCategory === category.id
-                    ? 'bg-red-100 text-red-700 border border-red-300'
-                    : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'
-                }`}
-              >
-                <span>{category.icon}</span>
-                <span>{category.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* Habit List */}
         {isLoading ? (
@@ -250,12 +179,9 @@ export function HabitRemover({ isOpen, onClose }: HabitRemoverProps) {
           </div>
         ) : filteredHabits.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-600 mb-2">No habits found for the selected category.</p>
+            <p className="text-gray-600 mb-2">No habits to remove.</p>
             <p className="text-sm text-gray-500">
-              {currentHabits.length === 0 
-                ? "You don't have any habits to remove yet."
-                : "Try selecting a different category to see your habits."
-              }
+              You don't have any habits to remove yet.
             </p>
           </div>
         ) : (
