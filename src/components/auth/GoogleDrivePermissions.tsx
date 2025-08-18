@@ -7,7 +7,8 @@
 
 import React, { useState } from 'react';
 import { Button, Card, CardContent } from '../ui';
-import { GoogleDriveAuth } from '../../services/sync/GoogleDriveProvider';
+// MVP: GoogleDriveProvider removed for MVP
+// import { GoogleDriveAuth } from '../../services/sync/GoogleDriveProvider';
 
 interface GoogleDrivePermissionsProps {
   onAuthComplete: (success: boolean) => void;
@@ -30,11 +31,10 @@ export const GoogleDrivePermissions: React.FC<GoogleDrivePermissionsProps> = ({
       setError(null);
       setStep('authenticating');
 
-      // Initialize Google API
-      await GoogleDriveAuth.initializeAuth();
-      
-      // Attempt sign in
-      const success = await GoogleDriveAuth.signIn();
+      // MVP: Google Drive auth disabled for MVP
+      // await GoogleDriveAuth.initializeAuth();
+      // const success = await GoogleDriveAuth.signIn();
+      const success = false; // Always fail in MVP
       
       if (success) {
         setStep('success');
@@ -42,7 +42,7 @@ export const GoogleDrivePermissions: React.FC<GoogleDrivePermissionsProps> = ({
           onAuthComplete(true);
         }, 1500);
       } else {
-        throw new Error('Sign in was cancelled or failed');
+        throw new Error('Cloud sync disabled for MVP');
       }
     } catch (error) {
       console.error('Google Drive authentication error:', error);
@@ -245,7 +245,8 @@ export const GoogleDriveStatus: React.FC<GoogleDriveStatusProps> = ({
     
     setIsDisconnecting(true);
     try {
-      await GoogleDriveAuth.signOut();
+      // MVP: GoogleDriveAuth.signOut() disabled for MVP
+      // await GoogleDriveAuth.signOut();
       onDisconnect();
     } catch (error) {
       console.error('Disconnect failed:', error);

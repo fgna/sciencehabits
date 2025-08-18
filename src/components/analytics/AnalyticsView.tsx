@@ -1,8 +1,7 @@
 import React from 'react';
-import { EnhancedAnalyticsView } from './EnhancedAnalyticsView';
+import { ResponsiveAnalyticsView } from './ResponsiveAnalyticsView';
 
 export function AnalyticsView() {
-
-  // Always use enhanced view
-  return <EnhancedAnalyticsView />;
+  // MVP: Use responsive view (defaults to mobile)
+  return <ResponsiveAnalyticsView />;
 }

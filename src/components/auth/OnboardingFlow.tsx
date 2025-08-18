@@ -10,7 +10,8 @@
 import React, { useState } from 'react';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
-import { CloudProviderSelector } from './CloudProviderSelector';
+// MVP: CloudProviderSelector removed for MVP
+// import { CloudProviderSelector } from './CloudProviderSelector';
 import { AuthResult, CloudConfig } from '../../types/sync';
 
 type OnboardingStep = 'auth-choice' | 'login' | 'register' | 'provider-selection' | 'complete';
@@ -154,10 +155,17 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
     return (
       <div className={`flex items-center justify-center min-h-screen bg-gray-50 ${className}`}>
         <div className="w-full p-6">
-          <CloudProviderSelector
-            onProviderSelected={handleProviderSelected}
-            onBack={() => setCurrentStep('auth-choice')}
-          />
+          {/* MVP: CloudProviderSelector removed for MVP - auto-complete with no cloud config */}
+          <div className="max-w-md mx-auto text-center">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">MVP: Local Only</h2>
+            <p className="text-gray-600 mb-4">Cloud sync disabled for MVP - your data will be stored locally.</p>
+            <button
+              onClick={() => handleProviderSelected(null)}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+            >
+              Continue
+            </button>
+          </div>
         </div>
       </div>
     );

@@ -7,23 +7,16 @@ import { ResponsiveAnalyticsView } from '../analytics/ResponsiveAnalyticsView';
 import { ProfileModal } from '../profile';
 import { ProfileSettings } from '../profile';
 import { ResearchArticles } from '../research';
-import { ContentLoaderDemo } from '../admin/ContentLoaderDemo';
 import { ReminderIndicator } from '../reminders/ReminderIndicator';
 import { RecoveryDashboard } from '../recovery';
 import { SmartDailyDashboard } from './SmartDailyDashboard';
-import { EnhancedProgressVisualization } from '../visualization/EnhancedProgressVisualization';
-import { MotivationalMessagingSystem } from '../motivation/MotivationalMessagingSystem';
 import { useUserStore } from '../../stores/userStore';
 import { useUIPreferencesStore } from '../../stores/uiPreferencesStore';
 import { addSampleCompletionsToExistingProgress } from '../../utils/devDataGenerator';
 import { SimplifiedDashboard } from './SimplifiedDashboard';
 import { CleanNavigation } from '../navigation/CleanNavigation';
 import { Analytics } from '../analytics/Analytics';
-import { CloudProviderSelector } from '../auth/CloudProviderSelector';
-import { ReportExporter } from '../analytics/ReportExporter';
-import { CloudConfig } from '../../types/sync';
-import { useAnalyticsStore } from '../../stores/analyticsStore';
-import { BackupSection } from '../settings/BackupSection';
+// Cloud sync imports removed for MVP
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -31,7 +24,7 @@ interface DashboardLayoutProps {
   onSignOut?: () => void;
 }
 
-type DashboardTab = 'today' | 'habits' | 'progress' | 'recovery' | 'research' | 'settings' | 'content-demo';
+type DashboardTab = 'today' | 'habits' | 'progress' | 'settings';
 
 // Settings Navigation Component
 function SettingsNavigation({ activeTab, onTabChange }: { 
@@ -70,10 +63,13 @@ function SettingsNavigation({ activeTab, onTabChange }: {
   );
 }
 
-// Analytics Export Section Component
-// MVP: Simplified Export Section using BackupSection
+// Analytics Export Section Component - MVP: Removed
 function AnalyticsExportSection() {
-  return <BackupSection />;
+  return (
+    <div className="text-center py-8">
+      <p className="text-gray-600">Export functionality removed for MVP</p>
+    </div>
+  );
 }
 
 export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutProps) {
@@ -171,21 +167,15 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
     }
   };
 
-  // Listen for navigation events
+  // Listen for navigation events - MVP: Simplified navigation
   useEffect(() => {
-    const handleShowResearchArticle = (event: CustomEvent) => {
-      setActiveTab('research');
-    };
-    
     const handleNavigateToHabits = (event: CustomEvent) => {
       setActiveTab('habits');
     };
 
-    window.addEventListener('showResearchArticle', handleShowResearchArticle as EventListener);
     window.addEventListener('navigate-to-habits', handleNavigateToHabits as EventListener);
     
     return () => {
-      window.removeEventListener('showResearchArticle', handleShowResearchArticle as EventListener);
       window.removeEventListener('navigate-to-habits', handleNavigateToHabits as EventListener);
     };
   }, []);
@@ -219,24 +209,6 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
       )
     },
     {
-      id: 'recovery' as const,
-      name: 'Recovery',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-        </svg>
-      )
-    },
-    {
-      id: 'research' as const,
-      name: 'Research',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-        </svg>
-      )
-    },
-    {
       id: 'settings' as const,
       name: 'Settings',
       icon: (
@@ -248,19 +220,7 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
     }
   ];
 
-  // Add content demo tab in development mode
-  if (process.env.NODE_ENV === 'development') {
-    navigation.push({
-      id: 'content-demo' as const,
-      name: 'Content Demo',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      )
-    });
-  }
+  // Content demo removed for MVP
 
   // If simplified mode is enabled, render the simplified dashboard
   if (layoutMode === 'simplified') {
@@ -563,160 +523,62 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
         )}
       </header>
 
-      {/* Motivational Messaging System */}
-      {user && (
-        <MotivationalMessagingSystem 
-          user={user}
-          habits={userHabits}
-          progress={userProgress}
-          currentContext={{
-            timeOfDay: new Date().getHours() < 12 ? 'morning' : 
-                      new Date().getHours() < 17 ? 'midday' : 
-                      new Date().getHours() < 21 ? 'evening' : 'night',
-            dayOfWeek: new Date().toLocaleDateString('en-US', { weekday: 'long' }),
-            isWeekend: [0, 6].includes(new Date().getDay()),
-            recentActivity: 'active'
-          }}
-        />
-      )}
-
       {/* Main Content */}
-      <main className="flex-1">
-        {/* Tab content - Show children for today or SmartDailyDashboard */}
-        {activeTab === 'today' && children}
-        
-        {activeTab === 'habits' && <HabitsView />}
-        
-        {activeTab === 'progress' && (
-          <div className="space-y-6">
-            {user && (
-              <EnhancedProgressVisualization 
-                habits={userHabits}
-                progress={userProgress}
-                user={user}
-                timeframe="month"
-              />
-            )}
-            <AnalyticsView />
-          </div>
-        )}
-        
-        {activeTab === 'recovery' && <RecoveryDashboard />}
-        
-        {activeTab === 'research' && <ResearchArticles />}
-        
-        {activeTab === 'settings' && (
-          <div className="max-w-4xl mx-auto p-6">
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Settings</h1>
-              <p className="text-gray-600">Manage your account settings</p>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Today View */}
+          {activeTab === 'today' && (
+            <div className="w-full">
+              {children}
             </div>
-            
-            <SettingsNavigation 
-              activeTab={settingsTab} 
-              onTabChange={setSettingsTab} 
-            />
-            
-            {/* MVP: Cloud Sync Disabled for MVP - restore for full version
-            {settingsTab === 'sync' && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">☁️ Cloud Sync</h2>
-                <p className="text-gray-600 mb-4">
-                  Keep your habits synchronized across all your devices with secure cloud storage.
-                </p>
-                <CloudProviderSelector 
-                  onProviderSelected={async (config) => {
-                    if (config) {
-                      console.log('Cloud provider selected:', config);
-                      await saveCloudConfig({
-                        type: config.type,
-                        serverUrl: config.serverUrl,
-                        username: config.username,
-                        appPassword: config.appPassword,
-                        syncPath: config.syncPath,
-                        projectId: config.projectId,
-                        bucketName: config.bucketName,
-                        region: config.region,
-                        credentials: config.credentials
-                      });
-                    }
-                  }}
-                />
-              </div>
-            )}
-            */}
-            
-            {/* Profile Tab */}
-            {settingsTab === 'profile' && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                {currentUser ? (
-                  <ProfileSettings user={currentUser} />
-                ) : (
-                  <div className="text-center py-8">
-                    <div className="text-4xl mb-4">👤</div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Loading Profile...</h3>
-                    <p className="text-gray-600">Setting up your profile settings</p>
-                  </div>
-                )}
-              </div>
-            )}
+          )}
 
-            {/* MVP: Layout Tab Disabled for MVP - restore for full version
-            {settingsTab === 'layout' && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">🎯 Layout Mode</h2>
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setLayoutMode('simplified')}
-                  >
-                    Simplified
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setLayoutMode('enhanced')}
-                    className={layoutMode === 'enhanced' ? 'bg-blue-600 text-white border-blue-600' : ''}
-                  >
-                    Enhanced
-                  </Button>
+          {/* My Habits View */}
+          {activeTab === 'habits' && (
+            <div className="w-full">
+              <HabitsView />
+            </div>
+          )}
+
+          {/* Progress View */}
+          {activeTab === 'progress' && (
+            <div className="w-full">
+              <AnalyticsView />
+            </div>
+          )}
+
+          {/* Settings View */}
+          {activeTab === 'settings' && (
+            <div className="w-full max-w-4xl">
+              <div className="mb-6">
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">Settings</h1>
+                <p className="text-gray-600">Manage your account settings</p>
+              </div>
+              
+              <SettingsNavigation 
+                activeTab={settingsTab} 
+                onTabChange={setSettingsTab} 
+              />
+              
+              {/* Profile Tab */}
+              {settingsTab === 'profile' && (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  {currentUser ? (
+                    <ProfileSettings user={currentUser} />
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-4">👤</div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">Loading Profile...</h3>
+                      <p className="text-gray-600">Setting up your profile settings</p>
+                    </div>
+                  )}
                 </div>
-                <p className="text-gray-600 text-sm mt-2">
-                  Choose between a clean simplified interface or the full-featured enhanced view.
-                </p>
-              </div>
-            )}
-            */}
-
-            {/* MVP: Export Tab - Disabled for MVP, needs more work */}
-          </div>
-        )}
-        
-        {activeTab === 'content-demo' && <ContentLoaderDemo />}
+              )}
+            </div>
+          )}
+        </div>
       </main>
 
-      {/* Bottom Navigation (Mobile) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-        <div className="grid grid-cols-5">
-          {navigation.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`flex flex-col items-center justify-center py-2 px-1 transition-colors ${
-                activeTab === item.id
-                  ? 'text-primary-600 bg-primary-50'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              {item.icon}
-              <span className="text-xs mt-1">{item.name}</span>
-            </button>
-          ))}
-        </div>
-      </nav>
-
-      {/* Bottom padding for mobile navigation */}
-      <div className="md:hidden h-16" />
-      
       {/* Profile Modal */}
       {user && (
         <ProfileModal 
@@ -727,4 +589,4 @@ export function DashboardLayout({ children, user, onSignOut }: DashboardLayoutPr
       )}
     </div>
   );
-}
+};

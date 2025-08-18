@@ -2,28 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { OnboardingContainer } from './components/onboarding/index';
 import { DashboardLayout } from './components/dashboard';
 import { SmartDailyDashboard } from './components/dashboard/SmartDailyDashboard';
-import { TranslationDashboard } from './components/admin/TranslationDashboard';
-import { AdminDashboard } from './components/admin/AdminDashboard';
-import { AdminLogin } from './components/admin/AdminLogin';
-import { ResearchTranslationReview } from './components/admin/ResearchTranslationReview';
 import { UserTestingDashboard } from './components/testing';
 import { initializeDatabase } from './services/storage/database';
 import { useUserStore } from './stores/userStore';
 import { ResearchProvider } from './contexts/ResearchContext';
 import { ReminderProvider } from './contexts/ReminderContext';
-import PerformanceManager from './services/performance';
+// Performance manager removed for MVP
 
 function App() {
   const [isOnboarded, setIsOnboarded] = useState<boolean | null>(null);
   const [currentView, setCurrentView] = useState<string>('dashboard');
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
   const { loadUserData, clearUser, currentUser } = useUserStore();
 
-  // Simple routing based on URL hash
+  // Simple routing based on URL hash - MVP: Only support main app and user testing
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1);
-      setCurrentView(hash || 'dashboard');
+      
+      // MVP: Only support main app and user testing
+      if (hash === 'user-testing') {
+        setCurrentView('user-testing');
+      } else {
+        setCurrentView('dashboard');
+      }
     };
 
     handleHashChange(); // Set initial view
@@ -42,15 +43,7 @@ function App() {
       // Initialize database first
       await initializeDatabase();
       
-      // Initialize performance optimization system
-      if (process.env.NODE_ENV === 'production' || process.env.REACT_APP_ENABLE_PERFORMANCE_OPTIMIZATION === 'true') {
-        try {
-          await PerformanceManager.initialize();
-          console.log('✅ Performance optimization system initialized');
-        } catch (error) {
-          console.warn('⚠️ Performance optimization initialization failed:', error);
-        }
-      }
+      // Performance optimization removed for MVP
       
       // Check if user has completed onboarding
       const storedUserId = localStorage.getItem('sciencehabits_user_id');
@@ -97,131 +90,7 @@ function App() {
     return <OnboardingContainer onComplete={handleOnboardingComplete} />;
   }
 
-  // Admin dashboard view with secure authentication
-  if (currentView === 'admin') {
-    if (!isAdminAuthenticated) {
-      return <AdminLogin onLoginSuccess={() => setIsAdminAuthenticated(true)} />;
-    }
-
-    return (
-      <ResearchProvider>
-        <ReminderProvider>
-          <div className="min-h-screen bg-gray-50">
-            {/* Admin header */}
-            <div className="bg-white shadow-sm border-b">
-              <div className="max-w-7xl mx-auto px-6 py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <button
-                      onClick={() => window.location.hash = 'dashboard'}
-                      className="text-primary-600 hover:text-primary-700 text-sm font-medium"
-                    >
-                      ← Back to App
-                    </button>
-                    <span className="text-gray-300">|</span>
-                    <h1 className="text-xl font-semibold text-gray-900">Admin Panel</h1>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <a
-                      href="#translation-dashboard"
-                      className="text-sm text-blue-600 hover:text-blue-700"
-                    >
-                      Translation Dashboard
-                    </a>
-                    <a
-                      href="#user-testing"
-                      className="text-sm text-purple-600 hover:text-purple-700"
-                    >
-                      User Testing
-                    </a>
-                    <button
-                      onClick={() => {
-                        setIsAdminAuthenticated(false);
-                        window.location.hash = 'dashboard';
-                      }}
-                      className="text-sm text-gray-600 hover:text-gray-700"
-                    >
-                      Logout
-                    </button>
-                    <div className="text-sm text-gray-500">
-                      ScienceHabits CMS
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <AdminDashboard />
-          </div>
-        </ReminderProvider>
-      </ResearchProvider>
-    );
-  }
-
-  // Translation dashboard view
-  if (currentView === 'translation-dashboard') {
-    return (
-      <ResearchProvider>
-        <ReminderProvider>
-          <div className="min-h-screen bg-gray-50">
-            {/* Admin header */}
-            <div className="bg-white shadow-sm border-b">
-              <div className="max-w-7xl mx-auto px-6 py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <button
-                      onClick={() => window.location.hash = 'admin'}
-                      className="text-primary-600 hover:text-primary-700 text-sm font-medium"
-                    >
-                      ← Back to CMS
-                    </button>
-                    <span className="text-gray-300">|</span>
-                    <h1 className="text-xl font-semibold text-gray-900">Translation Dashboard</h1>
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    Multi-Language Quality Control
-                  </div>
-                </div>
-              </div>
-            </div>
-            <TranslationDashboard />
-          </div>
-        </ReminderProvider>
-      </ResearchProvider>
-    );
-  }
-
-  // Research translation review view
-  if (currentView === 'research-translation-review') {
-    return (
-      <ResearchProvider>
-        <ReminderProvider>
-          <div className="min-h-screen bg-gray-50">
-            {/* Admin header */}
-            <div className="bg-white shadow-sm border-b">
-              <div className="max-w-7xl mx-auto px-6 py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <button
-                      onClick={() => window.location.hash = 'translation-dashboard'}
-                      className="text-primary-600 hover:text-primary-700 text-sm font-medium"
-                    >
-                      ← Back to Translation Dashboard
-                    </button>
-                    <span className="text-gray-300">|</span>
-                    <h1 className="text-xl font-semibold text-gray-900">German Research Review</h1>
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    Review & Approve German Translations
-                  </div>
-                </div>
-              </div>
-            </div>
-            <ResearchTranslationReview />
-          </div>
-        </ReminderProvider>
-      </ResearchProvider>
-    );
-  }
+  // Admin dashboard removed for MVP
 
   // User testing dashboard view
   if (currentView === 'user-testing') {

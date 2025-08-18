@@ -7,8 +7,13 @@
 
 import React, { useState } from 'react';
 import { Button, Card, CardContent } from '../ui';
-import { CloudProviderFactory } from '../../services/sync/CloudProviderFactory';
-import { CloudConfig, CloudProviderType } from '../../types/sync';
+// MVP: Cloud sync services removed for MVP
+// import { CloudProviderFactory } from '../../services/sync/CloudProviderFactory';
+// import { CloudConfig, CloudProviderType } from '../../types/sync';
+
+// MVP: Temporary types for compilation
+type CloudConfig = any;
+type CloudProviderType = string;
 
 interface ConnectionTesterProps {
   config: CloudConfig;
@@ -62,7 +67,8 @@ export const ConnectionTester: React.FC<ConnectionTesterProps> = ({
       setCurrentTest('Testing connection...');
       setProgress(25);
       
-      const connectionResult = await CloudProviderFactory.testConnection(config);
+      // MVP: Cloud sync disabled for MVP
+      const connectionResult = { success: false, error: 'Cloud sync disabled for MVP', latency: 0 };
       testResults.connection = {
         success: connectionResult.success,
         latency: connectionResult.latency,
@@ -83,7 +89,8 @@ export const ConnectionTester: React.FC<ConnectionTesterProps> = ({
       setCurrentTest('Testing authentication...');
       setProgress(50);
       
-      const authResult = await CloudProviderFactory.testAuthentication(config);
+      // MVP: Cloud sync disabled for MVP  
+      const authResult = { success: false, error: 'Cloud sync disabled for MVP', quota: null };
       testResults.authentication = {
         success: authResult.success,
         error: authResult.error,
@@ -140,58 +147,17 @@ export const ConnectionTester: React.FC<ConnectionTesterProps> = ({
   };
 
   const testBasicOperations = async (config: CloudConfig): Promise<TestResult> => {
-    try {
-      const provider = CloudProviderFactory.create(config);
-      
-      // Test file listing
-      await provider.listFiles('');
-      
-      // Test directory creation (by uploading a test file)
-      const testData = {
-        data: [1, 2, 3, 4, 5], // Small test payload
-        iv: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120],
-        timestamp: Date.now(),
-        context: 'connection-test',
-        version: '1.0'
-      };
-      
-      const testFileName = `test-${Date.now()}`;
-      
-      // Upload test file
-      await provider.uploadFile(testFileName, testData);
-      
-      // Download test file
-      const downloaded = await provider.downloadFile(testFileName);
-      
-      // Verify data integrity
-      const dataMatches = JSON.stringify(downloaded) === JSON.stringify(testData);
-      
-      // Clean up - delete test file
-      try {
-        await provider.deleteFile(testFileName);
-      } catch (error) {
-        console.warn('Failed to clean up test file:', error);
-      }
-      
-      return {
-        success: dataMatches,
-        details: dataMatches 
-          ? 'File operations successful'
-          : 'Data integrity check failed'
-      };
-    } catch (error) {
-      console.error('Basic operations test failed:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Operations test failed',
-        details: 'Could not perform file upload/download test'
-      };
-    }
+    // MVP: Cloud sync disabled for MVP
+    return {
+      success: false,
+      error: 'Cloud sync disabled for MVP',
+      details: 'File operations not available in MVP'
+    };
   };
 
   const getProviderInfo = (type: CloudProviderType) => {
-    const providers = CloudProviderFactory.getSupportedProviders();
-    return providers.find(p => p.type === type);
+    // MVP: Return placeholder info
+    return { name: 'Cloud Provider (MVP Disabled)', type: type };
   };
 
   const formatQuota = (quota: TestResults['quota']) => {

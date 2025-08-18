@@ -119,8 +119,9 @@ export const DeviceManagement: React.FC<DeviceManagementProps> = ({
     return platformNames[platform] || 'Unknown';
   };
 
-  const formatDate = (timestamp: number): string => {
-    return new Date(timestamp).toLocaleDateString(undefined, {
+  const formatDate = (dateInput: number | Date): string => {
+    const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+    return date.toLocaleDateString(undefined, {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',

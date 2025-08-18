@@ -68,10 +68,12 @@ export class UserAuthentication {
       
       // Create user profile
       const user: User = {
-        userId,
+        id: userId,
         email: email.toLowerCase(),
+        username: email.split('@')[0], // Use email prefix as username
+        createdAt: new Date(),
+        // Auth system properties
         emailHash,
-        createdAt: Date.now(),
         devices: [],
         encryptionSalt: Array.from(salt),
         cloudProvider: 'none'
@@ -87,8 +89,9 @@ export class UserAuthentication {
       
       return {
         success: true,
-        user: { userId, email: email.toLowerCase() },
-        requiresCloudSetup: true
+        userId,
+        // MVP: No device management for now
+        // deviceId: undefined
       };
     } catch (error) {
       console.error('User registration failed:', error);
@@ -106,6 +109,9 @@ export class UserAuthentication {
       }
       
       // Verify password by attempting to derive the same key
+      if (!user.encryptionSalt) {
+        return { success: false, error: 'Invalid user data' };
+      }
       const isValid = await this.verifyPassword(password, user.encryptionSalt);
       
       if (!isValid) {
@@ -116,15 +122,15 @@ export class UserAuthentication {
       await this.createSession(user, password);
       
       // Update last seen
-      user.lastSeen = Date.now();
+      user.lastSeen = new Date();
       await this.saveUser(user);
       
-      console.log('✅ User authenticated successfully:', { userId: user.userId, email: user.email });
+      console.log('✅ User authenticated successfully:', { userId: user.id, email: user.email });
       
       return {
         success: true,
-        user: { userId: user.userId, email: user.email },
-        requiresCloudSetup: !user.cloudProvider || user.cloudProvider === 'none'
+        userId: user.id
+        // MVP: No cloud setup required for MVP
       };
     } catch (error) {
       console.error('Authentication failed:', error);
@@ -139,19 +145,22 @@ export class UserAuthentication {
     }
 
     // Check if device already exists
+    if (!currentUser.devices) {
+      currentUser.devices = [];
+    }
     const existingIndex = currentUser.devices.findIndex(d => d.id === deviceInfo.id);
     
     if (existingIndex >= 0) {
       // Update existing device
       currentUser.devices[existingIndex] = {
         ...deviceInfo,
-        lastSeen: Date.now()
+        lastSeen: new Date()
       };
     } else {
       // Add new device
       currentUser.devices.push({
         ...deviceInfo,
-        lastSeen: Date.now()
+        lastSeen: new Date()
       });
     }
     
@@ -165,6 +174,9 @@ export class UserAuthentication {
       throw new Error('No authenticated user');
     }
 
+    if (!currentUser.devices) {
+      currentUser.devices = [];
+    }
     const deviceIndex = currentUser.devices.findIndex(d => d.id === deviceInfo.id);
     if (deviceIndex === -1) {
       throw new Error('Device not found');
@@ -182,7 +194,7 @@ export class UserAuthentication {
       return [];
     }
 
-    return currentUser.devices;
+    return currentUser.devices || [];
   }
 
   async removeDevice(deviceId: string): Promise<void> {
@@ -191,6 +203,9 @@ export class UserAuthentication {
       throw new Error('No authenticated user');
     }
 
+    if (!currentUser.devices) {
+      currentUser.devices = [];
+    }
     currentUser.devices = currentUser.devices.filter(d => d.id !== deviceId);
     await this.saveUser(currentUser);
     
@@ -203,6 +218,9 @@ export class UserAuthentication {
       throw new Error('No authenticated user');
     }
 
+    if (!currentUser.devices) {
+      currentUser.devices = [];
+    }
     currentUser.devices = currentUser.devices.filter(d => d.id !== deviceId);
     await this.saveUser(currentUser);
     
@@ -327,7 +345,7 @@ export class UserAuthentication {
     // Store minimal session info - password is not stored
     const session = {
       id: 'current',
-      userId: user.userId,
+      userId: user.id,
       createdAt: Date.now(),
       deviceId: this.getCurrentDeviceId()
     };

@@ -28,6 +28,12 @@ jest.mock('../../services/storage/database', () => ({
       put: jest.fn(),
       delete: jest.fn()
     }
+  },
+  dbHelpers: {
+    markHabitComplete: jest.fn().mockResolvedValue(true),
+    getUserProgress: jest.fn().mockResolvedValue([]),
+    getUserHabits: jest.fn().mockResolvedValue([]),
+    saveUser: jest.fn().mockResolvedValue(true)
   }
 }));
 

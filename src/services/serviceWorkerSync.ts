@@ -8,8 +8,10 @@
 import { serviceWorkerManager, type OfflineOperation } from './swRegistration';
 import { offlineQueueManager } from './offlineQueue';
 import { dbHelpers } from './storage/database';
-import { HabitSyncService } from './habitSyncService';
-import { GoogleDriveService } from './googleDriveService';
+// Cloud sync services removed for MVP
+// MVP: Disabled cloud sync imports
+// import { HabitSyncService } from './habitSyncService';
+// import { GoogleDriveService } from './googleDriveService';
 
 interface SyncResult {
   success: boolean;
@@ -347,23 +349,9 @@ class ServiceWorkerSyncManager {
     if (!this.cloudConfig.enabled) return;
 
     try {
-      switch (this.cloudConfig.provider) {
-        case 'google-drive':
-          if (GoogleDriveService.isAuthenticated()) {
-            await HabitSyncService.syncToCloud();
-          } else {
-            throw new Error('Google Drive not authenticated');
-          }
-          break;
-
-        case 'nextcloud':
-          // TODO: Implement NextCloud sync
-          console.log('[SWSync] NextCloud sync not yet implemented');
-          break;
-
-        default:
-          throw new Error(`Unknown cloud provider: ${this.cloudConfig.provider}`);
-      }
+      // MVP: Cloud sync services removed - local sync only
+      console.log('[SWSync] Cloud sync disabled for MVP - data synced locally only');
+      return;
     } catch (error) {
       console.error('[SWSync] Cloud sync failed:', error);
       throw error;

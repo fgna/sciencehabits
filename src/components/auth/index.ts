@@ -6,7 +6,8 @@
 
 export { LoginForm } from './LoginForm';
 export { RegisterForm } from './RegisterForm';
-export { CloudProviderSelector } from './CloudProviderSelector';
+// MVP: CloudProviderSelector removed for MVP
+// export { CloudProviderSelector } from './CloudProviderSelector';
 export { OnboardingFlow } from './OnboardingFlow';
 export { DeviceManagement } from './DeviceManagement';
 export { ConnectionTester } from './ConnectionTester';

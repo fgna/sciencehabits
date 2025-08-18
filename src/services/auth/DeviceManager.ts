@@ -51,10 +51,10 @@ export class DeviceManager {
       name: deviceName || this.getDefaultDeviceName(),
       type: this.getDeviceType(),
       platform: this.getPlatform(),
-      lastSeen: Date.now(),
+      lastSeen: new Date(),
       isActive: true,
       userAgent: navigator.userAgent,
-      createdAt: Date.now()
+      createdAt: new Date()
     };
 
     try {
@@ -82,7 +82,7 @@ export class DeviceManager {
         const device: DeviceInfo = JSON.parse(stored);
         
         // Update last seen timestamp
-        device.lastSeen = Date.now();
+        device.lastSeen = new Date();
         localStorage.setItem('current-device', JSON.stringify(device));
         
         return device;
@@ -106,7 +106,7 @@ export class DeviceManager {
     const updatedDevice: DeviceInfo = {
       ...currentDevice,
       ...updates,
-      lastSeen: Date.now()
+      lastSeen: new Date()
     };
 
     try {
@@ -174,7 +174,7 @@ export class DeviceManager {
       const updatedDevice: DeviceInfo = {
         ...device,
         name: newName.trim(),
-        lastSeen: Date.now()
+        lastSeen: new Date()
       };
 
       await this.userAuth.updateDevice(updatedDevice);

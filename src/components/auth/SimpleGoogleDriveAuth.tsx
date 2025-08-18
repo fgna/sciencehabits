@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button, Card, CardContent } from '../ui';
-import { GoogleDriveService } from '../../services/googleDriveService';
+// MVP: GoogleDriveService removed for MVP
 
 // TypeScript declarations for Google Identity Services
 declare global {
@@ -143,22 +143,9 @@ export const SimpleGoogleDriveAuth: React.FC<SimpleGoogleDriveAuthProps> = ({
       // Store the access token for Google Drive API calls
       localStorage.setItem('google_drive_token', response.access_token);
       
-      // Test the connection to ensure everything works
-      try {
-        console.log('🔄 Testing Google Drive connection...');
-        const testResult = await GoogleDriveService.testConnection();
-        
-        if (testResult.success) {
-          console.log('✅ Google Drive connection test successful');
-          onAuthComplete(true);
-        } else {
-          console.error('Google Drive connection test failed:', testResult.error);
-          setError(`Connection test failed: ${testResult.error}`);
-        }
-      } catch (err: any) {
-        console.error('Google Drive connection test error:', err);
-        setError('Unable to connect to Google Drive. Please try again.');
-      }
+      // MVP: Connection test disabled for MVP - just complete auth
+      console.log('✅ Google Drive authentication successful (MVP: connection test disabled)');
+      onAuthComplete(true);
       
       setIsLoading(false);
     } else {

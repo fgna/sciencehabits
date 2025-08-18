@@ -6,7 +6,23 @@
  */
 
 import { migrationConfig, MigrationConfig } from './MigrationConfig';
-import { ContentAPIClient } from '../admin/ContentAPIClient';
+// MVP: ContentAPIClient removed for MVP - using stub
+// import { ContentAPIClient } from '../admin/ContentAPIClient';
+
+// MVP: Stub class for ContentAPIClient
+class ContentAPIClient {
+  constructor(public baseUrl: string) {}
+  async checkHealth(): Promise<void> { throw new Error('MVP: Admin features disabled'); }
+  async testConnection(): Promise<{ connected: boolean }> { return { connected: false }; }
+  async fetchHabits(): Promise<any[]> { return []; }
+  async fetchResearch(): Promise<any[]> { return []; }
+  async fetchGoals(): Promise<any[]> { return []; }
+  async fetchTranslations(): Promise<any[]> { return []; }
+  async getHabits(language: string): Promise<any[]> { return []; }
+  async getResearch(language: string): Promise<any[]> { return []; }
+  async getGoals(language: string): Promise<any[]> { return []; }
+  async getTranslations(language: string): Promise<any[]> { return []; }
+}
 
 export interface ContentRequest {
   type: 'habits' | 'research' | 'goals' | 'translations';
