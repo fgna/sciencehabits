@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Button, Card, CardContent } from '../ui';
 import { useAnalyticsStore } from '../../stores/analyticsStore';
 import { useUserStore } from '../../stores/userStore';
@@ -7,13 +7,11 @@ import { useUserStore } from '../../stores/userStore';
 import { ProgressOverview } from './ProgressOverview';
 import { HabitPerformanceChart } from './HabitPerformanceChart';
 import { GoalProgressTracker } from './GoalProgressTracker';
-import { ReportExporter } from './ReportExporter';
 import { TrendProgressView } from '../recovery/TrendProgressView';
 
 type TimeRange = 'week' | 'month' | '3months' | 'year';
 
 export function SimpleAnalyticsView() {
-  const [showExport, setShowExport] = useState(false);
   
   const {
     analyticsData,
@@ -117,39 +115,9 @@ export function SimpleAnalyticsView() {
               </option>
             ))}
           </select>
-          
-          {/* Export Button */}
-          <Button
-            onClick={() => setShowExport(!showExport)}
-            variant="secondary"
-            size="sm"
-          >
-            📤 Export Report
-          </Button>
         </div>
       </div>
 
-      {/* Export Panel */}
-      {showExport && (
-        <Card>
-          <CardContent>
-            <div className="p-4">
-              <h3 className="font-semibold text-gray-900 mb-3">Export Analytics Report</h3>
-              <ReportExporter 
-                analytics={analyticsData}
-                habitPerformance={analyticsData.habitPerformance || []}
-                timeRange={selectedTimeRange}
-              />
-              <button
-                onClick={() => setShowExport(false)}
-                className="mt-3 text-sm text-gray-500 hover:text-gray-700"
-              >
-                Close export options
-              </button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Progress Overview */}
       <Card>
