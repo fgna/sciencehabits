@@ -1,6 +1,6 @@
-# 🧬 ScienceHabits
+# 🧬 ScienceHabits MVP
 
-> **Science-backed habit tracking for sustainable behavior change**
+> **Mobile-first, science-backed habit tracking for sustainable behavior change**
 
 [![Tests](https://github.com/sciencehabits/app/actions/workflows/test-automation.yml/badge.svg)](https://github.com/sciencehabits/app/actions/workflows/test-automation.yml)
 [![Accessibility](https://img.shields.io/badge/accessibility-WCAG%202.1%20AA-green.svg)](https://www.w3.org/WAI/WCAG21/Understanding/)
@@ -11,68 +11,57 @@
 ## 📋 Table of Contents
 
 - [Overview](#overview)
-- [Key Features](#key-features)
+- [MVP Features](#mvp-features)
 - [Quick Start](#quick-start)
 - [Architecture](#architecture)
 - [Development](#development)
 - [Testing](#testing)
-- [Content Management System](#content-management-system)
+- [Content System](#content-system)
 - [User Testing Environment](#user-testing-environment)
 - [Multi-Language Support](#multi-language-support)
-- [Sync Architecture](#sync-architecture)
 - [Contributing](#contributing)
 
 ## 🌟 Overview
 
-ScienceHabits is a Progressive Web Application (PWA) that helps users build sustainable habits based on scientific research. The app provides personalized habit recommendations, progress tracking, and educational content to support evidence-based behavior change.
+ScienceHabits MVP is a streamlined Progressive Web Application (PWA) that helps users build sustainable habits based on scientific research. This mobile-first version focuses on core habit tracking functionality with a clean, accessible interface.
 
-**🚀 Latest Enhancement**: Complete Content Management System with GitHub Pages-based Content API, comprehensive multi-language support, and User Data Mock Dataset Testing Environment for advanced development workflows.
+**🚀 Current Status**: MVP Release - Mobile-first, English-focused, local-storage experience
+**🎯 Core Philosophy**: Privacy-first, offline-capable, science-backed habit formation
+**📱 Target Platform**: Mobile devices with responsive design for desktop
 
-**🎯 Core Philosophy**: Privacy-first, local-first architecture with optional multi-cloud sync, designed for long-term sustainable habit formation based on behavioral science.
-
-## ✨ Key Features
+## ✨ MVP Features
 
 ### 🎯 **Core Habit Tracking**
-- **Personalized Onboarding**: Goal-based habit recommendations with progressive 4-phase journey
-- **Multi-Frequency Support**: Daily, weekly (3x/week), periodic (quarterly/yearly) habits
-- **Smart Progress Analytics**: Frequency-aware streak and performance tracking
-- **Intelligent Reminders**: Browser notifications with completion pattern analysis
-- **Research Integration**: Science-backed habit explanations with contextual insights
+- **Progressive Onboarding**: Goal-based habit recommendations with 4-phase journey
+- **Multi-Frequency Support**: Daily, weekly (3x/week), periodic habits
+- **Smart Progress Analytics**: Streak tracking and completion rate calculations
+- **Research Integration**: Science-backed habit explanations with research sources
+- **Mobile-First Interface**: Optimized carousel design for mobile habit browsing
 
-### 🧠 **AI-Powered Intelligence**
-- **Smart Scheduling System**: AI-optimized habit timing with stacking methodology
-- **Adaptive Difficulty Engine**: Automatic adjustment based on performance patterns
-- **Proactive Recovery System**: Detects struggling patterns and provides compassionate support
-- **Contextual Research Integration**: Relevant scientific insights at optimal moments
-- **Motivational Messaging AI**: Context-aware encouragement with research backing
+### 📊 **Progress Analytics**
+- **Mobile Analytics Dashboard**: Touch-friendly charts and visualizations
+- **Streak Tracking**: Real-time streak calculations with recovery support
+- **Completion Insights**: Weekly and monthly progress summaries
+- **Recovery Focus**: Compassionate design for missed habits
 
-### 🎨 **Enhanced User Experience**
-- **Progressive Onboarding**: 4-phase guided setup with milestone tracking
-- **Enhanced Progress Visualizations**: Interactive charts, heatmaps, and streak analytics
-- **Personalization Control**: 4 levels from minimal to comprehensive AI assistance
-- **Compassionate Design**: Recovery-focused rather than punishment-based approach
-- **Micro-Interactions**: Gentle, purposeful feedback throughout the app
+### 🎨 **User Experience**
+- **Mobile-Optimized Carousel**: Swipe-friendly habit browsing
+- **Responsive Design**: Works seamlessly across mobile and desktop
+- **Clean Interface**: Minimal design focused on essential features
+- **Accessibility**: WCAG 2.1 AA compliant with keyboard navigation
+- **Offline Support**: Full PWA functionality without internet
 
-### 🔒 **Privacy & Security**
-- **Hybrid Local-First Architecture**: Works offline, syncs across devices
-- **End-to-End Encryption**: All data encrypted before leaving your device
-- **Multi-Cloud Support**: NextCloud (privacy-first) and Google Cloud Storage
-- **Device Management**: Secure multi-device synchronization
-- **GDPR Compliance**: EU hosting options and privacy controls
+### 🔒 **Privacy & Data**
+- **Local-First**: All data stored locally in IndexedDB
+- **No Cloud Dependencies**: Fully functional without external services
+- **Privacy-Focused**: No tracking, analytics, or external data sharing
+- **Import/Export**: JSON backup and restore functionality
 
-### 🌍 **Multi-Language System**
-- **4 Languages Supported**: English, German, French, Spanish
-- **Immediate Publishing Strategy**: Real-time translations with admin oversight
-- **Quality Control System**: Translation warnings and review workflows
+### 🌍 **Multi-Language Infrastructure**
+- **Core Languages**: English (primary), German, French, Spanish
+- **Infrastructure Ready**: Complete i18n system for future expansion
 - **Cultural Adaptation**: Localized formatting and terminology
-- **Admin Dashboard**: Professional translation management interface
-
-### ♿ **Accessibility & Quality**
-- **WCAG 2.1 AA Compliant**: Full accessibility support with keyboard navigation
-- **Performance Optimized**: Lighthouse score > 90 with optimized rendering
-- **Type-Safe**: Full TypeScript implementation with strict mode
-- **Comprehensive Testing**: Unit, integration, E2E, accessibility test suites
-- **Responsive Design**: Mobile-first, works on all devices
+- **Translation Management**: Professional admin dashboard (dev only)
 
 ## 🚀 Quick Start
 
@@ -106,10 +95,8 @@ npm run preview             # Preview production build
 
 # Testing
 npm test                    # Run unit tests
-npm run test:watch          # Watch mode
 npm run test:coverage       # Coverage report
 npm run test:a11y          # Accessibility tests
-npm run test:integration   # Integration tests
 npm run cypress:open       # Interactive E2E tests
 
 # Code Quality
@@ -118,24 +105,16 @@ npm run type-check        # TypeScript validation
 npm run validate-content  # Content validation
 
 # Content Management
-npm run fetch-content-api # Fetch from content API
-npm run validate-goals    # Validate goal mappings
+npm run bundle-content     # Bundle content for production
+npm run validate-goals     # Validate goal mappings
 ```
 
-### Admin & Development Access
+### User Testing Environment
 
 ```bash
-# Admin Dashboard
-# Navigate to: #admin
-# Features: Content management, translation oversight, system monitoring
-
-# User Testing Environment  
 # Navigate to: #user-testing
 # Features: Mock user scenarios, behavioral analytics, journey testing
-
-# Translation Dashboard
-# Navigate to: #translation-dashboard  
-# Features: Multi-language quality control, review workflows
+# Note: Development environment only, not included in production build
 ```
 
 ## 🏗️ Architecture
@@ -145,7 +124,7 @@ npm run validate-goals    # Validate goal mappings
 **Frontend Framework**
 - **React 19.1.1** - UI library with concurrent features
 - **TypeScript 4.9.5** - Type safety and developer experience
-- **Tailwind CSS** - Utility-first styling with Headless UI
+- **Tailwind CSS** - Utility-first styling with responsive design
 - **Progressive Web App** - Offline capabilities and app-like experience
 
 **State Management**
@@ -153,85 +132,60 @@ npm run validate-goals    # Validate goal mappings
 - **IndexedDB (Dexie 4.0.11)** - Client-side persistence
 - **React Context** - Component-level state and providers
 
-**Content Management**
-- **GitHub Pages Content API** - Distributed content delivery
-- **Multi-Language CMS** - Translation management and quality control
+**Content System**
+- **Bundled Content Strategy** - Build-time content bundling
+- **Multi-Language CMS** - Translation management (dev environment)
 - **Content Validation Pipeline** - Automated quality assurance
-- **Hybrid Architecture** - GitHub Pages + Runtime API ready for scaling
+- **GitHub Pages Ready** - Static content delivery optimized
 
 **Testing & Quality**
 - **Jest + React Testing Library** - Unit/integration testing
 - **Cypress** - End-to-end testing
 - **jest-axe** - Accessibility testing
-- **User Testing Environment** - Mock scenarios and behavioral analytics
+- **User Testing Environment** - Mock scenarios and analytics
 
 ### Project Structure
 
 ```
 src/
 ├── components/          # React components
-│   ├── admin/          # Content management system
-│   │   ├── AdminDashboard.tsx      # Main CMS interface
-│   │   ├── HabitsManager.tsx       # Habit content editing
-│   │   ├── ResearchManager.tsx     # Research article management
-│   │   ├── TranslationDashboard.tsx # Multi-language oversight
-│   │   └── ContentAPIClient.ts     # GitHub Pages API integration
-│   ├── testing/        # User testing environment
-│   │   ├── UserTestingDashboard.tsx     # Main testing interface
-│   │   ├── UserScenarioSelector.tsx     # Mock user selection
-│   │   ├── UserJourneyVisualization.tsx # Analytics visualization
-│   │   └── AppPreviewWithContext.tsx    # App testing with user context
-│   ├── auth/           # Authentication & sync
 │   ├── dashboard/      # Main user interface
 │   ├── onboarding/     # User onboarding flow
-│   ├── habits/         # Habit management
+│   ├── habits/         # Habit management and carousel
 │   ├── analytics/      # Progress visualization
-│   └── i18n/          # Multi-language components
+│   ├── testing/        # User testing environment (dev only)
+│   └── ui/            # Reusable UI components
 ├── services/           # Business logic
-│   ├── admin/         # CMS services
-│   ├── testing/       # User testing services
-│   ├── i18n/         # Multi-language services (5 interconnected)
-│   ├── sync/         # Cloud synchronization
-│   ├── storage/      # Database operations
-│   └── migration/    # Hybrid architecture preparation
+│   ├── storage/       # IndexedDB operations
+│   ├── i18n/         # Multi-language services
+│   └── BundledContentService.ts # Content loading
 ├── stores/            # Zustand state stores
 ├── hooks/             # Custom React hooks
 ├── data/              # Content and localization
+│   ├── bundled/      # Build-time bundled content
 │   ├── locales/      # Translation files (en, de, fr, es)
-│   ├── habits/       # Habit definitions
-│   └── research/     # Research articles
+│   └── goalTaxonomy.json # Goal definitions
 ├── types/             # TypeScript definitions
 ├── utils/             # Helper functions
 └── tests/             # Test utilities and integration tests
-
-.github/workflows/     # CI/CD automation
-├── validate-cms-integration.yml    # CMS validation
-├── deploy-admin-dashboard.yml      # Admin deployment
-└── test-automation.yml            # Comprehensive testing
-
-runtime-api-server/    # Future hybrid deployment
-├── src/server.ts     # Express.js foundation
-├── middleware/       # Security and performance
-└── routes/          # API endpoints
 ```
 
 ## 🧪 Testing
 
-### Comprehensive Test Coverage
+### Test Coverage
 
 **Test Types**
 - **Unit Tests**: Component behavior and business logic
-- **Integration Tests**: Cross-system communication (CMS, API, Main App)
-- **E2E Tests**: Complete user journeys and workflows
+- **Integration Tests**: Cross-component communication
+- **E2E Tests**: Complete user journeys
 - **Accessibility Tests**: WCAG 2.1 AA compliance validation
-- **Performance Tests**: Lighthouse CI with render time budgets
-- **Content Validation**: Automated quality assurance for content
+- **Content Validation**: Automated quality assurance
 
 **User Testing Environment**
-- **Mock User Scenarios**: 8+ predefined user profiles (new, power, struggling, returning, consistent)
-- **Behavioral Analytics**: Real-time interaction tracking and analysis
-- **Journey Visualization**: Completion trends and pattern analysis
-- **App Preview**: Full application testing with mock user context
+- **Mock User Scenarios**: 8+ predefined user profiles
+- **Behavioral Analytics**: Real-time interaction tracking
+- **Journey Visualization**: Completion trends and patterns
+- **App Preview**: Full application testing with mock context
 
 ### Running Tests
 
@@ -239,7 +193,6 @@ runtime-api-server/    # Future hybrid deployment
 # Core testing
 npm test                    # Unit tests
 npm run test:coverage       # Coverage report
-npm run test:integration    # Integration tests
 npm run test:a11y          # Accessibility compliance
 
 # End-to-end testing
@@ -254,154 +207,90 @@ npm run validate-goals      # Goal mapping validation
 # Navigate to #user-testing for interactive testing
 ```
 
-### Continuous Integration
+## 📊 Content System
 
-GitHub Actions pipeline includes:
-- ✅ TypeScript compilation and linting
-- ✅ Unit and integration test suites
-- ✅ Accessibility compliance testing (WCAG 2.1 AA)
-- ✅ Multi-browser E2E tests (Chrome, Firefox, Edge, Safari)
-- ✅ Content management system validation
-- ✅ Performance testing with Lighthouse (>90 score requirement)
-- ✅ Security vulnerability scanning
-- ✅ Multi-language content validation
+### Content Architecture
 
-## 📊 Content Management System
-
-### Overview
-
-ScienceHabits features a complete Content Management System built on a hybrid GitHub Pages + Runtime API architecture, designed for scalability and cost-effectiveness.
-
-### Architecture Components
-
-**GitHub Pages Content API**
-- Distributed content delivery via GitHub Pages
+**Bundled Content Strategy**
+- Build-time content bundling for optimal performance
 - Version-controlled content with automated validation
-- RESTful API endpoints for habits, research, and metadata
-- Authentication and rate limiting for content access
+- Offline-first content delivery
+- Multi-language content support
 
-**Admin Dashboard**
-- Professional content editing interface
-- Real-time preview and validation
-- Multi-language content oversight
-- System health monitoring and metrics
+**Content Types**
+- **Habits**: Science-backed habit definitions with research sources
+- **Research**: Scientific articles and studies
+- **Locales**: Translation files for multi-language support
+- **Goal Taxonomy**: Structured goal categories and mappings
 
-**Hybrid Migration System**
-- Feature flags for gradual rollout
-- Runtime API server foundation ($5/month deployment ready)
-- Intelligent fallback strategies
-- Performance monitoring and optimization
-
-### Key Features
-
+**Content Management**
 ```typescript
-// Content API Client
-const contentAPI = new ContentAPIClient();
+// Content access
+const bundledContentService = new BundledContentService();
+const habits = await bundledContentService.getAllHabits();
+const research = await bundledContentService.getResearch();
 
-// Fetch habits with language support
-const habits = await contentAPI.getHabits('en');
-
-// Content validation pipeline
-const validation = await contentValidator.validateContent(content);
-
-// Translation quality monitoring
-const qualityReport = qualityWarningService.generateQualityReport();
+// Content validation
+npm run validate-content    // Automated quality checks
 ```
 
-**Content Management Workflows**
-1. **Content Creation**: Rich editing interface with preview
-2. **Validation Pipeline**: Automated quality checks and validation
-3. **Translation Oversight**: Multi-language quality control
-4. **Deployment**: Automated deployment via GitHub Actions
-5. **Monitoring**: Health checks and performance metrics
-
-### Technical Implementation
-
-**GitHub Actions CI/CD**
-- Content validation on every commit
-- Automated deployment to GitHub Pages
-- Integration testing across all systems
-- Performance monitoring and alerts
-
-**Hybrid Architecture Preparation**
-- Migration configuration with feature flags
-- Runtime API server foundation (Express.js)
-- Circuit breaker patterns for reliability
-- Cache-first strategies with TTL invalidation
+**Content Validation Pipeline**
+- Automated content structure validation
+- Research reference verification
+- Translation completeness checks
+- Goal mapping consistency validation
 
 ## 🧪 User Testing Environment
 
 ### Overview
 
-The User Data Mock Dataset Testing Environment provides a comprehensive framework for testing application behavior with realistic user scenarios and behavioral patterns.
+The User Testing Environment provides a framework for testing application behavior with realistic user scenarios and behavioral patterns.
 
-### Key Components
-
-**Mock User Scenarios**
-- **New Users**: Excited beginners and overwhelmed users
-- **Power Users**: Advanced users with sophisticated tracking needs
-- **Struggling Users**: Users with inconsistent patterns and restart attempts
-- **Returning Users**: Users coming back after breaks
-- **Consistent Users**: Steady users with reliable completion rates
-
-**Testing Interface**
-- **User Scenario Selector**: Browse and select predefined user profiles
+**Key Features**
+- **Mock User Scenarios**: Predefined user profiles with realistic data
 - **Journey Visualization**: Visual analytics showing completion trends
-- **App Preview**: Full application interface with selected user's data
-- **Behavioral Analytics**: Real-time interaction tracking and analysis
+- **App Preview**: Full application interface with selected user context
+- **Behavioral Analytics**: Real-time interaction tracking
 
-### Usage Workflows
-
+**Usage**
 ```typescript
-// Enable testing mode
-const { enableTestingMode, recordEvent } = useUserTesting();
+// Access testing environment
+// Navigate to #user-testing
 
-// Select user scenario
-enableTestingMode('struggling_user_inconsistent');
-
-// Track interactions
-recordEvent('habit_completion', { habitId: 'morning-meditation' });
-
-// Generate analytics
-const analytics = getBehaviorAnalytics();
+// Available scenarios:
+- New users (excited beginners, overwhelmed users)
+- Power users (advanced tracking needs)
+- Struggling users (inconsistent patterns)
+- Returning users (coming back after breaks)
+- Consistent users (steady completion rates)
 ```
 
-**Testing Scenarios**
-1. **User Experience Testing**: Navigate through different user journeys
-2. **Feature Validation**: Test new features with various user types
-3. **Recovery Flow Testing**: Validate motivational interventions
-4. **A/B Testing**: Compare behaviors across user scenarios
-
-### Access Points
-
-- **Admin Panel**: Navigate to `#admin` → "User Testing"
-- **Direct Access**: Navigate to `#user-testing`
-- **Programmatic**: Use `useUserTesting` hook in components
+**Note**: User testing environment is available in development mode only and not included in production builds.
 
 ## 🌍 Multi-Language Support
 
-### Comprehensive i18n System
+### Current Implementation
 
 **Supported Languages**
-- **English (en)**: Master language with complete coverage
-- **German (de)**: Full localization with cultural adaptation
-- **French (fr)**: Complete translation with regional formatting
-- **Spanish (es)**: Comprehensive localization with cultural context
+- **English (en)**: Primary language with complete coverage
+- **German (de)**: Full localization infrastructure ready
+- **French (fr)**: Complete translation framework
+- **Spanish (es)**: Comprehensive localization support
 
-**Translation Strategy**
-- **Immediate Publishing**: Real-time translations with admin oversight
-- **Quality Control**: Translation warnings and review workflows
-- **Cultural Adaptation**: Localized date formats and terminology
-- **Claude API Integration**: Automatic translations with quality monitoring
+**MVP Configuration**
+- **Default Language**: English
+- **Infrastructure**: Complete i18n system implemented
+- **Future Ready**: Easy expansion to additional languages
+- **Cultural Adaptation**: Localized formatting and terminology
 
 ### Technical Implementation
 
 ```typescript
-// Multi-language service architecture
+// Multi-language service architecture (ready for activation)
 MultiLanguageContentManager     // Content loading and caching
 LanguageDetectionService       // Browser language detection
 UITranslationService          // React component translations
-TranslationService            // Claude API integration
+TranslationService            // Automatic translation integration
 TranslationMetadataService    // Quality tracking
 QualityWarningService         // Translation monitoring
 
@@ -410,67 +299,7 @@ const { t } = useTranslation();
 const { currentLanguage, setLanguage } = useLanguage();
 ```
 
-**Translation Management**
-- **Admin Dashboard**: Professional translation interface
-- **Quality Warnings**: Real-time quality alerts for unreviewed content
-- **Review Workflows**: German research article review interface
-- **Metadata Tracking**: Translation history and quality metrics
-
-## 🔒 Hybrid Local-First Sync Architecture
-
-### Privacy-First Design
-
-**Core Principles**
-- **Local-First**: Fully functional without internet connection
-- **Privacy-First**: All data encrypted client-side using AES-GCM
-- **Multi-Cloud Support**: NextCloud (privacy) and Google Cloud (convenience)
-- **Device Management**: Secure multi-device synchronization
-
-**Supported Cloud Providers**
-
-```typescript
-// NextCloud (Privacy-Focused)
-interface NextCloudConfig {
-  serverUrl: string;
-  username: string;
-  appPassword: string;  // Secure app-specific credentials
-}
-
-// Google Cloud Storage (Convenience-Focused)  
-interface GoogleCloudConfig {
-  projectId: string;
-  keyFilename: string;  // Service account credentials
-  bucketName: string;
-}
-```
-
-**Security Features**
-- **AES-GCM Encryption**: 256-bit keys with authenticated encryption
-- **PBKDF2 Key Derivation**: 100,000 iterations for password security
-- **Per-User Encryption**: Unique encryption keys per user
-- **Device-Specific Keys**: Additional security layer per device
-
-### Technical Architecture
-
-**Authentication System**
-```typescript
-interface User {
-  userId: string;           // PBKDF2-derived from email
-  email: string;           // User identifier  
-  devices: DeviceInfo[];   // Connected devices
-  encryptionSalt: number[]; // Encryption key salt
-  cloudProvider: 'nextcloud' | 'google-cloud' | 'none';
-}
-```
-
-**Cloud Provider Architecture**
-```typescript
-abstract class CloudProvider {
-  abstract uploadFile(path: string, data: EncryptedData): Promise<void>;
-  abstract downloadFile(path: string): Promise<EncryptedData>;
-  abstract checkConnection(): Promise<boolean>;
-}
-```
+**MVP Status**: English-focused with multi-language infrastructure ready for future activation.
 
 ## 🤝 Contributing
 
@@ -494,27 +323,37 @@ We welcome contributions! Please see our development workflow:
 - **Performance**: Lighthouse score >90 required
 - **Type Safety**: No TypeScript errors allowed
 - **Content Quality**: All content must pass validation pipeline
-- **Multi-Language**: Consider i18n impact for user-facing changes
+- **Mobile-First**: All features must work optimally on mobile
 
 ### Commit Convention
 
 We use [Conventional Commits](https://conventionalcommits.org/):
 
 ```
-feat: add user testing environment
-fix: resolve content API authentication
-docs: update multi-language documentation  
-test: add integration tests for CMS
+feat: add mobile carousel optimization
+fix: resolve habit toggle functionality
+docs: update MVP documentation
+test: add mobile-specific integration tests
 ```
+
+### Recent MVP Changes
+
+Based on recent git commits, the following enterprise features have been removed:
+- **Enhanced Analytics**: Simplified to core progress tracking
+- **Admin Dashboard**: Moved to development-only environment
+- **Cloud Sync**: Removed for local-first MVP experience
+- **Advanced UI Components**: Streamlined to essential features
+- **Export Functionality**: Simplified to basic JSON backup
+- **Fallback Habits**: Removed to ensure content quality
 
 ### Areas for Contribution
 
-- **Content Management**: Enhance CMS features and workflows
-- **User Testing**: Expand mock scenarios and analytics
-- **Multi-Language**: Add new language support
+- **Mobile Optimization**: Enhance touch interactions and responsive design
+- **Content Quality**: Improve habit definitions and research integration
 - **Performance**: Optimize rendering and bundle size
 - **Accessibility**: Improve WCAG compliance
-- **Documentation**: Improve developer and user documentation
+- **Testing**: Expand test coverage and user scenarios
+- **Documentation**: Improve user and developer documentation
 
 ## 📄 License
 
@@ -523,18 +362,20 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - **Research Community**: For evidence-based habit formation insights
-- **Accessibility Experts**: For inclusive design guidance  
-- **Translation Community**: For cultural adaptation and localization
+- **Accessibility Experts**: For inclusive design guidance
+- **Mobile UX Community**: For mobile-first design patterns
 - **Open Source Community**: For the amazing tools and libraries
-- **Contributors**: For making this comprehensive system possible
+- **Contributors**: For helping create this focused MVP experience
 
 ---
 
 <div align="center">
   <strong>Built with ❤️ for sustainable behavior change</strong>
   <br>
-  <a href="https://sciencehabits.app">🌐 Website</a> •
-  <a href="https://docs.sciencehabits.app">📚 Docs</a> •
+  <em>MVP focused on mobile-first, science-backed habit tracking</em>
+  <br><br>
+  <a href="https://sciencehabits.vercel.app">🌐 Live MVP</a> •
+  <a href="#user-testing-environment">🧪 User Testing</a> •
   <a href="https://github.com/sciencehabits/app/issues">🐛 Report Bug</a> •
   <a href="https://github.com/sciencehabits/app/discussions">💬 Discussions</a>
 </div>

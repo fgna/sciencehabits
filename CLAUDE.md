@@ -1,9 +1,11 @@
 # CLAUDE.md - Project Memory and Context File
 
 ## Project Overview
-**ScienceHabits** is a Progressive Web Application (PWA) for science-backed habit tracking and behavior change. It helps users build healthy habits based on peer-reviewed research, with features for progress tracking, analytics, and personalized recommendations.
+**ScienceHabits MVP** is a streamlined Progressive Web Application (PWA) for science-backed habit tracking and behavior change. This mobile-first version focuses on core habit tracking functionality with clean, accessible interface and local-first data architecture.
 
-**🌍 NEW**: Comprehensive multi-language support system with immediate publishing strategy and admin oversight.
+**🚀 CURRENT STATUS**: MVP Release - Mobile-first, English-focused, local-storage experience with enterprise features removed for clarity and performance.
+
+**🎯 MVP FOCUS**: Core habit tracking, mobile optimization, offline functionality, and scientific research integration without complex enterprise features.
 
 ## Current Architecture
 
@@ -15,24 +17,39 @@
 - **UI Components**: Headless UI 2.2.7
 - **Testing**: Jest, React Testing Library, Cypress
 - **Build Tool**: React Scripts 5.0.1
-- **Deployment**: Netlify (with SPA routing configured)
+- **Deployment**: Vercel (optimized for MVP delivery)
 
-### Key Frameworks & Libraries
-- **Internationalization**: react-i18next 15.6.1 + Custom i18n System
-- **Multi-Language Support**: 🆕 Comprehensive i18n architecture with Claude API integration
+### Key Frameworks & Libraries (MVP Configuration)
+- **Internationalization**: react-i18next 15.6.1 + Custom i18n System (infrastructure ready, English-focused)
+- **Multi-Language Support**: 🆕 Complete i18n architecture available (currently English primary)
 - **Markdown Rendering**: react-markdown 10.1.0 with remark-gfm
-- **Routing**: Custom SPA routing (no react-router currently active)
-- **Analytics**: Custom analytics system with comprehensive tracking
-- **Admin System**: Professional translation management dashboard
+- **Routing**: Custom SPA routing (no react-router, hash-based navigation)
+- **Analytics**: Simplified progress tracking focused on core metrics
+- **Content System**: Build-time bundled content with validation pipeline
 
-### Multi-Language Architecture 🆕
-- **Supported Languages**: English (en), German (de), French (fr), Spanish (es)
-- **Translation Strategy**: Immediate publishing with admin oversight
-- **Quality Control**: Real-time quality warnings and review system
-- **Cultural Adaptation**: Localized formatting, terminology, and cultural context
-- **Services**: 5 interconnected i18n services with Claude API integration
+### MVP Architecture Decisions
+- **Local-First**: All data stored in IndexedDB, no cloud dependencies
+- **Mobile-First**: Responsive design optimized for mobile devices
+- **Content Strategy**: Build-time bundling for optimal performance
+- **Language Strategy**: English primary with i18n infrastructure ready
+- **Feature Set**: Core habit tracking without enterprise complexity
 
 ## Recent Major Improvements (Last 30 Days)
+
+### August 19, 2025 - 🚀 MVP RELEASE: Complete Code Cleanup
+- ✅ **Mobile Carousel Optimization** - Enhanced responsive design for mobile devices
+- ✅ **Fallback Content Removal** - Eliminated problematic habits without research backing
+- ✅ **Error Handling Implementation** - Clear error messages for missing content
+- ✅ **Mobile-First Interface** - Optimized touch interactions and responsive breakpoints
+- ✅ **Content Quality Assurance** - Removed habits without proper research data
+
+### August 18, 2025 - 🔧 ENTERPRISE FEATURE CLEANUP: MVP Focus
+- ✅ **Complete MVP Cleanup** - Removed enterprise features for mobile-first architecture
+- ✅ **Enhanced Analytics Removal** - Simplified to core progress tracking
+- ✅ **Admin Dashboard Scope** - Moved to development-only environment
+- ✅ **Cloud Sync Removal** - Established local-first MVP experience
+- ✅ **Export Functionality Simplification** - Removed complex export features
+- ✅ **UI Component Streamlining** - Focused on essential features only
 
 ### August 17, 2025 - 🔧 CRITICAL INFRASTRUCTURE: Git Hooks System
 - ✅ **Comprehensive Git Hooks** - Pre-commit and pre-push validation system
@@ -44,10 +61,12 @@
 - ✅ **Type System Enhancement** - Extended Habit interface for research properties
 - ✅ **Manual Validation Scripts** - Added npm scripts for manual hook execution
 
-### August 15, 2025 - 🚀 MAJOR RELEASE: Multi-Language System
+### August 15, 2025 - 🚀 INFRASTRUCTURE: Multi-Language System (Development Ready)
 - ✅ **Comprehensive Multi-Language Support** - Full i18n system with EN/DE/FR/ES support
 - ✅ **Advanced Translation Services** - Claude API integration with quality warnings
-- ✅ **Professional Admin Dashboard** - Translation monitoring with real-time statistics
+- ✅ **Professional Admin Dashboard** - Translation monitoring (development environment)
+- ✅ **React Hooks Integration** - useLanguage and useTranslation hooks
+- ✅ **Cultural Adaptation Infrastructure** - Ready for future multi-language activation
 - ✅ **German Research Review Interface** - Professional translation review workflow
 - ✅ **React Hooks Integration** - useLanguage and useTranslation hooks
 - ✅ **Settings Integration** - Language selector with auto-detection
@@ -77,47 +96,39 @@
 - ✅ **GitHub Actions CI/CD** - Automated testing and deployment pipeline
 - ✅ **Initial app creation** - Complete ScienceHabits PWA with testing framework
 
-## Implementation Status
+## Implementation Status (MVP Release)
 
-### Core Features - ✅ Complete
-- User onboarding with progressive goal selection
-- Habit tracking with daily/weekly/periodic frequencies
-- Progress visualization and streak tracking
-- Research-backed habit recommendations
-- Custom habit creation
-- Analytics dashboard with multiple views
-- PWA functionality with offline support
+### ✅ MVP Core Features - Complete
+- **Progressive Onboarding**: Goal-based habit recommendations with 4-phase journey
+- **Habit Tracking**: Daily/weekly/periodic frequencies with streak calculations
+- **Mobile-First Interface**: Optimized carousel design for mobile habit browsing
+- **Progress Analytics**: Simplified tracking focused on core metrics
+- **Research Integration**: Science-backed habit explanations with sources
+- **PWA Functionality**: Full offline support with local data storage
+- **Accessibility**: WCAG 2.1 AA compliant with keyboard navigation
+- **Content Quality**: Eliminated habits without proper research backing
 
-### 🆕 Multi-Language Features - ✅ Complete
-- Comprehensive i18n architecture with 4 language support
-- Immediate publishing strategy with admin oversight
-- System language detection with manual override
-- Claude API integration for automatic translations
-- Quality warning system for unreviewed content
-- Professional admin dashboard with real-time statistics
-- German research article review interface
-- Cultural adaptation and localization
-- React hooks for seamless language switching
+### 🏗️ Infrastructure Ready (Not Active in MVP)
+- **Multi-Language System**: Complete i18n architecture (English primary)
+- **Translation Management**: Professional admin dashboard (development only)
+- **Advanced Analytics**: Infrastructure available, simplified for MVP
+- **User Testing Environment**: Mock scenarios and behavioral analytics (dev only)
+- **Content Management**: Build-time bundling with validation pipeline
 
-### Recent Enhancements - ✅ Complete
-- Enhanced analytics with time-based analysis
-- Research article integration
-- UI consistency improvements
-- Proper completion rate calculations
-- New user experience fixes
-- Google Drive sync improvements
+### 🚫 Removed for MVP Focus
+- **Enhanced Analytics**: Complex charts and enterprise reporting
+- **Cloud Sync**: Multi-cloud synchronization features
+- **Advanced UI Components**: Non-essential interface elements
+- **Export Functionality**: Complex reporting and data export
+- **Admin Dashboard**: Moved to development environment only
+- **Fallback Content**: Removed habits without research data
 
-### In Progress - 🔧
-- Multi-language test coverage expansion
-- Admin dashboard system (backend at port 3005)
-- Advanced gamification features
-
-### Planned Features - 📋
-- Additional language support (Italian, Portuguese, Japanese)
-- Social features and community
-- Advanced AI recommendations
-- Wearable device integrations
-- Team/family accounts
+### 📋 Future Expansion Ready
+- **Multi-Language Activation**: Infrastructure complete, ready for enabling
+- **Cloud Sync Restoration**: Architecture preserved for future implementation
+- **Advanced Analytics**: Enterprise features available for restoration
+- **Social Features**: Foundation ready for community features
+- **AI Recommendations**: Architecture prepared for intelligent suggestions
 
 ## Coding Standards
 
@@ -389,15 +400,42 @@ git commit --message "Add user profile validation."
 - **Regression Prevention**: Warnings for critical file modifications
 - **Quality Monitoring**: Performance and improvement impact assessment
 
-### Session Notes
+### Session Notes - MVP Release
 - Development server running on port 3000
-- Admin backend/dashboard accessible via hash routing
-- **🆕 Multi-Language System**: Fully operational with admin oversight
-- All critical regressions have been resolved
-- Auto-documentation system actively being implemented
+- User testing environment accessible via #user-testing
+- **MVP Status**: Mobile-first, English-focused, local-storage experience
+- **Enterprise Features**: Removed for MVP clarity and performance
+- **Infrastructure**: Multi-language and advanced features ready for future activation
+- **Current Focus**: Core habit tracking with scientific research integration
+
+### MVP Development Commands
+```bash
+# Core MVP development
+npm start                    # Development server
+npm run build               # Production MVP build
+npm test                    # Core functionality tests
+npm run validate-content    # Content quality validation
+
+# Development environment features (not in production)
+# Navigate to #user-testing for mock user scenarios
+# Navigate to #admin for content management (dev only)
+```
+
+### MVP Critical Files - Handle with Care
+- **🔒 CORE MVP COMPONENTS**:
+  - `src/components/habits/HabitsCarousel.tsx` - Mobile-optimized habit interface
+  - `src/components/dashboard/SimplifiedDashboard.tsx` - Main user interface
+  - `src/components/onboarding/` - User onboarding flow
+  - `src/data/loader.ts` - Content loading with error handling
+  - `src/data/bundled/` - Build-time content system
+
+- **🛠️ INFRASTRUCTURE (Ready for Future)**:
+  - `src/services/i18n/` - Multi-language system (infrastructure)
+  - `src/components/testing/` - User testing environment (dev only)
+  - `src/components/admin/` - Content management (dev only)
 
 ---
 
-*Last Updated: August 15, 2025 at 16:00 UTC*
+*Last Updated: August 19, 2025 at 04:00 UTC*
 *Auto-maintained by Claude Code Documentation System*
-*Project Status: Stable | Major Features: Complete | Multi-Language: ✅ Operational*
+*Project Status: MVP Release | Core Features: ✅ Complete | Mobile-First: ✅ Optimized*
