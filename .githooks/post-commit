@@ -1,0 +1,141 @@
+#!/bin/bash
+
+# ScienceHabits Post-Commit Hook
+# 
+# This hook automatically:
+# 1. Logs significant improvements to IMPROVEMENTS.md
+# 2. Updates README.md and CLAUDE.md when major code changes are made
+# 3. Maintains project documentation in sync with code changes
+
+set -e
+
+echo ""
+echo "🔄 [POST-COMMIT] Running automatic documentation and improvement tracking..."
+echo ""
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_status() {
+    echo -e "${BLUE}[POST-COMMIT]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Get the root directory of the project
+PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+
+# Check if we're in a rebase/merge/cherry-pick
+if [ -d "$PROJECT_ROOT/.git/rebase-merge" ] || [ -d "$PROJECT_ROOT/.git/rebase-apply" ] || [ -f "$PROJECT_ROOT/.git/MERGE_HEAD" ] || [ -f "$PROJECT_ROOT/.git/CHERRY_PICK_HEAD" ]; then
+    print_warning "Rebase/merge/cherry-pick in progress, skipping post-commit hooks"
+    exit 0
+fi
+
+# Check if this is an amend commit
+if [ "${GIT_EDITOR:-}" = ":" ] || [ "${GIT_SEQUENCE_EDITOR:-}" = ":" ]; then
+    print_warning "Amend commit detected, skipping post-commit hooks"
+    exit 0
+fi
+
+# Navigate to project root
+cd "$PROJECT_ROOT"
+
+# Function to run improvement logging
+run_improvement_logging() {
+    print_status "📝 Running improvement logging..."
+    
+    if [ -f "scripts/log-improvements.js" ]; then
+        if node scripts/log-improvements.js; then
+            print_success "✅ Improvement logging completed"
+        else
+            print_warning "⚠️  Improvement logging encountered issues"
+        fi
+    else
+        print_warning "⚠️  Improvement logging script not found"
+    fi
+}
+
+# Function to run documentation updates
+run_documentation_update() {
+    print_status "📚 Running documentation updates..."
+    
+    if [ -f "scripts/update-docs.js" ]; then
+        if node scripts/update-docs.js; then
+            print_success "✅ Documentation update completed"
+        else
+            print_warning "⚠️  Documentation update encountered issues"
+        fi
+    else
+        print_warning "⚠️  Documentation update script not found"
+    fi
+}
+
+# Function to check if Node.js is available
+check_node() {
+    if ! command -v node &> /dev/null; then
+        print_error "❌ Node.js not found. Please install Node.js to enable automatic documentation updates."
+        return 1
+    fi
+    return 0
+}
+
+# Main execution
+main() {
+    print_status "🚀 Starting post-commit automation..."
+    
+    # Check prerequisites
+    if ! check_node; then
+        print_error "❌ Prerequisites not met, skipping automation"
+        exit 1
+    fi
+    
+    # Get commit information for logging
+    COMMIT_HASH=$(git rev-parse HEAD | cut -c1-8)
+    COMMIT_MESSAGE=$(git log -1 --pretty=%s)
+    FILES_CHANGED=$(git diff-tree --no-commit-id --name-only -r HEAD | wc -l)
+    
+    print_status "📋 Processing commit: $COMMIT_HASH"
+    print_status "💬 Message: $COMMIT_MESSAGE"
+    print_status "📁 Files changed: $FILES_CHANGED"
+    
+    # Run improvement logging
+    run_improvement_logging
+    
+    # Run documentation updates
+    run_documentation_update
+    
+    # Check if documentation files were updated and need to be committed
+    if git diff --cached --quiet; then
+        # No staged changes from documentation updates
+        if git diff --name-only | grep -E "(README\.md|CLAUDE\.md|IMPROVEMENTS\.md)" > /dev/null 2>&1; then
+            print_status "📝 Documentation files were updated"
+            print_status "💡 Run 'git add README.md CLAUDE.md IMPROVEMENTS.md && git commit -m \"docs: update documentation after $COMMIT_HASH\"' to commit documentation changes"
+        fi
+    else
+        # There are staged changes from documentation updates
+        print_status "📝 Documentation files were updated and staged"
+        print_status "💡 Documentation changes are ready for the next commit"
+    fi
+    
+    print_success "🎉 Post-commit automation completed successfully!"
+}
+
+# Execute main function
+main
+
+echo ""
