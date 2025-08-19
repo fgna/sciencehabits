@@ -154,11 +154,14 @@ export function HabitsCarousel({
     
     const scrollLeft = carouselRef.current.scrollLeft;
     // Calculate card width based on responsive breakpoints
-    const cardWidth = window.innerWidth >= 768 
-      ? 320 + 24 // md: w-80 + gap
-      : window.innerWidth >= 640 
-        ? window.innerWidth - 48 + 16 // sm: calc(100vw-3rem) + gap
-        : window.innerWidth - 16 + 16; // xs: calc(100vw-1rem) + gap
+    const getCardWidth = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) return 384; // lg
+      if (width >= 768) return 320;  // md
+      if (width >= 640) return width - 32; // sm
+      return width - 24; // mobile: calc(100vw-1.5rem)
+    };
+    const cardWidth = getCardWidth();
     const newIndex = Math.round(scrollLeft / cardWidth);
     setActiveIndex(Math.min(newIndex, enhancedHabits.length - 1));
   };
@@ -167,11 +170,14 @@ export function HabitsCarousel({
     if (!carouselRef.current) return;
     
     // Calculate card width based on responsive breakpoints
-    const cardWidth = window.innerWidth >= 768 
-      ? 320 + 24 // md: w-80 + gap
-      : window.innerWidth >= 640 
-        ? window.innerWidth - 48 + 16 // sm: calc(100vw-3rem) + gap
-        : window.innerWidth - 16 + 16; // xs: calc(100vw-1rem) + gap
+    const getCardWidth = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) return 384; // lg
+      if (width >= 768) return 320;  // md
+      if (width >= 640) return width - 32; // sm
+      return width - 24; // mobile: calc(100vw-1.5rem)
+    };
+    const cardWidth = getCardWidth();
     carouselRef.current.scrollTo({
       left: cardWidth * index,
       behavior: 'smooth'
@@ -210,13 +216,13 @@ export function HabitsCarousel({
         {/* Scrollable Container */}
         <div 
           ref={carouselRef}
-          className="flex overflow-x-auto gap-4 md:gap-6 pb-4 snap-x snap-mandatory scrollbar-hide px-4 md:px-0"
+          className="flex overflow-x-auto gap-3 pb-4 snap-x snap-mandatory scrollbar-hide px-3"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {enhancedHabits.map((habit) => (
             <div 
               key={habit.id}
-              className="flex-none w-[calc(100vw-1rem)] sm:w-[calc(100vw-3rem)] md:w-80 snap-start"
+              className="flex-none w-[calc(100vw-1.5rem)] sm:w-[calc(100vw-2rem)] md:w-80 lg:w-96 snap-start"
             >
               <HabitCard 
                 habit={habit} 
@@ -306,7 +312,7 @@ function HabitCard({
   return (
     <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
       {/* Card Header */}
-      <div className="p-6 pb-4">
+      <div className="p-4 sm:p-6 pb-3 sm:pb-4">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
             {/* Completion Status */}
@@ -351,13 +357,13 @@ function HabitCard({
         </div>
 
         {/* Title and Description */}
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">{habit.title}</h3>
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">{habit.title}</h3>
         <p className="text-sm text-gray-600 leading-relaxed">{habit.description}</p>
 
       </div>
 
       {/* Research Details Section */}
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {/* Mechanism of Action */}
         <div className="mb-4">
           <h4 className="text-sm font-semibold text-gray-900 mb-1">How it works:</h4>
@@ -379,7 +385,7 @@ function HabitCard({
       </div>
 
       {/* Research Verification Bar */}
-      <div className="bg-blue-50 px-6 py-3 border-t border-blue-100">
+      <div className="bg-blue-50 px-4 sm:px-6 py-3 border-t border-blue-100">
         <div className="flex items-center gap-2 mb-2">
           <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
